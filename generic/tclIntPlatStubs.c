@@ -323,22 +323,22 @@ TclWinNoBackslash(path)
 
 /* Slot 25 */
 TCHAR *
-Tcl_WinUtfToTChar(string, len, dsPtr)
-    CONST char * string;
+Tcl_WinUtfToTChar(str, len, dsPtr)
+    CONST char * str;
     int len;
     Tcl_DString * dsPtr;
 {
-    return (tclIntPlatStubsPtr->tcl_WinUtfToTChar)(string, len, dsPtr);
+    return (tclIntPlatStubsPtr->tcl_WinUtfToTChar)(str, len, dsPtr);
 }
 
 /* Slot 26 */
 char *
-Tcl_WinTCharToUtf(string, len, dsPtr)
-    CONST TCHAR * string;
+Tcl_WinTCharToUtf(str, len, dsPtr)
+    CONST TCHAR * str;
     int len;
     Tcl_DString * dsPtr;
 {
-    return (tclIntPlatStubsPtr->tcl_WinTCharToUtf)(string, len, dsPtr);
+    return (tclIntPlatStubsPtr->tcl_WinTCharToUtf)(str, len, dsPtr);
 }
 
 #endif /* __WIN32__ */
