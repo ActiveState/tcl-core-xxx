@@ -379,10 +379,9 @@ declare 100 generic {
     Tcl_Obj * TclSetIndexedScalar(Tcl_Interp *interp, int localIndex, \
 	    Tcl_Obj *objPtr, int leaveErrorMsg)
 }
-# TODO: needs to be implemented
-#  declare 101 generic {
-#      char * TclSetPreInitScript(char *string)
-#  }
+declare 101 generic {
+    char * TclSetPreInitScript(char *string)
+}
 declare 102 generic {
     void TclSetupEnv(Tcl_Interp *interp)
 }
@@ -394,7 +393,7 @@ declare 104 generic {
     int TclSockMinimumBuffers(int sock, int size)
 }
 declare 105 generic {
-    int TclStat(CONST char *path, TclStat_ *buf)
+    int TclStat(CONST char *path, struct stat *buf)
 }
 declare 106 generic {
     int TclStatDeleteProc(TclStatProc_ *proc)
