@@ -2,7 +2,7 @@
 # tests.  Execute it by invoking "source all" when running tclTest
 # in this directory.
 #
-# SCCS: @(#) all 1.8 97/08/01 11:07:14
+# SCCS: @(#) all 1.9 97/12/24 10:40:19
 
 if {$tcl_platform(os) == "Win32s"} {
     set files [glob *.tes]
@@ -10,13 +10,49 @@ if {$tcl_platform(os) == "Win32s"} {
     set files [glob *.test]
 }
 
-foreach i [lsort $files] {
-    if [string match l.*.test $i] {
-	# This is an SCCS lock file;  ignore it.
-	continue
-    }
-    puts stdout $i
-    if [catch {source $i} msg] {
-	puts $msg
-    }	
+if {[info commands test] != "test"} {
+    source defs
 }
+
+proc alltests {files} {
+    foreach i [lsort $files] {
+	set savedProcs [info procs]
+	set savedVars [uplevel {info vars}]
+	if {[catch {testchannel open} savedDesc]} {
+	    set savedDesc {}
+	}
+	set savedDir [pwd]
+	set savedFiles [glob -nocomplain *]
+
+	puts stdout $i
+	if {[catch {uplevel "source $i"} msg]} {
+	    puts $msg
+	}
+
+	checkLeaking procs $savedProcs [info procs]
+	checkLeaking variables $savedVars [uplevel {info vars}]
+	if {$savedDesc != ""} {
+	    checkLeaking "file descriptors" $savedDesc [testchannel open]
+	}
+	if {[pwd] == $savedDir} {
+	    checkLeaking files $savedFiles [glob -nocomplain *]
+	}
+    }
+}
+
+proc checkLeaking {type old new} {
+    if {([info exists ::VERBOSE] == 0) || ($::VERBOSE == 0)} {
+	return
+    }
+    set leak {}
+    foreach p $new {
+	if {[lsearch -exact $old $p] < 0} {
+	    lappend leak $p
+	}
+    }
+    if {$leak != {}} {
+	puts "== Leaking $type: [lsort $leak]"
+    }
+}	    
+
+alltests $files
