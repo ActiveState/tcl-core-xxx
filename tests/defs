@@ -18,6 +18,11 @@ if ![info exists TESTS] {
     set TESTS {}
 }
 
+# Ensure that we have a minimal auto_path so we don't pick up extra
+#  junk.
+
+set auto_path [list [info library]]
+
 # If there is no "memory" command (because memory debugging isn't
 # enabled), generate a dummy command that does nothing.
 
