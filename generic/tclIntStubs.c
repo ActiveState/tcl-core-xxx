@@ -1202,8 +1202,8 @@ size_t
 TclpStrftime(s, maxsize, format, t)
     char * s;
     size_t maxsize;
-    const char * format;
-    const struct tm * t;
+    CONST char * format;
+    CONST struct tm * t;
 {
     return (tclIntStubsPtr->tclpStrftime)(s, maxsize, format, t);
 }
@@ -1258,3 +1258,4 @@ TclLooksLikeInt(bytes, length)
 
 
 /* !END!: Do not edit above this line. */
+
