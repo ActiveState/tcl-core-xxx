@@ -1,6 +1,7 @@
 @echo off
+rem RCS: @(#) $Id$
 
-if exist %1 goto end
+if not exist %1 goto end
 
 if %OS% == Windows_NT goto winnt
 
