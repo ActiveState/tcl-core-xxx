@@ -6850,6 +6850,18 @@ UpdateInterest(chanPtr)
 		&& (statePtr->inQueueHead->nextRemoved <
 			statePtr->inQueueHead->nextAdded)) {
 	    mask &= ~TCL_READABLE;
+
+	    /*
+	     * Andreas Kupries -- Experimental change
+	     *
+	     * Squash interest in exceptions too. Solaris may/will
+	     * generate superfluous exceptions for plain text files,
+	     * screwing up expect, which doesn't get the synthesized
+	     * readable event, or to late.
+	     */
+	    mask &= ~TCL_EXCEPTION;
+
+
 	    if (!statePtr->timer) {
 		statePtr->timer = Tcl_CreateTimerHandler(0, ChannelTimerProc,
 			(ClientData) chanPtr);
