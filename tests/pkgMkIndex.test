@@ -323,7 +323,7 @@ if {[file exists $x]} {
     file copy -force $x pkg
     test pkgMkIndex-10.1 {package in DLL and script} {
 	pkgtest::runIndex pkg pkga[info sharedlibextension] pkga.tcl
-    } {0 {{Pkga:1.0 {tclPkgSetup {pkga.so load {pkga_eq pkga_quote}} {pkga.tcl source pkga_neq}}}}}
+    } "0 {{Pkga:1.0 {tclPkgSetup {pkga[info sharedlibextension] load {pkga_eq pkga_quote}} {pkga.tcl source pkga_neq}}}}"
     test pkgMkIndex-10.2 {package in DLL hidden by -load} {
 	pkgtest::runIndex -load Pkg* -- pkg pkga[info sharedlibextension]
     } {0 {}}
