@@ -258,6 +258,12 @@ cvars      = -DWIN32 -D_WIN32
 cvarsmt    = $(cvars) -D_MT
 cvarsdll   = $(cvarsmt) -D_DLL
 
+!IF "$(NODEBUG)" == "1"
+cvarsdll   = $(cvars) -MD
+!ELSE
+cvarsdll   = $(cvars) -MDd
+!ENDIF
+
 ######################################################################
 # Project specific targets
 ######################################################################
