@@ -84,6 +84,7 @@ TclpDlopen(interp, pathPtr, loadHandle, unloadProcPtr)
 
     *unloadProcPtr = &TclpUnloadFile;
     *loadHandle = (TclLoadHandle)handle;
+    return TCL_OK;
 }
 
 Tcl_PackageInitProc*
