@@ -436,6 +436,8 @@ TclStubs tclStubs = {
     Tcl_ParseVarName, /* 364 */
     Tcl_GetCwd, /* 365 */
     Tcl_Chdir, /* 366 */
+    Tcl_Access, /* 367 */
+    Tcl_Stat, /* 368 */
 };
 
 TclIntStubs tclIntStubs = {
@@ -542,7 +544,7 @@ TclIntStubs tclIntStubs = {
     TclServiceIdle, /* 98 */
     TclSetElementOfIndexedArray, /* 99 */
     TclSetIndexedScalar, /* 100 */
-    NULL, /* 101 */
+    TclSetPreInitScript, /* 101 */
     TclSetupEnv, /* 102 */
     TclSockGetPort, /* 103 */
     TclSockMinimumBuffers, /* 104 */
