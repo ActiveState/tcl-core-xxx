@@ -501,6 +501,15 @@ test set-old-8.37.4 {array command, empty set with populated array} {
     array set aVaRnAmE [list e3 v3]
     list [lsort [array names aVaRnAmE]] [catch {set aVaRnAmE(e2)} msg] $msg
 } {{e1 e2 e3} 0 v2}
+test set-old-8.37.5 {array command, set with non-existent namespace} {
+    list [catch {array set bogusnamespace::var {}} msg] $msg
+} {1 {can't set "bogusnamespace::var": parent namespace doesn't exist}}
+test set-old-8.37.6 {array command, set with non-existent namespace} {
+    list [catch {array set bogusnamespace::var {a b}} msg] $msg
+} {1 {can't set "bogusnamespace::var(a)": parent namespace doesn't exist}}
+test set-old-8.37.7 {array command, set with non-existent namespace} {
+    list [catch {array set bogusnamespace::var(0) {a b}} msg] $msg
+} {1 {can't set "bogusnamespace::var(0)": variable isn't array}}
 test set-old-8.38 {array command, size option} {
     catch {unset a}
     array size a

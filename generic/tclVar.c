@@ -3255,8 +3255,7 @@ TclArraySet(interp, arrayNameObj, arrayElemObj)
 	    
 	    return TCL_OK;
 	}
-	if (TclIsVarArrayElement(varPtr) ||
-		!TclIsVarUndefined(varPtr)) {
+	if (TclIsVarArrayElement(varPtr) || !TclIsVarUndefined(varPtr)) {
 	    /*
 	     * Either an array element, or a scalar: lose!
 	     */
@@ -3269,9 +3268,17 @@ TclArraySet(interp, arrayNameObj, arrayElemObj)
 	 * Create variable for new array.
 	 */
 	
-	varPtr = TclLookupVar(interp, varName, (char *) NULL, 0, 0,
+	varPtr = TclLookupVar(interp, varName, (char *) NULL,
+		TCL_LEAVE_ERR_MSG, "set",
 	        /*createPart1*/ 1, /*createPart2*/ 0, &arrayPtr);
 
+	/*
+	 * Still couldn't do it - this can occur if a non-existent
+	 * namespace was specified
+	 */
+	if (varPtr == NULL) {
+	    return TCL_ERROR;
+	}
     }
     TclSetVarArray(varPtr);
     TclClearVarUndefined(varPtr);

@@ -1907,6 +1907,8 @@ Tcl_FormatObjCmd(dummy, interp, objc, objv)
 				 * been seen in the current field. */
     int gotPrecision;		/* Non-zero indicates that a precision has
 				 * been set for the current field. */
+    int gotZero;		/* Non-zero indicates that a zero flag has
+ 				 * been seen in the current field. */
 
     /*
      * This procedure is a bit nasty.  The goal is to use sprintf to
@@ -1935,7 +1937,7 @@ Tcl_FormatObjCmd(dummy, interp, objc, objv)
 	register char *newPtr = newFormat;
 
 	width = precision = noPercent = useShort = 0;
-	gotMinus = gotPrecision = 0;
+	gotZero = gotMinus = gotPrecision = 0;
 	whichValue = PTR_VALUE;
 
 	/*
@@ -2004,6 +2006,13 @@ Tcl_FormatObjCmd(dummy, interp, objc, objv)
 	    if (*format == '-') {
 		gotMinus = 1;
 	    }
+ 	    if (*format == '0') {
+ 		/*
+ 		 * This will be handled by sprintf for numbers, but we
+ 		 * need to do the char/string ones ourselves
+ 		 */
+ 		gotZero = 1;
+ 	    }
 	    *newPtr = *format;
 	    newPtr++;
 	    format++;
@@ -2191,21 +2200,23 @@ Tcl_FormatObjCmd(dummy, interp, objc, objv)
 		}
 		case CHAR_VALUE: {
 		    char *ptr;
+		    char padChar = (gotZero ? '0' : ' ');
 		    ptr = dst;
 		    if (!gotMinus) {
 			for ( ; --width > 0; ptr++) {
-			    *ptr = ' ';
+			    *ptr = padChar;
 			}
 		    }
 		    ptr += Tcl_UniCharToUtf(intValue, ptr);
 		    for ( ; --width > 0; ptr++) {
-			*ptr = ' ';
+			*ptr = padChar;
 		    }
 		    *ptr = '\0';
 		    break;
 		}
 		case STRING_VALUE: {
 		    char *ptr;
+		    char padChar = (gotZero ? '0' : ' ');
 		    int pad;
 
 		    ptr = dst;
@@ -2217,7 +2228,7 @@ Tcl_FormatObjCmd(dummy, interp, objc, objv)
 
 		    if (!gotMinus) {
 			while (pad > 0) {
-			    *ptr++ = ' ';
+			    *ptr++ = padChar;
 			    pad--;
 			}
 		    }
@@ -2228,7 +2239,7 @@ Tcl_FormatObjCmd(dummy, interp, objc, objv)
 			ptr += size;
 		    }
 		    while (pad > 0) {
-			*ptr++ = ' ';
+			*ptr++ = padChar;
 			pad--;
 		    }
 		    *ptr = '\0';

@@ -1393,7 +1393,8 @@ TclCompileExprWords(interp, tokenPtr, numWords, envPtr)
 	    for (j = 0, partPtr = wordPtr+1;  j < wordPtr->numComponents;
 		    j++, partPtr++) {
 		if ((partPtr->type == TCL_TOKEN_BS)
-		        || (partPtr->type == TCL_TOKEN_COMMAND)) {
+		        || (partPtr->type == TCL_TOKEN_COMMAND)
+ 			|| (partPtr->type == TCL_TOKEN_VARIABLE)) {
 		    doExprInline = 0;
 		    break;
 		}

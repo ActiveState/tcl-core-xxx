@@ -94,7 +94,10 @@ will return \fB1\fR, and
 	a
 		\-
 	b
-		{format 1}
+		{
+		# Correct Comment Placement (in switch body)
+		format 1
+	}
 	a*
 		{format 2}
 	default
