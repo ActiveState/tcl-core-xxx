@@ -1215,14 +1215,7 @@ TclpCheckStackSpace()
     return (tclIntStubsPtr->tclpCheckStackSpace)();
 }
 
-/* Slot 136 */
-char *
-Tcl_GetString(objPtr)
-    Tcl_Obj * objPtr;
-{
-    return (tclIntStubsPtr->tcl_GetString)(objPtr);
-}
-
+/* Slot 136 is reserved */
 /* Slot 137 */
 int
 TclpChdir(dirName)
