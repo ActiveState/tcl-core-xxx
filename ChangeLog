@@ -1,3 +1,13 @@
+2001-04-11  Miguel Sofer <msofer@users.sourceforge.net>
+
+	** First CVS version of the S4 engine **
+	* generic/tclCompile.h: Added compilation flag
+	  TCL_BYTECODE_OPCODES_OK  
+	* generic/tclExecute.c: First CVS version of the engine
+	* generic/tclExecute.h: Compiler dependent macros (new file)
+	* generic/tclInt.h: slight modifs, mainly for the new addressing
+	  mode for the tcl stack
+
 2001-04-07  Miguel Sofer <msofer@users.sourceforge.net>
 
 	* generic/tclExecute.c: Avoid panic when there are extra items in
@@ -8,7 +18,7 @@
 
 	* doc/namespace.n: document correct functionality
 	* generic/tclNamesp.c: corrected behaviour of [namespace code]
-	(Bug #219385, Patch #403530)
+	  (Bug #219385, Patch #403530)
 	* library/init.tcl:
 	* tests/namespace-old.test: test correct functionality
 	* tests/namespace.test: test correct functionality
