@@ -46,14 +46,14 @@ Tcl_DeleteFileHandler(fd)
 
 /* Slot 2 */
 int
-Tcl_GetOpenFile(interp, string, write, checkUsage, filePtr)
+Tcl_GetOpenFile(interp, str, write, checkUsage, filePtr)
     Tcl_Interp * interp;
-    char * string;
+    char * str;
     int write;
     int checkUsage;
     ClientData * filePtr;
 {
-    return (tclPlatStubsPtr->tcl_GetOpenFile)(interp, string, write, checkUsage, filePtr);
+    return (tclPlatStubsPtr->tcl_GetOpenFile)(interp, str, write, checkUsage, filePtr);
 }
 
 #endif /* UNIX */

@@ -13,7 +13,7 @@ EXTERN void		Tcl_CreateFileHandler _ANSI_ARGS_((int fd, int mask,
 EXTERN void		Tcl_DeleteFileHandler _ANSI_ARGS_((int fd));
 /* 2 */
 EXTERN int		Tcl_GetOpenFile _ANSI_ARGS_((Tcl_Interp * interp, 
-				char * string, int write, int checkUsage, 
+				char * str, int write, int checkUsage, 
 				ClientData * filePtr));
 #endif /* UNIX */
 #ifdef MAC_TCL
@@ -56,7 +56,7 @@ typedef struct TclPlatStubs {
 #if !defined(__WIN32__) && !defined(MAC_TCL)
     void (*tcl_CreateFileHandler) _ANSI_ARGS_((int fd, int mask, Tcl_FileProc * proc, ClientData clientData)); /* 0 */
     void (*tcl_DeleteFileHandler) _ANSI_ARGS_((int fd)); /* 1 */
-    int (*tcl_GetOpenFile) _ANSI_ARGS_((Tcl_Interp * interp, char * string, int write, int checkUsage, ClientData * filePtr)); /* 2 */
+    int (*tcl_GetOpenFile) _ANSI_ARGS_((Tcl_Interp * interp, char * str, int write, int checkUsage, ClientData * filePtr)); /* 2 */
 #endif /* UNIX */
 #ifdef MAC_TCL
     void (*tcl_MacSetEventProc) _ANSI_ARGS_((Tcl_MacConvertEventPtr procPtr)); /* 0 */
@@ -89,8 +89,8 @@ extern TclPlatStubs *tclPlatStubsPtr;
 	(tclPlatStubsPtr->tcl_DeleteFileHandler)(fd) /* 1 */
 #endif
 #ifndef Tcl_GetOpenFile
-#define Tcl_GetOpenFile(interp, string, write, checkUsage, filePtr) \
-	(tclPlatStubsPtr->tcl_GetOpenFile)(interp, string, write, checkUsage, filePtr) /* 2 */
+#define Tcl_GetOpenFile(interp, str, write, checkUsage, filePtr) \
+	(tclPlatStubsPtr->tcl_GetOpenFile)(interp, str, write, checkUsage, filePtr) /* 2 */
 #endif
 #endif /* UNIX */
 #ifdef MAC_TCL

@@ -70,14 +70,7 @@ TclWinGetTclInstance()
     return (tclIntPlatStubsPtr->tclWinGetTclInstance)();
 }
 
-/* Slot 5 */
-HINSTANCE
-TclWinLoadLibrary(name)
-    char * name;
-{
-    return (tclIntPlatStubsPtr->tclWinLoadLibrary)(name);
-}
-
+/* Slot 5 is reserved */
 /* Slot 6 */
 u_short
 TclWinNToHS(ns)
@@ -106,13 +99,7 @@ TclpGetPid(pid)
     return (tclIntPlatStubsPtr->tclpGetPid)(pid);
 }
 
-/* Slot 9 */
-void
-TclpFinalize()
-{
-    (tclIntPlatStubsPtr->tclpFinalize)();
-}
-
+/* Slot 9 is reserved */
 /* Slot 10 */
 int
 TclWinGetPlatformId()
@@ -191,22 +178,8 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr)
     return (tclIntPlatStubsPtr->tclpCreateProcess)(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr);
 }
 
-/* Slot 18 */
-TclFile
-TclpCreateTempFile(contents, namePtr)
-    char * contents;
-    Tcl_DString * namePtr;
-{
-    return (tclIntPlatStubsPtr->tclpCreateTempFile)(contents, namePtr);
-}
-
-/* Slot 19 */
-char *
-TclpGetTZName()
-{
-    return (tclIntPlatStubsPtr->tclpGetTZName)();
-}
-
+/* Slot 18 is reserved */
+/* Slot 19 is reserved */
 /* Slot 20 */
 TclFile
 TclpMakeFile(channel, direction)
@@ -219,7 +192,7 @@ TclpMakeFile(channel, direction)
 /* Slot 21 */
 TclFile
 TclpOpenFile(fname, mode)
-    char * fname;
+    CONST char * fname;
     int mode;
 {
     return (tclIntPlatStubsPtr->tclpOpenFile)(fname, mode);
@@ -300,7 +273,7 @@ TclpMakeFile(channel, direction)
 /* Slot 7 */
 TclFile
 TclpOpenFile(fname, mode)
-    char * fname;
+    CONST char * fname;
     int mode;
 {
     return (tclIntPlatStubsPtr->tclpOpenFile)(fname, mode);
@@ -346,10 +319,10 @@ TclpSysRealloc(cp, size)
 
 /* Slot 3 */
 void
-TclPlatformExit(status)
+TclpExit(status)
     int status;
 {
-    (tclIntPlatStubsPtr->tclPlatformExit)(status);
+    (tclIntPlatStubsPtr->tclpExit)(status);
 }
 
 /* Slot 4 */
@@ -527,16 +500,7 @@ TclMacFOpenHack(path, mode)
     return (tclIntPlatStubsPtr->tclMacFOpenHack)(path, mode);
 }
 
-/* Slot 24 */
-int
-TclMacReadlink(path, buf, size)
-    char * path;
-    char * buf;
-    int size;
-{
-    return (tclIntPlatStubsPtr->tclMacReadlink)(path, buf, size);
-}
-
+/* Slot 24 is reserved */
 /* Slot 25 */
 int
 TclMacChmod(path, mode)

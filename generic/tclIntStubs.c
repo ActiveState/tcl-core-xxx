@@ -56,15 +56,7 @@ TclAllocateFreeObjects()
     (tclIntStubsPtr->tclAllocateFreeObjects)();
 }
 
-/* Slot 4 */
-int
-TclChdir(interp, dirName)
-    Tcl_Interp * interp;
-    char * dirName;
-{
-    return (tclIntStubsPtr->tclChdir)(interp, dirName);
-}
-
+/* Slot 4 is reserved */
 /* Slot 5 */
 int
 TclCleanupChildren(interp, numPids, pidPtr, errorChan)
@@ -88,7 +80,7 @@ TclCleanupCommand(cmdPtr)
 int
 TclCopyAndCollapse(count, src, dst)
     int count;
-    char * src;
+    CONST char * src;
     char * dst;
 {
     return (tclIntStubsPtr->tclCopyAndCollapse)(count, src, dst);
@@ -170,15 +162,7 @@ TclDumpMemoryInfo(outFile)
     (tclIntStubsPtr->tclDumpMemoryInfo)(outFile);
 }
 
-/* Slot 15 */
-void
-TclExpandParseValue(pvPtr, needed)
-    ParseValue * pvPtr;
-    int needed;
-{
-    (tclIntStubsPtr->tclExpandParseValue)(pvPtr, needed);
-}
-
+/* Slot 15 is reserved */
 /* Slot 16 */
 void
 TclExprFloatError(interp, value)
@@ -252,21 +236,15 @@ TclFinalizeEnvironment()
     (tclIntStubsPtr->tclFinalizeEnvironment)();
 }
 
-/* Slot 24 */
-void
-TclFinalizeExecEnv()
-{
-    (tclIntStubsPtr->tclFinalizeExecEnv)();
-}
-
+/* Slot 24 is reserved */
 /* Slot 25 */
 int
 TclFindElement(interp, list, listLength, elementPtr, nextPtr, sizePtr, bracePtr)
     Tcl_Interp * interp;
-    char * list;
+    CONST char * list;
     int listLength;
-    char ** elementPtr;
-    char ** nextPtr;
+    CONST char ** elementPtr;
+    CONST char ** nextPtr;
     int * sizePtr;
     int * bracePtr;
 {
@@ -299,14 +277,7 @@ TclFreePackageInfo(iPtr)
     (tclIntStubsPtr->tclFreePackageInfo)(iPtr);
 }
 
-/* Slot 29 */
-char *
-TclGetCwd(interp)
-    Tcl_Interp * interp;
-{
-    return (tclIntStubsPtr->tclGetCwd)(interp);
-}
-
+/* Slot 29 is reserved */
 /* Slot 30 */
 int
 TclGetDate(p, now, zone, timePtr)
@@ -320,10 +291,10 @@ TclGetDate(p, now, zone, timePtr)
 
 /* Slot 31 */
 Tcl_Channel
-TclGetDefaultStdChannel(type)
+TclpGetDefaultStdChannel(type)
     int type;
 {
-    return (tclIntStubsPtr->tclGetDefaultStdChannel)(type);
+    return (tclIntStubsPtr->tclpGetDefaultStdChannel)(type);
 }
 
 /* Slot 32 */
@@ -337,14 +308,7 @@ TclGetElementOfIndexedArray(interp, localIndex, elemPtr, leaveErrorMsg)
     return (tclIntStubsPtr->tclGetElementOfIndexedArray)(interp, localIndex, elemPtr, leaveErrorMsg);
 }
 
-/* Slot 33 */
-char *
-TclGetEnv(name)
-    CONST char * name;
-{
-    return (tclIntStubsPtr->tclGetEnv)(name);
-}
-
+/* Slot 33 is reserved */
 /* Slot 34 */
 char *
 TclGetExtension(name)
@@ -452,11 +416,11 @@ TclGetOriginalCommand(command)
 
 /* Slot 45 */
 char *
-TclGetUserHome(name, bufferPtr)
-    char * name;
+TclpGetUserHome(name, bufferPtr)
+    CONST char * name;
     Tcl_DString * bufferPtr;
 {
-    return (tclIntStubsPtr->tclGetUserHome)(name, bufferPtr);
+    return (tclIntStubsPtr->tclpGetUserHome)(name, bufferPtr);
 }
 
 /* Slot 46 */
@@ -537,13 +501,7 @@ TclInitCompiledLocals(interp, framePtr, nsPtr)
     (tclIntStubsPtr->tclInitCompiledLocals)(interp, framePtr, nsPtr);
 }
 
-/* Slot 54 */
-void
-TclInitNamespaces()
-{
-    (tclIntStubsPtr->tclInitNamespaces)();
-}
-
+/* Slot 54 is reserved */
 /* Slot 55 */
 int
 TclInterpInit(interp)
@@ -593,27 +551,8 @@ TclIsProc(cmdPtr)
     return (tclIntStubsPtr->tclIsProc)(cmdPtr);
 }
 
-/* Slot 60 */
-int
-TclLoadFile(interp, fileName, sym1, sym2, proc1Ptr, proc2Ptr)
-    Tcl_Interp * interp;
-    char * fileName;
-    char * sym1;
-    char * sym2;
-    Tcl_PackageInitProc ** proc1Ptr;
-    Tcl_PackageInitProc ** proc2Ptr;
-{
-    return (tclIntStubsPtr->tclLoadFile)(interp, fileName, sym1, sym2, proc1Ptr, proc2Ptr);
-}
-
-/* Slot 61 */
-int
-TclLooksLikeInt(p)
-    char * p;
-{
-    return (tclIntStubsPtr->tclLooksLikeInt)(p);
-}
-
+/* Slot 60 is reserved */
+/* Slot 61 is reserved */
 /* Slot 62 */
 Var *
 TclLookupVar(interp, part1, part2, flags, msg, createPart1, createPart2, arrayPtrPtr)
@@ -631,14 +570,14 @@ TclLookupVar(interp, part1, part2, flags, msg, createPart1, createPart2, arrayPt
 
 /* Slot 63 */
 int
-TclMatchFiles(interp, separators, dirPtr, pattern, tail)
+TclpMatchFiles(interp, separators, dirPtr, pattern, tail)
     Tcl_Interp * interp;
     char * separators;
     Tcl_DString * dirPtr;
     char * pattern;
     char * tail;
 {
-    return (tclIntStubsPtr->tclMatchFiles)(interp, separators, dirPtr, pattern, tail);
+    return (tclIntStubsPtr->tclpMatchFiles)(interp, separators, dirPtr, pattern, tail);
 }
 
 /* Slot 64 */
@@ -735,8 +674,8 @@ TclpAlloc(size)
 /* Slot 74 */
 int
 TclpCopyFile(source, dest)
-    char * source;
-    char * dest;
+    CONST char * source;
+    CONST char * dest;
 {
     return (tclIntStubsPtr->tclpCopyFile)(source, dest);
 }
@@ -744,8 +683,8 @@ TclpCopyFile(source, dest)
 /* Slot 75 */
 int
 TclpCopyDirectory(source, dest, errorPtr)
-    char * source;
-    char * dest;
+    CONST char * source;
+    CONST char * dest;
     Tcl_DString * errorPtr;
 {
     return (tclIntStubsPtr->tclpCopyDirectory)(source, dest, errorPtr);
@@ -754,7 +693,7 @@ TclpCopyDirectory(source, dest, errorPtr)
 /* Slot 76 */
 int
 TclpCreateDirectory(path)
-    char * path;
+    CONST char * path;
 {
     return (tclIntStubsPtr->tclpCreateDirectory)(path);
 }
@@ -762,7 +701,7 @@ TclpCreateDirectory(path)
 /* Slot 77 */
 int
 TclpDeleteFile(path)
-    char * path;
+    CONST char * path;
 {
     return (tclIntStubsPtr->tclpDeleteFile)(path);
 }
@@ -836,7 +775,7 @@ TclpRealloc(ptr, size)
 /* Slot 86 */
 int
 TclpRemoveDirectory(path, recursive, errorPtr)
-    char * path;
+    CONST char * path;
     int recursive;
     Tcl_DString * errorPtr;
 {
@@ -846,56 +785,16 @@ TclpRemoveDirectory(path, recursive, errorPtr)
 /* Slot 87 */
 int
 TclpRenameFile(source, dest)
-    char * source;
-    char * dest;
+    CONST char * source;
+    CONST char * dest;
 {
     return (tclIntStubsPtr->tclpRenameFile)(source, dest);
 }
 
-/* Slot 88 */
-int
-TclParseBraces(interp, string, termPtr, pvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char ** termPtr;
-    ParseValue * pvPtr;
-{
-    return (tclIntStubsPtr->tclParseBraces)(interp, string, termPtr, pvPtr);
-}
-
-/* Slot 89 */
-int
-TclParseNestedCmd(interp, string, flags, termPtr, pvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    int flags;
-    char ** termPtr;
-    ParseValue * pvPtr;
-{
-    return (tclIntStubsPtr->tclParseNestedCmd)(interp, string, flags, termPtr, pvPtr);
-}
-
-/* Slot 90 */
-int
-TclParseQuotes(interp, string, termChar, flags, termPtr, pvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    int termChar;
-    int flags;
-    char ** termPtr;
-    ParseValue * pvPtr;
-{
-    return (tclIntStubsPtr->tclParseQuotes)(interp, string, termChar, flags, termPtr, pvPtr);
-}
-
-/* Slot 91 */
-void
-TclPlatformInit(interp)
-    Tcl_Interp * interp;
-{
-    (tclIntStubsPtr->tclPlatformInit)(interp);
-}
-
+/* Slot 88 is reserved */
+/* Slot 89 is reserved */
+/* Slot 90 is reserved */
+/* Slot 91 is reserved */
 /* Slot 92 */
 char *
 TclPrecTraceProc(clientData, interp, name1, name2, flags)
@@ -918,15 +817,7 @@ TclPreventAliasLoop(interp, cmdInterp, cmd)
     return (tclIntStubsPtr->tclPreventAliasLoop)(interp, cmdInterp, cmd);
 }
 
-/* Slot 94 */
-void
-TclPrintByteCodeObj(interp, objPtr)
-    Tcl_Interp * interp;
-    Tcl_Obj * objPtr;
-{
-    (tclIntStubsPtr->tclPrintByteCodeObj)(interp, objPtr);
-}
-
+/* Slot 94 is reserved */
 /* Slot 95 */
 void
 TclProcCleanupProc(procPtr)
@@ -1025,14 +916,7 @@ TclSetIndexedScalar(interp, localIndex, objPtr, leaveErrorMsg)
     return (tclIntStubsPtr->tclSetIndexedScalar)(interp, localIndex, objPtr, leaveErrorMsg);
 }
 
-/* Slot 105 */
-char *
-TclSetPreInitScript(string)
-    char * string;
-{
-    return (tclIntStubsPtr->tclSetPreInitScript)(string);
-}
-
+/* Slot 105 is reserved */
 /* Slot 106 */
 void
 TclSetupEnv(interp)
@@ -1102,17 +986,7 @@ TclUpdateReturnInfo(iPtr)
     return (tclIntStubsPtr->tclUpdateReturnInfo)(iPtr);
 }
 
-/* Slot 114 */
-char *
-TclWordEnd(start, lastChar, nested, semiPtr)
-    char * start;
-    char * lastChar;
-    int nested;
-    int * semiPtr;
-{
-    return (tclIntStubsPtr->tclWordEnd)(start, lastChar, nested, semiPtr);
-}
-
+/* Slot 114 is reserved */
 /* Slot 115 */
 void
 Tcl_AddInterpResolvers(interp, name, cmdProc, varProc, compiledVarProc)
@@ -1322,132 +1196,22 @@ Tcl_SetNamespaceResolvers(namespacePtr, cmdProc, varProc, compiledVarProc)
     (tclIntStubsPtr->tcl_SetNamespaceResolvers)(namespacePtr, cmdProc, varProc, compiledVarProc);
 }
 
-/* Slot 136 */
-int
-TclCompileBreakCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileBreakCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 137 */
-int
-TclCompileCatchCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileCatchCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 138 */
-int
-TclCompileContinueCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileContinueCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 139 */
-int
-TclCompileExprCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileExprCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 140 */
-int
-TclCompileForCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileForCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 141 */
-int
-TclCompileForeachCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileForeachCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 142 */
-int
-TclCompileIfCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileIfCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 143 */
-int
-TclCompileIncrCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileIncrCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 144 */
-int
-TclCompileSetCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileSetCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
-/* Slot 145 */
-int
-TclCompileWhileCmd(interp, string, lastChar, compileFlags, compileEnvPtr)
-    Tcl_Interp * interp;
-    char * string;
-    char * lastChar;
-    int compileFlags;
-    struct CompileEnv * compileEnvPtr;
-{
-    return (tclIntStubsPtr->tclCompileWhileCmd)(interp, string, lastChar, compileFlags, compileEnvPtr);
-}
-
+/* Slot 136 is reserved */
+/* Slot 137 is reserved */
+/* Slot 138 is reserved */
+/* Slot 139 is reserved */
+/* Slot 140 is reserved */
+/* Slot 141 is reserved */
+/* Slot 142 is reserved */
+/* Slot 143 is reserved */
+/* Slot 144 is reserved */
+/* Slot 145 is reserved */
 /* Slot 146 */
 int
-TclHasSockets(interp)
+TclpHasSockets(interp)
     Tcl_Interp * interp;
 {
-    return (tclIntStubsPtr->tclHasSockets)(interp);
+    return (tclIntStubsPtr->tclpHasSockets)(interp);
 }
 
 /* Slot 147 */
@@ -1461,13 +1225,13 @@ TclpGetDate(time, useGMT)
 
 /* Slot 148 */
 size_t
-TclStrftime(s, maxsize, format, t)
+TclpStrftime(s, maxsize, format, t)
     char * s;
     size_t maxsize;
     const char * format;
     const struct tm * t;
 {
-    return (tclIntStubsPtr->tclStrftime)(s, maxsize, format, t);
+    return (tclIntStubsPtr->tclpStrftime)(s, maxsize, format, t);
 }
 
 /* Slot 149 */
@@ -1475,6 +1239,14 @@ int
 TclpCheckStackSpace()
 {
     return (tclIntStubsPtr->tclpCheckStackSpace)();
+}
+
+/* Slot 150 */
+char *
+Tcl_GetString(objPtr)
+    Tcl_Obj * objPtr;
+{
+    return (tclIntStubsPtr->tcl_GetString)(objPtr);
 }
 
 
