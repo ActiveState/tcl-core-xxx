@@ -1265,6 +1265,7 @@ Tcl_Import(interp, namespacePtr, pattern, allowOverwrite)
 			        "import pattern \"", pattern,
 				"\" would create a loop containing command \"",
 				Tcl_DStringValue(&ds), "\"", (char *) NULL);
+			Tcl_DStringFree(&ds);
 			return TCL_ERROR;
 		    }
 		}
@@ -1277,6 +1278,7 @@ Tcl_Import(interp, namespacePtr, pattern, allowOverwrite)
 		dataPtr->realCmdPtr = cmdPtr;
 		dataPtr->selfPtr = (Command *) importedCmd;
 		dataPtr->selfPtr->compileProc = cmdPtr->compileProc;
+		Tcl_DStringFree(&ds);
 
 		/*
 		 * Create an ImportRef structure describing this new import
