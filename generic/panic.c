@@ -11,7 +11,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) panic.c 1.15 96/09/12 14:55:25
+ * RCS: @(#) $Id$
  */
 
 #include <stdio.h>
@@ -24,6 +24,9 @@
 #define panic panicDummy
 #include "tcl.h"
 #undef panic
+
+# undef TCL_STORAGE_CLASS
+# define TCL_STORAGE_CLASS DLLEXPORT
 
 EXTERN void		panic _ANSI_ARGS_((char *format, char *arg1,
 			    char *arg2, char *arg3, char *arg4, char *arg5,

@@ -2,7 +2,7 @@
 # tests.  Execute it by invoking "source all" when running tclTest
 # in this directory.
 #
-# SCCS: @(#) all 1.9 97/12/24 10:40:19
+# RCS: @(#) $Id$
 
 if {$tcl_platform(os) == "Win32s"} {
     set files [glob *.tes]
