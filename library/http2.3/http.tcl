@@ -25,8 +25,8 @@ namespace eval http {
     }
 
     variable formMap
-    set alphanumeric	a-zA-Z0-9
-
+    variable alphanumeric a-zA-Z0-9
+    variable c
     variable i 0
     for {} {$i <= 256} {incr i} {
 	set c [format %c $i]
