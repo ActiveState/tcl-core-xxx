@@ -1461,6 +1461,14 @@ Tcl_InitHashTable(tablePtr, keyType)
 }
 
 /* Slot 152 */
+void
+Tcl_InitMemory(interp)
+    Tcl_Interp * interp;
+{
+    (tclStubsPtr->tcl_InitMemory)(interp);
+}
+
+/* Slot 153 */
 int
 Tcl_InputBlocked(chan)
     Tcl_Channel chan;
@@ -1468,7 +1476,7 @@ Tcl_InputBlocked(chan)
     return (tclStubsPtr->tcl_InputBlocked)(chan);
 }
 
-/* Slot 153 */
+/* Slot 154 */
 int
 Tcl_InputBuffered(chan)
     Tcl_Channel chan;
@@ -1476,7 +1484,7 @@ Tcl_InputBuffered(chan)
     return (tclStubsPtr->tcl_InputBuffered)(chan);
 }
 
-/* Slot 154 */
+/* Slot 155 */
 int
 Tcl_InterpDeleted(interp)
     Tcl_Interp * interp;
@@ -1484,7 +1492,7 @@ Tcl_InterpDeleted(interp)
     return (tclStubsPtr->tcl_InterpDeleted)(interp);
 }
 
-/* Slot 155 */
+/* Slot 156 */
 int
 Tcl_IsSafe(interp)
     Tcl_Interp * interp;
@@ -1492,7 +1500,7 @@ Tcl_IsSafe(interp)
     return (tclStubsPtr->tcl_IsSafe)(interp);
 }
 
-/* Slot 156 */
+/* Slot 157 */
 void
 Tcl_InvalidateStringRep(objPtr)
     Tcl_Obj * objPtr;
@@ -1500,7 +1508,7 @@ Tcl_InvalidateStringRep(objPtr)
     (tclStubsPtr->tcl_InvalidateStringRep)(objPtr);
 }
 
-/* Slot 157 */
+/* Slot 158 */
 char *
 Tcl_JoinPath(argc, argv, resultPtr)
     int argc;
@@ -1510,7 +1518,7 @@ Tcl_JoinPath(argc, argv, resultPtr)
     return (tclStubsPtr->tcl_JoinPath)(argc, argv, resultPtr);
 }
 
-/* Slot 158 */
+/* Slot 159 */
 int
 Tcl_LinkVar(interp, varName, addr, type)
     Tcl_Interp * interp;
@@ -1521,7 +1529,7 @@ Tcl_LinkVar(interp, varName, addr, type)
     return (tclStubsPtr->tcl_LinkVar)(interp, varName, addr, type);
 }
 
-/* Slot 159 */
+/* Slot 160 */
 int
 Tcl_ListObjAppendList(interp, listPtr, elemListPtr)
     Tcl_Interp * interp;
@@ -1531,7 +1539,7 @@ Tcl_ListObjAppendList(interp, listPtr, elemListPtr)
     return (tclStubsPtr->tcl_ListObjAppendList)(interp, listPtr, elemListPtr);
 }
 
-/* Slot 160 */
+/* Slot 161 */
 int
 Tcl_ListObjAppendElement(interp, listPtr, objPtr)
     Tcl_Interp * interp;
@@ -1541,7 +1549,7 @@ Tcl_ListObjAppendElement(interp, listPtr, objPtr)
     return (tclStubsPtr->tcl_ListObjAppendElement)(interp, listPtr, objPtr);
 }
 
-/* Slot 161 */
+/* Slot 162 */
 int
 Tcl_ListObjGetElements(interp, listPtr, objcPtr, objvPtr)
     Tcl_Interp * interp;
@@ -1552,7 +1560,7 @@ Tcl_ListObjGetElements(interp, listPtr, objcPtr, objvPtr)
     return (tclStubsPtr->tcl_ListObjGetElements)(interp, listPtr, objcPtr, objvPtr);
 }
 
-/* Slot 162 */
+/* Slot 163 */
 int
 Tcl_ListObjIndex(interp, listPtr, index, objPtrPtr)
     Tcl_Interp * interp;
@@ -1563,7 +1571,7 @@ Tcl_ListObjIndex(interp, listPtr, index, objPtrPtr)
     return (tclStubsPtr->tcl_ListObjIndex)(interp, listPtr, index, objPtrPtr);
 }
 
-/* Slot 163 */
+/* Slot 164 */
 int
 Tcl_ListObjLength(interp, listPtr, intPtr)
     Tcl_Interp * interp;
@@ -1573,7 +1581,7 @@ Tcl_ListObjLength(interp, listPtr, intPtr)
     return (tclStubsPtr->tcl_ListObjLength)(interp, listPtr, intPtr);
 }
 
-/* Slot 164 */
+/* Slot 165 */
 int
 Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
     Tcl_Interp * interp;
@@ -1586,7 +1594,7 @@ Tcl_ListObjReplace(interp, listPtr, first, count, objc, objv)
     return (tclStubsPtr->tcl_ListObjReplace)(interp, listPtr, first, count, objc, objv);
 }
 
-/* Slot 165 */
+/* Slot 166 */
 Tcl_Channel
 Tcl_MakeFileChannel(handle, mode)
     ClientData handle;
@@ -1595,7 +1603,7 @@ Tcl_MakeFileChannel(handle, mode)
     return (tclStubsPtr->tcl_MakeFileChannel)(handle, mode);
 }
 
-/* Slot 166 */
+/* Slot 167 */
 int
 Tcl_MakeSafe(interp)
     Tcl_Interp * interp;
@@ -1603,7 +1611,7 @@ Tcl_MakeSafe(interp)
     return (tclStubsPtr->tcl_MakeSafe)(interp);
 }
 
-/* Slot 167 */
+/* Slot 168 */
 Tcl_Channel
 Tcl_MakeTcpClientChannel(tcpSocket)
     ClientData tcpSocket;
@@ -1611,7 +1619,7 @@ Tcl_MakeTcpClientChannel(tcpSocket)
     return (tclStubsPtr->tcl_MakeTcpClientChannel)(tcpSocket);
 }
 
-/* Slot 168 */
+/* Slot 169 */
 char *
 Tcl_Merge(argc, argv)
     int argc;
@@ -1620,7 +1628,7 @@ Tcl_Merge(argc, argv)
     return (tclStubsPtr->tcl_Merge)(argc, argv);
 }
 
-/* Slot 169 */
+/* Slot 170 */
 Tcl_Obj *
 Tcl_NewBooleanObj(boolValue)
     int boolValue;
@@ -1628,7 +1636,7 @@ Tcl_NewBooleanObj(boolValue)
     return (tclStubsPtr->tcl_NewBooleanObj)(boolValue);
 }
 
-/* Slot 170 */
+/* Slot 171 */
 Tcl_Obj *
 Tcl_NewByteArrayObj(bytes, length)
     unsigned char * bytes;
@@ -1637,7 +1645,7 @@ Tcl_NewByteArrayObj(bytes, length)
     return (tclStubsPtr->tcl_NewByteArrayObj)(bytes, length);
 }
 
-/* Slot 171 */
+/* Slot 172 */
 Tcl_Obj *
 Tcl_NewDoubleObj(doubleValue)
     double doubleValue;
@@ -1645,7 +1653,7 @@ Tcl_NewDoubleObj(doubleValue)
     return (tclStubsPtr->tcl_NewDoubleObj)(doubleValue);
 }
 
-/* Slot 172 */
+/* Slot 173 */
 Tcl_Obj *
 Tcl_NewIntObj(intValue)
     int intValue;
@@ -1653,7 +1661,7 @@ Tcl_NewIntObj(intValue)
     return (tclStubsPtr->tcl_NewIntObj)(intValue);
 }
 
-/* Slot 173 */
+/* Slot 174 */
 Tcl_Obj *
 Tcl_NewListObj(objc, objv)
     int objc;
@@ -1662,7 +1670,7 @@ Tcl_NewListObj(objc, objv)
     return (tclStubsPtr->tcl_NewListObj)(objc, objv);
 }
 
-/* Slot 174 */
+/* Slot 175 */
 Tcl_Obj *
 Tcl_NewLongObj(longValue)
     long longValue;
@@ -1670,14 +1678,14 @@ Tcl_NewLongObj(longValue)
     return (tclStubsPtr->tcl_NewLongObj)(longValue);
 }
 
-/* Slot 175 */
+/* Slot 176 */
 Tcl_Obj *
 Tcl_NewObj()
 {
     return (tclStubsPtr->tcl_NewObj)();
 }
 
-/* Slot 176 */
+/* Slot 177 */
 Tcl_Obj *
 Tcl_NewStringObj(bytes, length)
     char * bytes;
@@ -1686,7 +1694,7 @@ Tcl_NewStringObj(bytes, length)
     return (tclStubsPtr->tcl_NewStringObj)(bytes, length);
 }
 
-/* Slot 177 */
+/* Slot 178 */
 Tcl_HashEntry *
 Tcl_NextHashEntry(searchPtr)
     Tcl_HashSearch * searchPtr;
@@ -1694,7 +1702,7 @@ Tcl_NextHashEntry(searchPtr)
     return (tclStubsPtr->tcl_NextHashEntry)(searchPtr);
 }
 
-/* Slot 178 */
+/* Slot 179 */
 void
 Tcl_NotifyChannel(channel, mask)
     Tcl_Channel channel;
@@ -1703,7 +1711,7 @@ Tcl_NotifyChannel(channel, mask)
     (tclStubsPtr->tcl_NotifyChannel)(channel, mask);
 }
 
-/* Slot 179 */
+/* Slot 180 */
 Tcl_Obj *
 Tcl_ObjGetVar2(interp, part1Ptr, part2Ptr, flags)
     Tcl_Interp * interp;
@@ -1714,7 +1722,7 @@ Tcl_ObjGetVar2(interp, part1Ptr, part2Ptr, flags)
     return (tclStubsPtr->tcl_ObjGetVar2)(interp, part1Ptr, part2Ptr, flags);
 }
 
-/* Slot 180 */
+/* Slot 181 */
 Tcl_Obj *
 Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr, newValuePtr, flags)
     Tcl_Interp * interp;
@@ -1726,7 +1734,7 @@ Tcl_ObjSetVar2(interp, part1Ptr, part2Ptr, newValuePtr, flags)
     return (tclStubsPtr->tcl_ObjSetVar2)(interp, part1Ptr, part2Ptr, newValuePtr, flags);
 }
 
-/* Slot 181 */
+/* Slot 182 */
 Tcl_Channel
 Tcl_OpenCommandChannel(interp, argc, argv, flags)
     Tcl_Interp * interp;
@@ -1737,7 +1745,7 @@ Tcl_OpenCommandChannel(interp, argc, argv, flags)
     return (tclStubsPtr->tcl_OpenCommandChannel)(interp, argc, argv, flags);
 }
 
-/* Slot 182 */
+/* Slot 183 */
 Tcl_Channel
 Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
     Tcl_Interp * interp;
@@ -1748,7 +1756,7 @@ Tcl_OpenFileChannel(interp, fileName, modeString, permissions)
     return (tclStubsPtr->tcl_OpenFileChannel)(interp, fileName, modeString, permissions);
 }
 
-/* Slot 183 */
+/* Slot 184 */
 Tcl_Channel
 Tcl_OpenTcpClient(interp, port, address, myaddr, myport, async)
     Tcl_Interp * interp;
@@ -1761,7 +1769,7 @@ Tcl_OpenTcpClient(interp, port, address, myaddr, myport, async)
     return (tclStubsPtr->tcl_OpenTcpClient)(interp, port, address, myaddr, myport, async);
 }
 
-/* Slot 184 */
+/* Slot 185 */
 Tcl_Channel
 Tcl_OpenTcpServer(interp, port, host, acceptProc, callbackData)
     Tcl_Interp * interp;
@@ -1773,7 +1781,7 @@ Tcl_OpenTcpServer(interp, port, host, acceptProc, callbackData)
     return (tclStubsPtr->tcl_OpenTcpServer)(interp, port, host, acceptProc, callbackData);
 }
 
-/* Slot 185 */
+/* Slot 186 */
 void
 panic TCL_VARARGS_DEF(char *,format)
 {
@@ -1786,7 +1794,7 @@ panic TCL_VARARGS_DEF(char *,format)
     va_end(argList);
 }
 
-/* Slot 186 */
+/* Slot 187 */
 void
 panicVA(format, argList)
     char * format;
@@ -1795,7 +1803,7 @@ panicVA(format, argList)
     (tclStubsPtr->panicVA)(format, argList);
 }
 
-/* Slot 187 */
+/* Slot 188 */
 char *
 Tcl_ParseVar(interp, string, termPtr)
     Tcl_Interp * interp;
@@ -1805,7 +1813,7 @@ Tcl_ParseVar(interp, string, termPtr)
     return (tclStubsPtr->tcl_ParseVar)(interp, string, termPtr);
 }
 
-/* Slot 188 */
+/* Slot 189 */
 char *
 Tcl_PkgPresent(interp, name, version, exact)
     Tcl_Interp * interp;
@@ -1816,7 +1824,7 @@ Tcl_PkgPresent(interp, name, version, exact)
     return (tclStubsPtr->tcl_PkgPresent)(interp, name, version, exact);
 }
 
-/* Slot 189 */
+/* Slot 190 */
 char *
 Tcl_PkgPresentEx(interp, name, version, exact, clientDataPtr)
     Tcl_Interp * interp;
@@ -1828,7 +1836,7 @@ Tcl_PkgPresentEx(interp, name, version, exact, clientDataPtr)
     return (tclStubsPtr->tcl_PkgPresentEx)(interp, name, version, exact, clientDataPtr);
 }
 
-/* Slot 190 */
+/* Slot 191 */
 int
 Tcl_PkgProvide(interp, name, version)
     Tcl_Interp * interp;
@@ -1838,7 +1846,7 @@ Tcl_PkgProvide(interp, name, version)
     return (tclStubsPtr->tcl_PkgProvide)(interp, name, version);
 }
 
-/* Slot 191 */
+/* Slot 192 */
 int
 Tcl_PkgProvideEx(interp, name, version, clientData)
     Tcl_Interp * interp;
@@ -1849,7 +1857,7 @@ Tcl_PkgProvideEx(interp, name, version, clientData)
     return (tclStubsPtr->tcl_PkgProvideEx)(interp, name, version, clientData);
 }
 
-/* Slot 192 */
+/* Slot 193 */
 char *
 Tcl_PkgRequire(interp, name, version, exact)
     Tcl_Interp * interp;
@@ -1860,7 +1868,7 @@ Tcl_PkgRequire(interp, name, version, exact)
     return (tclStubsPtr->tcl_PkgRequire)(interp, name, version, exact);
 }
 
-/* Slot 193 */
+/* Slot 194 */
 char *
 Tcl_PkgRequireEx(interp, name, version, exact, clientDataPtr)
     Tcl_Interp * interp;
@@ -1872,7 +1880,7 @@ Tcl_PkgRequireEx(interp, name, version, exact, clientDataPtr)
     return (tclStubsPtr->tcl_PkgRequireEx)(interp, name, version, exact, clientDataPtr);
 }
 
-/* Slot 194 */
+/* Slot 195 */
 char *
 Tcl_PosixError(interp)
     Tcl_Interp * interp;
@@ -1880,7 +1888,7 @@ Tcl_PosixError(interp)
     return (tclStubsPtr->tcl_PosixError)(interp);
 }
 
-/* Slot 195 */
+/* Slot 196 */
 void
 Tcl_Preserve(data)
     ClientData data;
@@ -1888,7 +1896,7 @@ Tcl_Preserve(data)
     (tclStubsPtr->tcl_Preserve)(data);
 }
 
-/* Slot 196 */
+/* Slot 197 */
 void
 Tcl_PrintDouble(interp, value, dst)
     Tcl_Interp * interp;
@@ -1898,7 +1906,7 @@ Tcl_PrintDouble(interp, value, dst)
     (tclStubsPtr->tcl_PrintDouble)(interp, value, dst);
 }
 
-/* Slot 197 */
+/* Slot 198 */
 int
 Tcl_PutEnv(string)
     CONST char * string;
@@ -1906,7 +1914,7 @@ Tcl_PutEnv(string)
     return (tclStubsPtr->tcl_PutEnv)(string);
 }
 
-/* Slot 198 */
+/* Slot 199 */
 void
 Tcl_QueueEvent(evPtr, position)
     Tcl_Event * evPtr;
@@ -1915,7 +1923,7 @@ Tcl_QueueEvent(evPtr, position)
     (tclStubsPtr->tcl_QueueEvent)(evPtr, position);
 }
 
-/* Slot 199 */
+/* Slot 200 */
 int
 Tcl_Read(chan, bufPtr, toRead)
     Tcl_Channel chan;
@@ -1925,7 +1933,7 @@ Tcl_Read(chan, bufPtr, toRead)
     return (tclStubsPtr->tcl_Read)(chan, bufPtr, toRead);
 }
 
-/* Slot 200 */
+/* Slot 201 */
 char *
 Tcl_Realloc(ptr, size)
     char * ptr;
@@ -1934,14 +1942,14 @@ Tcl_Realloc(ptr, size)
     return (tclStubsPtr->tcl_Realloc)(ptr, size);
 }
 
-/* Slot 201 */
+/* Slot 202 */
 void
 Tcl_ReapDetachedProcs()
 {
     (tclStubsPtr->tcl_ReapDetachedProcs)();
 }
 
-/* Slot 202 */
+/* Slot 203 */
 int
 Tcl_RecordAndEval(interp, cmd, flags)
     Tcl_Interp * interp;
@@ -1951,7 +1959,7 @@ Tcl_RecordAndEval(interp, cmd, flags)
     return (tclStubsPtr->tcl_RecordAndEval)(interp, cmd, flags);
 }
 
-/* Slot 203 */
+/* Slot 204 */
 int
 Tcl_RecordAndEvalObj(interp, cmdPtr, flags)
     Tcl_Interp * interp;
@@ -1961,7 +1969,7 @@ Tcl_RecordAndEvalObj(interp, cmdPtr, flags)
     return (tclStubsPtr->tcl_RecordAndEvalObj)(interp, cmdPtr, flags);
 }
 
-/* Slot 204 */
+/* Slot 205 */
 Tcl_RegExp
 Tcl_RegExpCompile(interp, string)
     Tcl_Interp * interp;
@@ -1970,7 +1978,7 @@ Tcl_RegExpCompile(interp, string)
     return (tclStubsPtr->tcl_RegExpCompile)(interp, string);
 }
 
-/* Slot 205 */
+/* Slot 206 */
 int
 Tcl_RegExpExec(interp, regexp, string, start)
     Tcl_Interp * interp;
@@ -1981,7 +1989,7 @@ Tcl_RegExpExec(interp, regexp, string, start)
     return (tclStubsPtr->tcl_RegExpExec)(interp, regexp, string, start);
 }
 
-/* Slot 206 */
+/* Slot 207 */
 int
 Tcl_RegExpMatch(interp, string, pattern)
     Tcl_Interp * interp;
@@ -1991,7 +1999,7 @@ Tcl_RegExpMatch(interp, string, pattern)
     return (tclStubsPtr->tcl_RegExpMatch)(interp, string, pattern);
 }
 
-/* Slot 207 */
+/* Slot 208 */
 void
 Tcl_RegExpRange(regexp, index, startPtr, endPtr)
     Tcl_RegExp regexp;
@@ -2002,7 +2010,7 @@ Tcl_RegExpRange(regexp, index, startPtr, endPtr)
     (tclStubsPtr->tcl_RegExpRange)(regexp, index, startPtr, endPtr);
 }
 
-/* Slot 208 */
+/* Slot 209 */
 void
 Tcl_RegisterChannel(interp, chan)
     Tcl_Interp * interp;
@@ -2011,7 +2019,7 @@ Tcl_RegisterChannel(interp, chan)
     (tclStubsPtr->tcl_RegisterChannel)(interp, chan);
 }
 
-/* Slot 209 */
+/* Slot 210 */
 void
 Tcl_RegisterObjType(typePtr)
     Tcl_ObjType * typePtr;
@@ -2019,7 +2027,7 @@ Tcl_RegisterObjType(typePtr)
     (tclStubsPtr->tcl_RegisterObjType)(typePtr);
 }
 
-/* Slot 210 */
+/* Slot 211 */
 void
 Tcl_Release(clientData)
     ClientData clientData;
@@ -2027,7 +2035,7 @@ Tcl_Release(clientData)
     (tclStubsPtr->tcl_Release)(clientData);
 }
 
-/* Slot 211 */
+/* Slot 212 */
 void
 Tcl_ResetResult(interp)
     Tcl_Interp * interp;
@@ -2035,7 +2043,7 @@ Tcl_ResetResult(interp)
     (tclStubsPtr->tcl_ResetResult)(interp);
 }
 
-/* Slot 212 */
+/* Slot 213 */
 int
 Tcl_ScanCountedElement(string, length, flagPtr)
     CONST char * string;
@@ -2045,7 +2053,7 @@ Tcl_ScanCountedElement(string, length, flagPtr)
     return (tclStubsPtr->tcl_ScanCountedElement)(string, length, flagPtr);
 }
 
-/* Slot 213 */
+/* Slot 214 */
 int
 Tcl_ScanElement(string, flagPtr)
     CONST char * string;
@@ -2054,7 +2062,7 @@ Tcl_ScanElement(string, flagPtr)
     return (tclStubsPtr->tcl_ScanElement)(string, flagPtr);
 }
 
-/* Slot 214 */
+/* Slot 215 */
 int
 Tcl_Seek(chan, offset, mode)
     Tcl_Channel chan;
@@ -2064,14 +2072,14 @@ Tcl_Seek(chan, offset, mode)
     return (tclStubsPtr->tcl_Seek)(chan, offset, mode);
 }
 
-/* Slot 215 */
+/* Slot 216 */
 int
 Tcl_ServiceAll()
 {
     return (tclStubsPtr->tcl_ServiceAll)();
 }
 
-/* Slot 216 */
+/* Slot 217 */
 int
 Tcl_ServiceEvent(flags)
     int flags;
@@ -2079,7 +2087,7 @@ Tcl_ServiceEvent(flags)
     return (tclStubsPtr->tcl_ServiceEvent)(flags);
 }
 
-/* Slot 217 */
+/* Slot 218 */
 void
 Tcl_SetAssocData(interp, name, proc, clientData)
     Tcl_Interp * interp;
@@ -2090,7 +2098,7 @@ Tcl_SetAssocData(interp, name, proc, clientData)
     (tclStubsPtr->tcl_SetAssocData)(interp, name, proc, clientData);
 }
 
-/* Slot 218 */
+/* Slot 219 */
 void
 Tcl_SetBooleanObj(objPtr, boolValue)
     Tcl_Obj * objPtr;
@@ -2099,7 +2107,7 @@ Tcl_SetBooleanObj(objPtr, boolValue)
     (tclStubsPtr->tcl_SetBooleanObj)(objPtr, boolValue);
 }
 
-/* Slot 219 */
+/* Slot 220 */
 unsigned char *
 Tcl_SetByteArrayLength(objPtr, length)
     Tcl_Obj * objPtr;
@@ -2108,7 +2116,7 @@ Tcl_SetByteArrayLength(objPtr, length)
     return (tclStubsPtr->tcl_SetByteArrayLength)(objPtr, length);
 }
 
-/* Slot 220 */
+/* Slot 221 */
 void
 Tcl_SetByteArrayObj(objPtr, bytes, length)
     Tcl_Obj * objPtr;
@@ -2118,7 +2126,7 @@ Tcl_SetByteArrayObj(objPtr, bytes, length)
     (tclStubsPtr->tcl_SetByteArrayObj)(objPtr, bytes, length);
 }
 
-/* Slot 221 */
+/* Slot 222 */
 void
 Tcl_SetChannelBufferSize(chan, sz)
     Tcl_Channel chan;
@@ -2127,7 +2135,7 @@ Tcl_SetChannelBufferSize(chan, sz)
     (tclStubsPtr->tcl_SetChannelBufferSize)(chan, sz);
 }
 
-/* Slot 222 */
+/* Slot 223 */
 int
 Tcl_SetChannelOption(interp, chan, optionName, newValue)
     Tcl_Interp * interp;
@@ -2138,7 +2146,7 @@ Tcl_SetChannelOption(interp, chan, optionName, newValue)
     return (tclStubsPtr->tcl_SetChannelOption)(interp, chan, optionName, newValue);
 }
 
-/* Slot 223 */
+/* Slot 224 */
 int
 Tcl_SetCommandInfo(interp, cmdName, infoPtr)
     Tcl_Interp * interp;
@@ -2148,7 +2156,7 @@ Tcl_SetCommandInfo(interp, cmdName, infoPtr)
     return (tclStubsPtr->tcl_SetCommandInfo)(interp, cmdName, infoPtr);
 }
 
-/* Slot 224 */
+/* Slot 225 */
 void
 Tcl_SetDoubleObj(objPtr, doubleValue)
     Tcl_Obj * objPtr;
@@ -2157,7 +2165,7 @@ Tcl_SetDoubleObj(objPtr, doubleValue)
     (tclStubsPtr->tcl_SetDoubleObj)(objPtr, doubleValue);
 }
 
-/* Slot 225 */
+/* Slot 226 */
 void
 Tcl_SetErrno(err)
     int err;
@@ -2165,7 +2173,7 @@ Tcl_SetErrno(err)
     (tclStubsPtr->tcl_SetErrno)(err);
 }
 
-/* Slot 226 */
+/* Slot 227 */
 void
 Tcl_SetErrorCode TCL_VARARGS_DEF(Tcl_Interp *,interp)
 {
@@ -2178,7 +2186,7 @@ Tcl_SetErrorCode TCL_VARARGS_DEF(Tcl_Interp *,interp)
     va_end(argList);
 }
 
-/* Slot 227 */
+/* Slot 228 */
 void
 Tcl_SetErrorCodeVA(interp, argList)
     Tcl_Interp * interp;
@@ -2187,7 +2195,7 @@ Tcl_SetErrorCodeVA(interp, argList)
     (tclStubsPtr->tcl_SetErrorCodeVA)(interp, argList);
 }
 
-/* Slot 228 */
+/* Slot 229 */
 void
 Tcl_SetIntObj(objPtr, intValue)
     Tcl_Obj * objPtr;
@@ -2196,7 +2204,7 @@ Tcl_SetIntObj(objPtr, intValue)
     (tclStubsPtr->tcl_SetIntObj)(objPtr, intValue);
 }
 
-/* Slot 229 */
+/* Slot 230 */
 void
 Tcl_SetListObj(objPtr, objc, objv)
     Tcl_Obj * objPtr;
@@ -2206,7 +2214,7 @@ Tcl_SetListObj(objPtr, objc, objv)
     (tclStubsPtr->tcl_SetListObj)(objPtr, objc, objv);
 }
 
-/* Slot 230 */
+/* Slot 231 */
 void
 Tcl_SetLongObj(objPtr, longValue)
     Tcl_Obj * objPtr;
@@ -2215,7 +2223,7 @@ Tcl_SetLongObj(objPtr, longValue)
     (tclStubsPtr->tcl_SetLongObj)(objPtr, longValue);
 }
 
-/* Slot 231 */
+/* Slot 232 */
 void
 Tcl_SetMaxBlockTime(timePtr)
     Tcl_Time * timePtr;
@@ -2223,7 +2231,7 @@ Tcl_SetMaxBlockTime(timePtr)
     (tclStubsPtr->tcl_SetMaxBlockTime)(timePtr);
 }
 
-/* Slot 232 */
+/* Slot 233 */
 void
 Tcl_SetObjErrorCode(interp, errorObjPtr)
     Tcl_Interp * interp;
@@ -2232,7 +2240,7 @@ Tcl_SetObjErrorCode(interp, errorObjPtr)
     (tclStubsPtr->tcl_SetObjErrorCode)(interp, errorObjPtr);
 }
 
-/* Slot 233 */
+/* Slot 234 */
 void
 Tcl_SetObjLength(objPtr, length)
     Tcl_Obj * objPtr;
@@ -2241,7 +2249,7 @@ Tcl_SetObjLength(objPtr, length)
     (tclStubsPtr->tcl_SetObjLength)(objPtr, length);
 }
 
-/* Slot 234 */
+/* Slot 235 */
 void
 Tcl_SetObjResult(interp, resultObjPtr)
     Tcl_Interp * interp;
@@ -2250,7 +2258,7 @@ Tcl_SetObjResult(interp, resultObjPtr)
     (tclStubsPtr->tcl_SetObjResult)(interp, resultObjPtr);
 }
 
-/* Slot 235 */
+/* Slot 236 */
 void
 Tcl_SetPanicProc(panicProc)
     Tcl_PanicProc * panicProc;
@@ -2258,7 +2266,7 @@ Tcl_SetPanicProc(panicProc)
     (tclStubsPtr->tcl_SetPanicProc)(panicProc);
 }
 
-/* Slot 236 */
+/* Slot 237 */
 int
 Tcl_SetRecursionLimit(interp, depth)
     Tcl_Interp * interp;
@@ -2267,7 +2275,7 @@ Tcl_SetRecursionLimit(interp, depth)
     return (tclStubsPtr->tcl_SetRecursionLimit)(interp, depth);
 }
 
-/* Slot 237 */
+/* Slot 238 */
 void
 Tcl_SetResult(interp, string, freeProc)
     Tcl_Interp * interp;
@@ -2277,7 +2285,7 @@ Tcl_SetResult(interp, string, freeProc)
     (tclStubsPtr->tcl_SetResult)(interp, string, freeProc);
 }
 
-/* Slot 238 */
+/* Slot 239 */
 int
 Tcl_SetServiceMode(mode)
     int mode;
@@ -2285,7 +2293,7 @@ Tcl_SetServiceMode(mode)
     return (tclStubsPtr->tcl_SetServiceMode)(mode);
 }
 
-/* Slot 239 */
+/* Slot 240 */
 void
 Tcl_SetStdChannel(channel, type)
     Tcl_Channel channel;
@@ -2294,7 +2302,7 @@ Tcl_SetStdChannel(channel, type)
     (tclStubsPtr->tcl_SetStdChannel)(channel, type);
 }
 
-/* Slot 240 */
+/* Slot 241 */
 void
 Tcl_SetStringObj(objPtr, bytes, length)
     Tcl_Obj * objPtr;
@@ -2304,7 +2312,7 @@ Tcl_SetStringObj(objPtr, bytes, length)
     (tclStubsPtr->tcl_SetStringObj)(objPtr, bytes, length);
 }
 
-/* Slot 241 */
+/* Slot 242 */
 void
 Tcl_SetTimer(timePtr)
     Tcl_Time * timePtr;
@@ -2312,7 +2320,7 @@ Tcl_SetTimer(timePtr)
     (tclStubsPtr->tcl_SetTimer)(timePtr);
 }
 
-/* Slot 242 */
+/* Slot 243 */
 char *
 Tcl_SetVar(interp, varName, newValue, flags)
     Tcl_Interp * interp;
@@ -2323,7 +2331,7 @@ Tcl_SetVar(interp, varName, newValue, flags)
     return (tclStubsPtr->tcl_SetVar)(interp, varName, newValue, flags);
 }
 
-/* Slot 243 */
+/* Slot 244 */
 char *
 Tcl_SetVar2(interp, part1, part2, newValue, flags)
     Tcl_Interp * interp;
@@ -2335,7 +2343,7 @@ Tcl_SetVar2(interp, part1, part2, newValue, flags)
     return (tclStubsPtr->tcl_SetVar2)(interp, part1, part2, newValue, flags);
 }
 
-/* Slot 244 */
+/* Slot 245 */
 char *
 Tcl_SignalId(sig)
     int sig;
@@ -2343,7 +2351,7 @@ Tcl_SignalId(sig)
     return (tclStubsPtr->tcl_SignalId)(sig);
 }
 
-/* Slot 245 */
+/* Slot 246 */
 char *
 Tcl_SignalMsg(sig)
     int sig;
@@ -2351,7 +2359,7 @@ Tcl_SignalMsg(sig)
     return (tclStubsPtr->tcl_SignalMsg)(sig);
 }
 
-/* Slot 246 */
+/* Slot 247 */
 void
 Tcl_Sleep(ms)
     int ms;
@@ -2359,7 +2367,7 @@ Tcl_Sleep(ms)
     (tclStubsPtr->tcl_Sleep)(ms);
 }
 
-/* Slot 247 */
+/* Slot 248 */
 void
 Tcl_SourceRCFile(interp)
     Tcl_Interp * interp;
@@ -2367,7 +2375,7 @@ Tcl_SourceRCFile(interp)
     (tclStubsPtr->tcl_SourceRCFile)(interp);
 }
 
-/* Slot 248 */
+/* Slot 249 */
 int
 Tcl_SplitList(interp, list, argcPtr, argvPtr)
     Tcl_Interp * interp;
@@ -2378,7 +2386,7 @@ Tcl_SplitList(interp, list, argcPtr, argvPtr)
     return (tclStubsPtr->tcl_SplitList)(interp, list, argcPtr, argvPtr);
 }
 
-/* Slot 249 */
+/* Slot 250 */
 void
 Tcl_SplitPath(path, argcPtr, argvPtr)
     char * path;
@@ -2388,7 +2396,7 @@ Tcl_SplitPath(path, argcPtr, argvPtr)
     (tclStubsPtr->tcl_SplitPath)(path, argcPtr, argvPtr);
 }
 
-/* Slot 250 */
+/* Slot 251 */
 void
 Tcl_StaticPackage(interp, pkgName, initProc, safeInitProc)
     Tcl_Interp * interp;
@@ -2399,7 +2407,7 @@ Tcl_StaticPackage(interp, pkgName, initProc, safeInitProc)
     (tclStubsPtr->tcl_StaticPackage)(interp, pkgName, initProc, safeInitProc);
 }
 
-/* Slot 251 */
+/* Slot 252 */
 int
 Tcl_StringMatch(string, pattern)
     char * string;
@@ -2408,7 +2416,7 @@ Tcl_StringMatch(string, pattern)
     return (tclStubsPtr->tcl_StringMatch)(string, pattern);
 }
 
-/* Slot 252 */
+/* Slot 253 */
 int
 Tcl_Tell(chan)
     Tcl_Channel chan;
@@ -2416,7 +2424,7 @@ Tcl_Tell(chan)
     return (tclStubsPtr->tcl_Tell)(chan);
 }
 
-/* Slot 253 */
+/* Slot 254 */
 int
 Tcl_TraceVar(interp, varName, flags, proc, clientData)
     Tcl_Interp * interp;
@@ -2428,7 +2436,7 @@ Tcl_TraceVar(interp, varName, flags, proc, clientData)
     return (tclStubsPtr->tcl_TraceVar)(interp, varName, flags, proc, clientData);
 }
 
-/* Slot 254 */
+/* Slot 255 */
 int
 Tcl_TraceVar2(interp, part1, part2, flags, proc, clientData)
     Tcl_Interp * interp;
@@ -2441,7 +2449,7 @@ Tcl_TraceVar2(interp, part1, part2, flags, proc, clientData)
     return (tclStubsPtr->tcl_TraceVar2)(interp, part1, part2, flags, proc, clientData);
 }
 
-/* Slot 255 */
+/* Slot 256 */
 char *
 Tcl_TranslateFileName(interp, name, bufferPtr)
     Tcl_Interp * interp;
@@ -2451,7 +2459,7 @@ Tcl_TranslateFileName(interp, name, bufferPtr)
     return (tclStubsPtr->tcl_TranslateFileName)(interp, name, bufferPtr);
 }
 
-/* Slot 256 */
+/* Slot 257 */
 int
 Tcl_Ungets(chan, str, len, atHead)
     Tcl_Channel chan;
@@ -2462,7 +2470,7 @@ Tcl_Ungets(chan, str, len, atHead)
     return (tclStubsPtr->tcl_Ungets)(chan, str, len, atHead);
 }
 
-/* Slot 257 */
+/* Slot 258 */
 void
 Tcl_UnlinkVar(interp, varName)
     Tcl_Interp * interp;
@@ -2471,7 +2479,7 @@ Tcl_UnlinkVar(interp, varName)
     (tclStubsPtr->tcl_UnlinkVar)(interp, varName);
 }
 
-/* Slot 258 */
+/* Slot 259 */
 int
 Tcl_UnregisterChannel(interp, chan)
     Tcl_Interp * interp;
@@ -2480,7 +2488,7 @@ Tcl_UnregisterChannel(interp, chan)
     return (tclStubsPtr->tcl_UnregisterChannel)(interp, chan);
 }
 
-/* Slot 259 */
+/* Slot 260 */
 int
 Tcl_UnsetVar(interp, varName, flags)
     Tcl_Interp * interp;
@@ -2490,7 +2498,7 @@ Tcl_UnsetVar(interp, varName, flags)
     return (tclStubsPtr->tcl_UnsetVar)(interp, varName, flags);
 }
 
-/* Slot 260 */
+/* Slot 261 */
 int
 Tcl_UnsetVar2(interp, part1, part2, flags)
     Tcl_Interp * interp;
@@ -2501,7 +2509,7 @@ Tcl_UnsetVar2(interp, part1, part2, flags)
     return (tclStubsPtr->tcl_UnsetVar2)(interp, part1, part2, flags);
 }
 
-/* Slot 261 */
+/* Slot 262 */
 void
 Tcl_UntraceVar(interp, varName, flags, proc, clientData)
     Tcl_Interp * interp;
@@ -2513,7 +2521,7 @@ Tcl_UntraceVar(interp, varName, flags, proc, clientData)
     (tclStubsPtr->tcl_UntraceVar)(interp, varName, flags, proc, clientData);
 }
 
-/* Slot 262 */
+/* Slot 263 */
 void
 Tcl_UntraceVar2(interp, part1, part2, flags, proc, clientData)
     Tcl_Interp * interp;
@@ -2526,7 +2534,7 @@ Tcl_UntraceVar2(interp, part1, part2, flags, proc, clientData)
     (tclStubsPtr->tcl_UntraceVar2)(interp, part1, part2, flags, proc, clientData);
 }
 
-/* Slot 263 */
+/* Slot 264 */
 void
 Tcl_UpdateLinkedVar(interp, varName)
     Tcl_Interp * interp;
@@ -2535,7 +2543,7 @@ Tcl_UpdateLinkedVar(interp, varName)
     (tclStubsPtr->tcl_UpdateLinkedVar)(interp, varName);
 }
 
-/* Slot 264 */
+/* Slot 265 */
 int
 Tcl_UpVar(interp, frameName, varName, localName, flags)
     Tcl_Interp * interp;
@@ -2547,7 +2555,7 @@ Tcl_UpVar(interp, frameName, varName, localName, flags)
     return (tclStubsPtr->tcl_UpVar)(interp, frameName, varName, localName, flags);
 }
 
-/* Slot 265 */
+/* Slot 266 */
 int
 Tcl_UpVar2(interp, frameName, part1, part2, localName, flags)
     Tcl_Interp * interp;
@@ -2560,7 +2568,7 @@ Tcl_UpVar2(interp, frameName, part1, part2, localName, flags)
     return (tclStubsPtr->tcl_UpVar2)(interp, frameName, part1, part2, localName, flags);
 }
 
-/* Slot 266 */
+/* Slot 267 */
 void
 Tcl_ValidateAllMemory(file, line)
     char * file;
@@ -2569,7 +2577,7 @@ Tcl_ValidateAllMemory(file, line)
     (tclStubsPtr->tcl_ValidateAllMemory)(file, line);
 }
 
-/* Slot 267 */
+/* Slot 268 */
 int
 Tcl_VarEval TCL_VARARGS_DEF(Tcl_Interp *,interp)
 {
@@ -2584,7 +2592,7 @@ Tcl_VarEval TCL_VARARGS_DEF(Tcl_Interp *,interp)
 return resultValue;
 }
 
-/* Slot 268 */
+/* Slot 269 */
 int
 Tcl_VarEvalVA(interp, argList)
     Tcl_Interp * interp;
@@ -2593,7 +2601,7 @@ Tcl_VarEvalVA(interp, argList)
     return (tclStubsPtr->tcl_VarEvalVA)(interp, argList);
 }
 
-/* Slot 269 */
+/* Slot 270 */
 ClientData
 Tcl_VarTraceInfo(interp, varName, flags, procPtr, prevClientData)
     Tcl_Interp * interp;
@@ -2605,7 +2613,7 @@ Tcl_VarTraceInfo(interp, varName, flags, procPtr, prevClientData)
     return (tclStubsPtr->tcl_VarTraceInfo)(interp, varName, flags, procPtr, prevClientData);
 }
 
-/* Slot 270 */
+/* Slot 271 */
 ClientData
 Tcl_VarTraceInfo2(interp, part1, part2, flags, procPtr, prevClientData)
     Tcl_Interp * interp;
@@ -2618,7 +2626,7 @@ Tcl_VarTraceInfo2(interp, part1, part2, flags, procPtr, prevClientData)
     return (tclStubsPtr->tcl_VarTraceInfo2)(interp, part1, part2, flags, procPtr, prevClientData);
 }
 
-/* Slot 271 */
+/* Slot 272 */
 int
 Tcl_WaitForEvent(timePtr)
     Tcl_Time * timePtr;
@@ -2626,7 +2634,7 @@ Tcl_WaitForEvent(timePtr)
     return (tclStubsPtr->tcl_WaitForEvent)(timePtr);
 }
 
-/* Slot 272 */
+/* Slot 273 */
 Tcl_Pid
 Tcl_WaitPid(pid, statPtr, options)
     Tcl_Pid pid;
@@ -2636,7 +2644,7 @@ Tcl_WaitPid(pid, statPtr, options)
     return (tclStubsPtr->tcl_WaitPid)(pid, statPtr, options);
 }
 
-/* Slot 273 */
+/* Slot 274 */
 int
 Tcl_Write(chan, s, slen)
     Tcl_Channel chan;
@@ -2646,7 +2654,7 @@ Tcl_Write(chan, s, slen)
     return (tclStubsPtr->tcl_Write)(chan, s, slen);
 }
 
-/* Slot 274 */
+/* Slot 275 */
 void
 Tcl_WrongNumArgs(interp, objc, objv, message)
     Tcl_Interp * interp;

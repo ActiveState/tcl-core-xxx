@@ -1,3 +1,33 @@
+1999-03-05    <stanton@GASPODE>
+	
+	* generic/tclCompile.h:
+	* generic/tclStubInit.c:
+	* generic/tclCompileDecls.h:
+	* generic/tclCompileStubs.c:
+	* generic/tclInt.decls: Added functions from tclCompile.h into a
+	new tclCompile interface.
+
+	* generic/tclStubs.c:
+	* generic/tclDecls.h:
+	* generic/tcl.decls: Added Tcl_InitMemory.
+
+	* generic/tclStubLib.c: Changed to define USE_TCL_STUBS and
+	USE_TCL_STUB_PROCS automatically.
+
+	* unix/Makefile.in: Changes to get stubs mechanism working.
+
+	* generic/tclGetDate.y: Updated to reflect tclDate.c changes.
+	
+	* tools/genStubs.tcl: 
+	* generic/tclProc.c:
+	* generic/tclStubInit.c: 
+	* generic/tclTest.c:
+	* unix/tclUnixFile.c:
+	* unix/tclUnixPort.h: lint 
+
+	* win/makefile.vc: 
+	* generic/tclAlloc.c: Changed USE_NATIVEMALLOC to USE_NATIVE_MALLOC.
+
 1999-03-03    <stanton@GASPODE>
 
 	* unix/tclUnixTime.c: Added TclpGetDate and TclStrftime.
