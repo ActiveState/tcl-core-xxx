@@ -4360,13 +4360,6 @@ GetInput(chanPtr)
 	chanPtr->flags |= CHANNEL_EOF;
 	chanPtr->inputEncodingFlags |= TCL_ENCODING_END;
     } else if (nread < 0) {
-	/*
-	 * DO NOT check for EINTR here.  If you try again during
-	 * an EINTR (interrupt), nothing else can try to detect
-	 * them (such as TclX).  Check with Mark Diekhans for a
-	 * better answer.
-	 */
-
 	if ((result == EWOULDBLOCK) || (result == EAGAIN)) {
 	    chanPtr->flags |= CHANNEL_BLOCKED;
 	    result = EAGAIN;
