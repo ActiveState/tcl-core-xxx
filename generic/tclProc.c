@@ -114,7 +114,7 @@ Tcl_ProcObjCmd(dummy, interp, objc, objv)
     }
     Tcl_DStringAppend(&ds, procName, -1);
     
-    Tcl_CreateCommand(interp, Tcl_DStringValue(&ds), InterpProc,
+    Tcl_CreateCommand(interp, Tcl_DStringValue(&ds), TclProcInterpProc,
 	    (ClientData) procPtr, TclProcDeleteProc);
     cmd = Tcl_CreateObjCommand(interp, Tcl_DStringValue(&ds),
 	    TclObjInterpProc, (ClientData) procPtr, TclProcDeleteProc);
@@ -329,28 +329,6 @@ TclCreateProc(interp, nsPtr, procName, argsPtr, bodyPtr, procPtrPtr)
 	
 	ckfree((char *) fieldValues);
     }
-    ckfree((char *) argArray);
-
-    *procPtrPtr = procPtr;
-
-    /*
-     * Now create a command for the procedure. This will initially be in
-     * the current namespace unless the procedure's name included namespace
-     * qualifiers. To create the new command in the right namespace, we
-     * generate a fully qualified name for it.
-     */
-
-    Tcl_DStringInit(&ds);
-    if (nsPtr != iPtr->globalNsPtr) {
-	Tcl_DStringAppend(&ds, nsPtr->fullName, -1);
-	Tcl_DStringAppend(&ds, "::", 2);
-    }
-    Tcl_DStringAppend(&ds, procName, -1);
-    
-    Tcl_CreateCommand(interp, Tcl_DStringValue(&ds), TclProcInterpProc,
-	    (ClientData) procPtr, TclProcDeleteProc);
-    cmd = Tcl_CreateObjCommand(interp, Tcl_DStringValue(&ds),
-	    TclObjInterpProc, (ClientData) procPtr, TclProcDeleteProc);
 
     /*
      * Now initialize the new procedure's cmdPtr field. This will be used
@@ -359,8 +337,7 @@ TclCreateProc(interp, nsPtr, procName, argsPtr, bodyPtr, procPtrPtr)
      * namespace if the proc was renamed into a different namespace.
      */
     
-    procPtr->cmdPtr = (Command *) cmd;
-	
+    *procPtrPtr = procPtr;
     ckfree((char *) argArray);
     return TCL_OK;
 
