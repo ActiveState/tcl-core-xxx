@@ -253,14 +253,14 @@ TclCompileExpr(interp, script, numBytes, envPtr)
      * Parse the expression then compile it.
      */
 
-    code = Tcl_ParseExpr(interp, script, numBytes, &parse);
+    code = TclParseExpr(interp, script, numBytes,
+	    /* useInternalTokens */ 1, &parse);
     if (code != TCL_OK) {
 	goto done;
     }
 
     code = CompileSubExpr(parse.tokenPtr, &info, envPtr);
     if (code != TCL_OK) {
-	Tcl_FreeParse(&parse);
 	goto done;
     }
     
@@ -274,9 +274,9 @@ TclCompileExpr(interp, script, numBytes, envPtr)
 	
 	TclEmitOpcode(INST_TRY_CVT_TO_NUMERIC, envPtr);
     }
-    Tcl_FreeParse(&parse);
 
     done:
+    Tcl_FreeParse(&parse);
     return code;
 }
 
@@ -404,6 +404,23 @@ CompileSubExpr(exprTokenPtr, infoPtr, envPtr)
 	    }
 	    tokenPtr += 1;
 	    break;
+	    
+        case TCL_TOKEN_SCRIPT_SUBST: {
+	    Tcl_Token *lastTokenPtr = tokenPtr + (tokenPtr->numComponents);
+	    code = TclCompileScriptTokens(interp, tokenPtr+1,
+		    lastTokenPtr, envPtr);
+	    if ((code == TCL_OK) && (lastTokenPtr->type == TCL_TOKEN_ERROR)) {
+		code = TclSubstTokens(interp, lastTokenPtr, 1, NULL,
+			/* flags */ 0);
+	        TclLogCompilationInfo(interp, tokenPtr[1].start,
+			lastTokenPtr->start, lastTokenPtr->size);
+	    }
+	    if (code != TCL_OK) {
+		goto done;
+	    }
+	    tokenPtr += (tokenPtr->numComponents + 1);
+	    break;
+	}
 	    
         case TCL_TOKEN_VARIABLE:
 	    code = TclCompileTokens(interp, tokenPtr, 1, envPtr);

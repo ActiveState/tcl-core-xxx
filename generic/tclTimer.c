@@ -1020,8 +1020,6 @@ AfterProc(clientData)
     AfterInfo *prevPtr;
     int result;
     Tcl_Interp *interp;
-    char *script;
-    int numBytes;
 
     /*
      * First remove the callback from our list of callbacks;  otherwise
@@ -1045,8 +1043,8 @@ AfterProc(clientData)
 
     interp = assocPtr->interp;
     Tcl_Preserve((ClientData) interp);
-    script = Tcl_GetStringFromObj(afterPtr->commandPtr, &numBytes);
-    result = Tcl_EvalEx(interp, script, numBytes, TCL_EVAL_GLOBAL);
+    result = Tcl_EvalObjEx(interp, afterPtr->commandPtr,
+	    TCL_EVAL_GLOBAL | TCL_EVAL_DIRECT);
     if (result != TCL_OK) {
 	Tcl_AddErrorInfo(interp, "\n    (\"after\" script)");
 	Tcl_BackgroundError(interp);

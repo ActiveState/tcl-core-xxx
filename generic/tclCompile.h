@@ -730,7 +730,7 @@ EXTERN int              TclInterpReady _ANSI_ARGS_((Tcl_Interp *interp));
  */
 
 EXTERN int		TclCompEvalObj _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tcl_Obj *objPtr));
+			    Tcl_Obj *objPtr, int flags));
 
 /*
  *----------------------------------------------------------------
@@ -751,6 +751,9 @@ EXTERN int		TclCompileExprWords _ANSI_ARGS_((Tcl_Interp *interp,
 			    CompileEnv *envPtr));
 EXTERN int		TclCompileScript _ANSI_ARGS_((Tcl_Interp *interp,
 			    CONST char *script, int numBytes, CompileEnv *envPtr));
+EXTERN int		TclCompileScriptTokens _ANSI_ARGS_((Tcl_Interp *interp,
+			    Tcl_Token *tokens, Tcl_Token *lastTokenPtr,
+			    CompileEnv *envPtr));
 EXTERN int		TclCompileTokens _ANSI_ARGS_((Tcl_Interp *interp,
 			    Tcl_Token *tokenPtr, int count,
 			    CompileEnv *envPtr));
@@ -792,6 +795,9 @@ EXTERN void		TclInitJumpFixupArray _ANSI_ARGS_((
 			    JumpFixupArray *fixupArrayPtr));
 EXTERN void		TclInitLiteralTable _ANSI_ARGS_((
 			    LiteralTable *tablePtr));
+EXTERN void             TclLogCompilationInfo _ANSI_ARGS_((Tcl_Interp *interp,
+			    CONST char *script, CONST char *command,
+			    int length));
 #ifdef TCL_COMPILE_STATS
 EXTERN char *		TclLiteralStats _ANSI_ARGS_((
 			    LiteralTable *tablePtr));

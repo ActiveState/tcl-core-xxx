@@ -1077,7 +1077,7 @@ TclObjInterpProc(clientData, interp, objc, objv)
 #endif /*TCL_COMPILE_DEBUG*/
 
     procPtr->refCount++;
-    result = TclCompEvalObj(interp, procPtr->bodyPtr);
+    result = TclCompEvalObj(interp, procPtr->bodyPtr,0);
     procPtr->refCount--;
     if (procPtr->refCount <= 0) {
 	TclProcCleanupProc(procPtr);
