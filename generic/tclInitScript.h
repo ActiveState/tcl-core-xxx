@@ -2,7 +2,6 @@
  * tclInitScript.h --
  *
  *	This file contains Unix & Windows common init script
- *      It is not used on the Mac. (the mac init script is in tclMacInit.c)
  *
  * Copyright (c) 1998 Sun Microsystems, Inc.
  * Copyright (c) 1999 by Scriptics Corporation.
@@ -78,7 +77,7 @@ tclInit";
 
 /*
  * A pointer to a string that holds an initialization script that if non-NULL
- * is evaluated in Tcl_Init() prior to the the built-in initialization script
+ * is evaluated in Tcl_Init() prior to the built-in initialization script
  * above.  This variable can be modified by the procedure below.
  */
  
