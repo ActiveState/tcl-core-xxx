@@ -9,7 +9,7 @@
 # See the file "license.terms" for information on usage and redistribution
 # of this file, and for a DISCLAIMER OF ALL WARRANTIES.
 # 
-# SCCS: %Z% $Id$ 
+# SCCS: @(#) man2help2.tcl 1.7 98/01/22 16:51:45
 # 
 
 # Global variables used by these scripts:

@@ -8,7 +8,7 @@
  * source.  See the copyright notice below for details on redistribution
  * restrictions.  The "license.terms" file does not apply to this file.
  *
- * SCCS: @(#) strftime.c 1.4 97/08/07 17:17:02
+ * SCCS: @(#) strftime.c 1.5 98/02/02 20:59:19
  */
 
 /*
@@ -316,7 +316,7 @@ _fmt(format, t)
 		    continue;
 #ifndef MAC_TCL
 		case 'Z': {
-		    char *name = TclpGetTZName();
+		    char *name = TclpGetTZName(t->tm_isdst);
 		    if (name && !_add(name)) {
 			return 0;
 		    }
