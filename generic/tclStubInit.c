@@ -13,7 +13,6 @@
 
 #include "tclInt.h"
 #include "tclPort.h"
-#include "tclCompile.h"
 
 /*
  * Remove macros that will interfere with the definitions below.
@@ -349,6 +348,61 @@ TclStubs tclStubs = {
     Tcl_VarEvalVA, /* 276 */
     Tcl_WaitPid, /* 277 */
     panicVA, /* 278 */
+    Tcl_AppendObjToObj, /* 279 */
+    Tcl_AlertNotifier, /* 280 */
+    Tcl_CreateEncoding, /* 281 */
+    Tcl_CreateThreadExitHandler, /* 282 */
+    Tcl_DeleteThreadExitHandler, /* 283 */
+    Tcl_DiscardResult, /* 284 */
+    Tcl_EvalEx, /* 285 */
+    Tcl_EvalObjv, /* 286 */
+    Tcl_EvalObjEx, /* 287 */
+    Tcl_ExitThread, /* 288 */
+    Tcl_ExternalToUtf, /* 289 */
+    Tcl_ExternalToUtfDString, /* 290 */
+    Tcl_FinalizeThread, /* 291 */
+    Tcl_FinalizeNotifier, /* 292 */
+    Tcl_FreeEncoding, /* 293 */
+    Tcl_GetCurrentThread, /* 294 */
+    Tcl_GetEncoding, /* 295 */
+    Tcl_GetEncodingName, /* 296 */
+    Tcl_GetEncodingNames, /* 297 */
+    Tcl_GetIndexFromObjStruct, /* 298 */
+    Tcl_GetThreadData, /* 299 */
+    Tcl_GetVar2Ex, /* 300 */
+    Tcl_InitNotifier, /* 301 */
+    Tcl_MutexLock, /* 302 */
+    Tcl_MutexUnlock, /* 303 */
+    Tcl_ConditionNotify, /* 304 */
+    Tcl_ConditionWait, /* 305 */
+    Tcl_NumUtfChars, /* 306 */
+    Tcl_ReadChars, /* 307 */
+    Tcl_RestoreResult, /* 308 */
+    Tcl_SaveResult, /* 309 */
+    Tcl_SetSystemEncoding, /* 310 */
+    Tcl_SetVar2Ex, /* 311 */
+    Tcl_ThreadAlert, /* 312 */
+    Tcl_ThreadQueueEvent, /* 313 */
+    Tcl_UniCharAtIndex, /* 314 */
+    Tcl_UniCharToLower, /* 315 */
+    Tcl_UniCharToTitle, /* 316 */
+    Tcl_UniCharToUpper, /* 317 */
+    Tcl_UniCharToUtf, /* 318 */
+    Tcl_UtfAtIndex, /* 319 */
+    Tcl_UtfCharComplete, /* 320 */
+    Tcl_UtfBackslash, /* 321 */
+    Tcl_UtfFindFirst, /* 322 */
+    Tcl_UtfFindLast, /* 323 */
+    Tcl_UtfNext, /* 324 */
+    Tcl_UtfPrev, /* 325 */
+    Tcl_UtfToExternal, /* 326 */
+    Tcl_UtfToExternalDString, /* 327 */
+    Tcl_UtfToLower, /* 328 */
+    Tcl_UtfToTitle, /* 329 */
+    Tcl_UtfToUniChar, /* 330 */
+    Tcl_UtfToUpper, /* 331 */
+    Tcl_WriteChars, /* 332 */
+    Tcl_WriteObj, /* 333 */
 };
 
 TclStubs *tclStubsPtr = &tclStubs;
@@ -360,7 +414,7 @@ TclIntStubs tclIntStubs = {
     TclAccessDeleteProc, /* 1 */
     TclAccessInsertProc, /* 2 */
     TclAllocateFreeObjects, /* 3 */
-    TclChdir, /* 4 */
+    NULL, /* 4 */
     TclCleanupChildren, /* 5 */
     TclCleanupCommand, /* 6 */
     TclCopyAndCollapse, /* 7 */
@@ -371,7 +425,7 @@ TclIntStubs tclIntStubs = {
     TclDeleteVars, /* 12 */
     TclDoGlob, /* 13 */
     TclDumpMemoryInfo, /* 14 */
-    TclExpandParseValue, /* 15 */
+    NULL, /* 15 */
     TclExprFloatError, /* 16 */
     TclFileAttrsCmd, /* 17 */
     TclFileCopyCmd, /* 18 */
@@ -382,11 +436,11 @@ TclIntStubs tclIntStubs = {
     TclFindProc, /* 23 */
     TclFormatInt, /* 24 */
     TclFreePackageInfo, /* 25 */
-    TclGetCwd, /* 26 */
+    NULL, /* 26 */
     TclGetDate, /* 27 */
-    TclGetDefaultStdChannel, /* 28 */
+    TclpGetDefaultStdChannel, /* 28 */
     TclGetElementOfIndexedArray, /* 29 */
-    TclGetEnv, /* 30 */
+    NULL, /* 30 */
     TclGetExtension, /* 31 */
     TclGetFrame, /* 32 */
     TclGetInterpProc, /* 33 */
@@ -398,7 +452,7 @@ TclIntStubs tclIntStubs = {
     TclGetObjInterpProc, /* 39 */
     TclGetOpenMode, /* 40 */
     TclGetOriginalCommand, /* 41 */
-    TclGetUserHome, /* 42 */
+    TclpGetUserHome, /* 42 */
     TclGlobalInvoke, /* 43 */
     TclGuessPackageName, /* 44 */
     TclHideUnsafeCommands, /* 45 */
@@ -412,10 +466,10 @@ TclIntStubs tclIntStubs = {
     TclInvokeObjectCommand, /* 53 */
     TclInvokeStringCommand, /* 54 */
     TclIsProc, /* 55 */
-    TclLoadFile, /* 56 */
-    TclLooksLikeInt, /* 57 */
+    NULL, /* 56 */
+    NULL, /* 57 */
     TclLookupVar, /* 58 */
-    TclMatchFiles, /* 59 */
+    TclpMatchFiles, /* 59 */
     TclNeedSpace, /* 60 */
     TclNewProcBodyObj, /* 61 */
     TclObjCommandComplete, /* 62 */
@@ -440,13 +494,13 @@ TclIntStubs tclIntStubs = {
     TclpRealloc, /* 81 */
     TclpRemoveDirectory, /* 82 */
     TclpRenameFile, /* 83 */
-    TclParseBraces, /* 84 */
-    TclParseNestedCmd, /* 85 */
-    TclParseQuotes, /* 86 */
-    TclPlatformInit, /* 87 */
+    NULL, /* 84 */
+    NULL, /* 85 */
+    NULL, /* 86 */
+    NULL, /* 87 */
     TclPrecTraceProc, /* 88 */
     TclPreventAliasLoop, /* 89 */
-    TclPrintByteCodeObj, /* 90 */
+    NULL, /* 90 */
     TclProcCleanupProc, /* 91 */
     TclProcCompileProc, /* 92 */
     TclProcDeleteProc, /* 93 */
@@ -457,7 +511,7 @@ TclIntStubs tclIntStubs = {
     TclServiceIdle, /* 98 */
     TclSetElementOfIndexedArray, /* 99 */
     TclSetIndexedScalar, /* 100 */
-    TclSetPreInitScript, /* 101 */
+    NULL, /* 101 */
     TclSetupEnv, /* 102 */
     TclSockGetPort, /* 103 */
     TclSockMinimumBuffers, /* 104 */
@@ -466,7 +520,7 @@ TclIntStubs tclIntStubs = {
     TclStatInsertProc, /* 107 */
     TclTeardownNamespace, /* 108 */
     TclUpdateReturnInfo, /* 109 */
-    TclWordEnd, /* 110 */
+    NULL, /* 110 */
     Tcl_AddInterpResolvers, /* 111 */
     Tcl_AppendExportList, /* 112 */
     Tcl_CreateNamespace, /* 113 */
@@ -488,10 +542,15 @@ TclIntStubs tclIntStubs = {
     Tcl_PushCallFrame, /* 129 */
     Tcl_RemoveInterpResolvers, /* 130 */
     Tcl_SetNamespaceResolvers, /* 131 */
-    TclHasSockets, /* 132 */
+    TclpHasSockets, /* 132 */
     TclpGetDate, /* 133 */
-    TclStrftime, /* 134 */
+    TclpStrftime, /* 134 */
     TclpCheckStackSpace, /* 135 */
+    Tcl_GetString, /* 136 */
+    TclpChdir, /* 137 */
+    TclGetEnv, /* 138 */
+    TclpLoadFile, /* 139 */
+    TclLooksLikeInt, /* 140 */
 };
 
 TclIntStubs *tclIntStubsPtr = &tclIntStubs;
@@ -505,10 +564,11 @@ TclIntPlatStubs tclIntPlatStubs = {
     TclpCreateCommandChannel, /* 2 */
     TclpCreatePipe, /* 3 */
     TclpCreateProcess, /* 4 */
-    TclpCreateTempFile, /* 5 */
+    NULL, /* 5 */
     TclpMakeFile, /* 6 */
     TclpOpenFile, /* 7 */
     TclUnixWaitForFile, /* 8 */
+    TclpCreateTempFile, /* 9 */
 #endif /* UNIX */
 #ifdef __WIN32__
     TclWinConvertError, /* 0 */
@@ -516,7 +576,7 @@ TclIntPlatStubs tclIntPlatStubs = {
     TclWinGetServByName, /* 2 */
     TclWinGetSockOpt, /* 3 */
     TclWinGetTclInstance, /* 4 */
-    TclWinLoadLibrary, /* 5 */
+    NULL, /* 5 */
     TclWinNToHS, /* 6 */
     TclWinSetSockOpt, /* 7 */
     TclpGetPid, /* 8 */
@@ -527,16 +587,21 @@ TclIntPlatStubs tclIntPlatStubs = {
     TclpCreateCommandChannel, /* 13 */
     TclpCreatePipe, /* 14 */
     TclpCreateProcess, /* 15 */
-    TclpCreateTempFile, /* 16 */
-    TclpGetTZName, /* 17 */
+    NULL, /* 16 */
+    NULL, /* 17 */
     TclpMakeFile, /* 18 */
     TclpOpenFile, /* 19 */
+    TclpCreateTempFile, /* 20 */
+    TclpGetTZName, /* 21 */
+    TclWinNoBackslash, /* 22 */
+    Tcl_WinUtfToTChar, /* 23 */
+    Tcl_WinTCharToUtf, /* 24 */
 #endif /* __WIN32__ */
 #ifdef MAC_TCL
     TclpSysAlloc, /* 0 */
     TclpSysFree, /* 1 */
     TclpSysRealloc, /* 2 */
-    TclPlatformExit, /* 3 */
+    TclpExit, /* 3 */
     FSpGetDefaultDir, /* 4 */
     FSpSetDefaultDir, /* 5 */
     FSpFindFolder, /* 6 */
@@ -557,7 +622,7 @@ TclIntPlatStubs tclIntPlatStubs = {
     TclMacUnRegisterResourceFork, /* 21 */
     TclMacCreateEnv, /* 22 */
     TclMacFOpenHack, /* 23 */
-    TclMacReadlink, /* 24 */
+    NULL, /* 24 */
     TclMacChmod, /* 25 */
 #endif /* MAC_TCL */
 };

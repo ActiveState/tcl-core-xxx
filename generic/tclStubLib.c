@@ -20,10 +20,7 @@
  * including the rest of the stub functions.
  */
 
-#ifndef USE_TCL_STUBS
-#define USE_TCL_STUBS
-#endif
-#undef USE_TCL_STUB_PROCS
+#undef TCL_NO_INLINES
 
 #include "tclInt.h"
 #include "tclPort.h"

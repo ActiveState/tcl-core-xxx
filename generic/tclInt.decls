@@ -35,9 +35,10 @@ declare 2 generic {
 declare 3 generic {
     void TclAllocateFreeObjects(void)
 }
-declare 4 generic {
-    int TclChdir(Tcl_Interp *interp, char *dirName)
-}
+# Replaced by TclpChdir in 8.1:
+#  declare 4 generic {   
+#      int TclChdir(Tcl_Interp *interp, char *dirName)
+#  }
 declare 5 generic {
     int TclCleanupChildren(Tcl_Interp *interp, int numPids, Tcl_Pid *pidPtr, \
 	    Tcl_Channel errorChan)
@@ -46,7 +47,7 @@ declare 6 generic {
     void TclCleanupCommand(Command *cmdPtr)
 }
 declare 7 generic {
-    int TclCopyAndCollapse(int count, char *src, char *dst)
+    int TclCopyAndCollapse(int count, CONST char *src, char *dst)
 }
 declare 8 generic {
     int TclCopyChannel(Tcl_Interp *interp, Tcl_Channel inChan, \
@@ -77,9 +78,10 @@ declare 13 generic {
 declare 14 generic {
     void TclDumpMemoryInfo(FILE *outFile)
 }
-declare 15 generic {
-    void TclExpandParseValue(ParseValue *pvPtr, int needed)
-}
+# Removed in 8.1:
+#  declare 15 generic {
+#      void TclExpandParseValue(ParseValue *pvPtr, int needed)
+#  }
 declare 16 generic {
     void TclExprFloatError(Tcl_Interp *interp, double value)
 }
@@ -99,8 +101,9 @@ declare 21 generic {
     int TclFileRenameCmd(Tcl_Interp *interp, int argc, char **argv)
 }
 declare 22 generic {
-    int TclFindElement(Tcl_Interp *interp, char *list, int listLength, \
-	    char **elementPtr, char **nextPtr, int *sizePtr, int *bracePtr)
+    int TclFindElement(Tcl_Interp *interp, CONST char *list, int listLength, \
+	    CONST char **elementPtr, CONST char **nextPtr, int *sizePtr, \
+	    int *bracePtr)
 }
 declare 23 generic {
     Proc * TclFindProc(Interp *iPtr, char *procName)
@@ -111,23 +114,25 @@ declare 24 generic {
 declare 25 generic {
     void TclFreePackageInfo(Interp *iPtr)
 }
-declare 26 generic {
-    char * TclGetCwd(Tcl_Interp *interp)
-}
+# Removed in 8.1:
+#  declare 26 generic {	
+#      char * TclGetCwd(Tcl_Interp *interp)
+#  }
 declare 27 generic {
     int TclGetDate(char *p, unsigned long now, long zone, \
 	    unsigned long *timePtr)
 }
 declare 28 generic {
-    Tcl_Channel TclGetDefaultStdChannel(int type)
+    Tcl_Channel TclpGetDefaultStdChannel(int type)
 }
 declare 29 generic {
     Tcl_Obj * TclGetElementOfIndexedArray(Tcl_Interp *interp, \
 	    int localIndex, Tcl_Obj *elemPtr, int leaveErrorMsg)
 }
-declare 30 generic {
-    char * TclGetEnv(CONST char *name)
-}
+# Replaced by char * TclGetEnv(CONST char *name, Tcl_DString *valuePtr) in 8.1:
+#  declare 30 generic {
+#      char * TclGetEnv(CONST char *name)
+#  }
 declare 31 generic {
     char * TclGetExtension(char *name)
 }
@@ -167,7 +172,7 @@ declare 41 generic {
     Tcl_Command TclGetOriginalCommand(Tcl_Command command)
 }
 declare 42 generic {
-    char * TclGetUserHome(char *name, Tcl_DString *bufferPtr)
+    char * TclpGetUserHome(CONST char *name, Tcl_DString *bufferPtr)
 }
 declare 43 generic {
     int TclGlobalInvoke(Tcl_Interp *interp, int argc, char **argv, int flags)
@@ -214,21 +219,23 @@ declare 54 generic {
 declare 55 generic {
     Proc * TclIsProc(Command *cmdPtr)
 }
-declare 56 generic {
-    int TclLoadFile(Tcl_Interp *interp, char *fileName, char *sym1, \
-	    char *sym2, Tcl_PackageInitProc **proc1Ptr, \
-	    Tcl_PackageInitProc **proc2Ptr)
-}
-declare 57 generic {
-    int TclLooksLikeInt(char *p)
-}
+# Replaced with TclpLoadFile in 8.1:
+#  declare 56 generic {
+#      int TclLoadFile(Tcl_Interp *interp, char *fileName, char *sym1, \
+#  	    char *sym2, Tcl_PackageInitProc **proc1Ptr, \
+#  	    Tcl_PackageInitProc **proc2Ptr)
+#  }
+# Signature changed to take a length in 8.1:
+#  declare 57 generic {
+#      int TclLooksLikeInt(char *p)
+#  }
 declare 58 generic {
     Var * TclLookupVar(Tcl_Interp *interp, char *part1, char *part2, \
 	    int flags, char *msg, int createPart1, int createPart2, \
 	    Var **arrayPtrPtr)
 }
 declare 59 generic {
-    int TclMatchFiles(Tcl_Interp *interp, char *separators, \
+    int TclpMatchFiles(Tcl_Interp *interp, char *separators, \
 	    Tcl_DString *dirPtr, char *pattern, char *tail)
 }
 declare 60 generic {
@@ -265,16 +272,17 @@ declare 69 generic {
     char * TclpAlloc(unsigned int size)
 }
 declare 70 generic {
-    int TclpCopyFile(char *source, char *dest)
+    int TclpCopyFile(CONST char *source, CONST char *dest)
 }
 declare 71 generic {
-    int TclpCopyDirectory(char *source, char *dest, Tcl_DString *errorPtr)
+    int TclpCopyDirectory(CONST char *source, CONST char *dest, \
+	    Tcl_DString *errorPtr)
 }
 declare 72 generic {
-    int TclpCreateDirectory(char *path)
+    int TclpCreateDirectory(CONST char *path)
 }
 declare 73 generic {
-    int TclpDeleteFile(char *path)
+    int TclpDeleteFile(CONST char *path)
 }
 declare 74 generic {
     void TclpFree(char *ptr)
@@ -302,26 +310,28 @@ declare 81 generic {
     char * TclpRealloc(char *ptr, unsigned int size)
 }
 declare 82 generic {
-    int TclpRemoveDirectory(char *path, int recursive, Tcl_DString *errorPtr)
+    int TclpRemoveDirectory(CONST char *path, int recursive, \
+	    Tcl_DString *errorPtr)
 }
 declare 83 generic {
-    int TclpRenameFile(char *source, char *dest)
+    int TclpRenameFile(CONST char *source, CONST char *dest)
 }
-declare 84 generic {
-    int TclParseBraces(Tcl_Interp *interp, char *string, char **termPtr, \
-	    ParseValue *pvPtr)
-}
-declare 85 generic {
-    int TclParseNestedCmd(Tcl_Interp *interp, char *string, int flags, \
-	    char **termPtr, ParseValue *pvPtr)
-}
-declare 86 generic {
-    int TclParseQuotes(Tcl_Interp *interp, char *string, int termChar, \
-	    int flags, char **termPtr, ParseValue *pvPtr)
-}
-declare 87 generic {
-    void TclPlatformInit(Tcl_Interp *interp)
-}
+# Removed in 8.1:
+#  declare 84 generic {
+#      int TclParseBraces(Tcl_Interp *interp, char *string, char **termPtr, \
+#  	    ParseValue *pvPtr)
+#  }
+#  declare 85 generic {
+#      int TclParseNestedCmd(Tcl_Interp *interp, char *string, int flags, \
+#  	    char **termPtr, ParseValue *pvPtr)
+#  }
+#  declare 86 generic {
+#      int TclParseQuotes(Tcl_Interp *interp, char *string, int termChar, \
+#  	    int flags, char **termPtr, ParseValue *pvPtr)
+#  }
+#  declare 87 generic {
+#      void TclPlatformInit(Tcl_Interp *interp)
+#  }
 declare 88 generic {
     char * TclPrecTraceProc(ClientData clientData, Tcl_Interp *interp, \
 	    char *name1, char *name2, int flags)
@@ -330,9 +340,10 @@ declare 89 generic {
     int TclPreventAliasLoop(Tcl_Interp *interp, Tcl_Interp *cmdInterp, \
 	    Tcl_Command cmd)
 }
-declare 90 generic {
-    void TclPrintByteCodeObj(Tcl_Interp *interp, Tcl_Obj *objPtr)
-}
+# Removed in 8.1 (only available if compiled with TCL_COMPILE_DEBUG):
+#  declare 90 generic {
+#      void TclPrintByteCodeObj(Tcl_Interp *interp, Tcl_Obj *objPtr)
+#  }
 declare 91 generic {
     void TclProcCleanupProc(Proc *procPtr)
 }
@@ -368,9 +379,10 @@ declare 100 generic {
     Tcl_Obj * TclSetIndexedScalar(Tcl_Interp *interp, int localIndex, \
 	    Tcl_Obj *objPtr, int leaveErrorMsg)
 }
-declare 101 generic {
-    char * TclSetPreInitScript(char *string)
-}
+# TODO: needs to be implemented
+#  declare 101 generic {
+#      char * TclSetPreInitScript(char *string)
+#  }
 declare 102 generic {
     void TclSetupEnv(Tcl_Interp *interp)
 }
@@ -396,9 +408,10 @@ declare 108 generic {
 declare 109 generic {
     int TclUpdateReturnInfo(Interp *iPtr)
 }
-declare 110 generic {
-    char * TclWordEnd(char *start, char *lastChar, int nested, int *semiPtr)
-}
+# Removed in 8.1:
+#  declare 110 generic {
+#      char * TclWordEnd(char *start, char *lastChar, int nested, int *semiPtr)
+#  }
 
 # Procedures used in conjunction with Tcl namespaces. They are
 # defined here instead of in tcl.decls since they are not stable yet.
@@ -484,18 +497,39 @@ declare 131 generic {
 	    Tcl_ResolveCompiledVarProc *compiledVarProc)
 }
 declare 132 generic {
-    int TclHasSockets(Tcl_Interp *interp)
+    int TclpHasSockets(Tcl_Interp *interp)
 }
 declare 133 generic {
     struct tm *	TclpGetDate(TclpTime_t time, int useGMT)
 }
 declare 134 generic {
-    size_t TclStrftime(char *s, size_t maxsize, const char *format, \
+    size_t TclpStrftime(char *s, size_t maxsize, const char *format, \
 	    const struct tm *t)
 }
 declare 135 generic {
     int TclpCheckStackSpace(void)
 }
+
+# Added in 8.1:
+
+declare 136 generic {
+    char * Tcl_GetString(Tcl_Obj *objPtr)
+}
+declare 137 generic {
+    int TclpChdir(CONST char *dirName)
+}
+declare 138 generic {
+    char * TclGetEnv(CONST char *name, Tcl_DString *valuePtr)
+}
+declare 139 generic {
+    int TclpLoadFile(Tcl_Interp *interp, char *fileName, char *sym1, \
+	    char *sym2, Tcl_PackageInitProc **proc1Ptr, \
+	    Tcl_PackageInitProc **proc2Ptr, ClientData *clientDataPtr)
+}
+declare 140 generic {
+    int TclLooksLikeInt(char *bytes, int length)
+}
+
 
 ##############################################################################
 
@@ -517,7 +551,7 @@ declare 2 mac {
     VOID * TclpSysRealloc(VOID *cp, unsigned int size)
 }
 declare 3 mac {
-    void TclPlatformExit(int status)
+    void TclpExit(int status)
 }
 
 # Prototypes for functions found in the tclMacUtil.c compatability library.
@@ -600,9 +634,10 @@ declare 22 mac {
 declare 23 mac {
     FILE * TclMacFOpenHack(const char *path, const char *mode)
 }
-declare 24 mac {
-    int TclMacReadlink(char *path, char *buf, int size)
-}
+# Replaced in 8.1 by TclpReadLink:
+#  declare 24 mac {
+#      int TclMacReadlink(char *path, char *buf, int size)
+#  }
 declare 25 mac {
     int TclMacChmod(char *path, int mode)
 }
@@ -628,9 +663,10 @@ declare 3 win {
 declare 4 win {
     HINSTANCE TclWinGetTclInstance(void)
 }
-declare 5 win {
-    HINSTANCE TclWinLoadLibrary(char *name)
-}
+# Removed in 8.1:
+#  declare 5 win {
+#      HINSTANCE TclWinLoadLibrary(char *name)
+#  }
 declare 6 win {
     u_short TclWinNToHS(u_short ns)
 }
@@ -668,18 +704,35 @@ declare 15 win {
 	    TclFile inputFile, TclFile outputFile, TclFile errorFile, \
 	    Tcl_Pid *pidPtr)
 }
-declare 16 win {
-    TclFile TclpCreateTempFile(char *contents, 
-    Tcl_DString *namePtr)
-}
-declare 17 win {
-    char * TclpGetTZName(void)
-}
+# Signature changed in 8.1:
+#  declare 16 win {
+#      TclFile TclpCreateTempFile(char *contents, Tcl_DString *namePtr)
+#  }
+#  declare 17 win {
+#      char * TclpGetTZName(void)
+#  }
 declare 18 win {
     TclFile TclpMakeFile(Tcl_Channel channel, int direction)
 }
 declare 19 win {
-    TclFile TclpOpenFile(char *fname, int mode)
+    TclFile TclpOpenFile(CONST char *fname, int mode)
+}
+
+# Added in 8.1:
+declare 20 win {
+    TclFile TclpCreateTempFile(CONST char *contents)
+}
+declare 21 win {
+    char * TclpGetTZName(int isdst)
+}
+declare 22 win {
+    char * TclWinNoBackslash(char *path)
+}
+declare 23 win {
+    TCHAR * Tcl_WinUtfToTChar(CONST char *string, int len, Tcl_DString *dsPtr)
+}
+declare 24 win {
+    char * Tcl_WinTCharToUtf(CONST TCHAR *string, int len, Tcl_DString *dsPtr)
 }
 
 #########################
@@ -705,16 +758,23 @@ declare 4 unix {
 	    TclFile inputFile, TclFile outputFile, TclFile errorFile, \
 	    Tcl_Pid *pidPtr)
 }
-declare 5 unix {
-    TclFile TclpCreateTempFile(char *contents, 
-    Tcl_DString *namePtr)
-}
+# Signature changed in 8.1:
+#  declare 5 unix {
+#      TclFile TclpCreateTempFile(char *contents, 
+#      Tcl_DString *namePtr)
+#  }
 declare 6 unix {
     TclFile TclpMakeFile(Tcl_Channel channel, int direction)
 }
 declare 7 unix {
-    TclFile TclpOpenFile(char *fname, int mode)
+    TclFile TclpOpenFile(CONST char *fname, int mode)
 }
 declare 8 unix {
     int TclUnixWaitForFile(int fd, int mask, int timeout)
+}
+
+# Added in 8.1:
+
+declare 9 unix {
+    TclFile TclpCreateTempFile(CONST char *contents)
 }
