@@ -987,7 +987,7 @@ declare 281 generic {
 	    int mask, Tcl_Channel prevChan)
 }
 declare 282 generic {
-    void Tcl_UnstackChannel(Tcl_Interp *interp, Tcl_Channel chan)
+    int Tcl_UnstackChannel(Tcl_Interp *interp, Tcl_Channel chan)
 }
 declare 283 generic {
     Tcl_Channel Tcl_GetStackedChannel(Tcl_Channel chan)
@@ -1356,6 +1356,13 @@ declare 392 generic {
 declare 393 generic {
     int Tcl_CreateThread (Tcl_ThreadId *idPtr, Tcl_ThreadCreateProc proc, \
 	    ClientData clientData, int stackSize, int flags)
+}
+
+declare 394 generic {
+    int Tcl_ReadRaw (Tcl_Channel chan, char *dst, int bytesToRead)
+}
+declare 395 generic {
+    int Tcl_WriteRaw (Tcl_Channel chan, char *src, int srcLen)
 }
 
 ##############################################################################

@@ -791,6 +791,8 @@ TclStubs tclStubs = {
     Tcl_ConditionFinalize, /* 391 */
     Tcl_MutexFinalize, /* 392 */
     Tcl_CreateThread, /* 393 */
+    Tcl_ReadRaw, /* 394 */
+    Tcl_WriteRaw, /* 395 */
 };
 
 /* !END!: Do not edit above this line. */
