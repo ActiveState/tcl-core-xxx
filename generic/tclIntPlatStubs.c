@@ -78,15 +78,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr)
     return (tclIntPlatStubsPtr->tclpCreateProcess)(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr);
 }
 
-/* Slot 5 */
-TclFile
-TclpCreateTempFile(contents, namePtr)
-    char * contents;
-    Tcl_DString * namePtr;
-{
-    return (tclIntPlatStubsPtr->tclpCreateTempFile)(contents, namePtr);
-}
-
+/* Slot 5 is reserved */
 /* Slot 6 */
 TclFile
 TclpMakeFile(channel, direction)
@@ -99,7 +91,7 @@ TclpMakeFile(channel, direction)
 /* Slot 7 */
 TclFile
 TclpOpenFile(fname, mode)
-    char * fname;
+    CONST char * fname;
     int mode;
 {
     return (tclIntPlatStubsPtr->tclpOpenFile)(fname, mode);
@@ -113,6 +105,14 @@ TclUnixWaitForFile(fd, mask, timeout)
     int timeout;
 {
     return (tclIntPlatStubsPtr->tclUnixWaitForFile)(fd, mask, timeout);
+}
+
+/* Slot 9 */
+TclFile
+TclpCreateTempFile(contents)
+    CONST char * contents;
+{
+    return (tclIntPlatStubsPtr->tclpCreateTempFile)(contents);
 }
 
 #endif /* UNIX */
@@ -161,14 +161,7 @@ TclWinGetTclInstance()
     return (tclIntPlatStubsPtr->tclWinGetTclInstance)();
 }
 
-/* Slot 5 */
-HINSTANCE
-TclWinLoadLibrary(name)
-    char * name;
-{
-    return (tclIntPlatStubsPtr->tclWinLoadLibrary)(name);
-}
-
+/* Slot 5 is reserved */
 /* Slot 6 */
 u_short
 TclWinNToHS(ns)
@@ -267,22 +260,8 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr)
     return (tclIntPlatStubsPtr->tclpCreateProcess)(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr);
 }
 
-/* Slot 16 */
-TclFile
-TclpCreateTempFile(contents, namePtr)
-    char * contents;
-    Tcl_DString * namePtr;
-{
-    return (tclIntPlatStubsPtr->tclpCreateTempFile)(contents, namePtr);
-}
-
-/* Slot 17 */
-char *
-TclpGetTZName()
-{
-    return (tclIntPlatStubsPtr->tclpGetTZName)();
-}
-
+/* Slot 16 is reserved */
+/* Slot 17 is reserved */
 /* Slot 18 */
 TclFile
 TclpMakeFile(channel, direction)
@@ -295,10 +274,54 @@ TclpMakeFile(channel, direction)
 /* Slot 19 */
 TclFile
 TclpOpenFile(fname, mode)
-    char * fname;
+    CONST char * fname;
     int mode;
 {
     return (tclIntPlatStubsPtr->tclpOpenFile)(fname, mode);
+}
+
+/* Slot 20 */
+TclFile
+TclpCreateTempFile(contents)
+    CONST char * contents;
+{
+    return (tclIntPlatStubsPtr->tclpCreateTempFile)(contents);
+}
+
+/* Slot 21 */
+char *
+TclpGetTZName(isdst)
+    int isdst;
+{
+    return (tclIntPlatStubsPtr->tclpGetTZName)(isdst);
+}
+
+/* Slot 22 */
+char *
+TclWinNoBackslash(path)
+    char * path;
+{
+    return (tclIntPlatStubsPtr->tclWinNoBackslash)(path);
+}
+
+/* Slot 23 */
+TCHAR *
+Tcl_WinUtfToTChar(string, len, dsPtr)
+    CONST char * string;
+    int len;
+    Tcl_DString * dsPtr;
+{
+    return (tclIntPlatStubsPtr->tcl_WinUtfToTChar)(string, len, dsPtr);
+}
+
+/* Slot 24 */
+char *
+Tcl_WinTCharToUtf(string, len, dsPtr)
+    CONST TCHAR * string;
+    int len;
+    Tcl_DString * dsPtr;
+{
+    return (tclIntPlatStubsPtr->tcl_WinTCharToUtf)(string, len, dsPtr);
 }
 
 #endif /* __WIN32__ */
@@ -331,10 +354,10 @@ TclpSysRealloc(cp, size)
 
 /* Slot 3 */
 void
-TclPlatformExit(status)
+TclpExit(status)
     int status;
 {
-    (tclIntPlatStubsPtr->tclPlatformExit)(status);
+    (tclIntPlatStubsPtr->tclpExit)(status);
 }
 
 /* Slot 4 */
@@ -512,16 +535,7 @@ TclMacFOpenHack(path, mode)
     return (tclIntPlatStubsPtr->tclMacFOpenHack)(path, mode);
 }
 
-/* Slot 24 */
-int
-TclMacReadlink(path, buf, size)
-    char * path;
-    char * buf;
-    int size;
-{
-    return (tclIntPlatStubsPtr->tclMacReadlink)(path, buf, size);
-}
-
+/* Slot 24 is reserved */
 /* Slot 25 */
 int
 TclMacChmod(path, mode)
