@@ -593,7 +593,13 @@ typedef struct TclIntStubs {
     char * (*tclpGetCwd) _ANSI_ARGS_((Tcl_Interp * interp, Tcl_DString * cwdPtr)); /* 141 */
 } TclIntStubs;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern TclIntStubs *tclIntStubsPtr;
+#ifdef __cplusplus
+}
+#endif
 
 #if defined(USE_TCL_STUBS) && !defined(USE_TCL_STUB_PROCS)
 
