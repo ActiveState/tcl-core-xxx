@@ -443,11 +443,13 @@ proc tclPkgUnknown {name version {exact {}}} {
 	    foreach file [glob -nocomplain [file join [lindex $auto_path $i] \
 		    * pkgIndex.tcl]] {
 		set dir [file dirname $file]
-		if {[catch {source $file} msg]} {
-		    tclLog "error reading package index file $file: $msg"
+		if {[file readable $file]} {
+		    if {[catch {source $file} msg]} {
+			tclLog "error reading package index file $file: $msg"
+		    }
 		}
 	    }
-        }
+	}
 	set dir [lindex $auto_path $i]
 	set file [file join $dir pkgIndex.tcl]
 	# safe interps usually don't have "file readable", nor stderr channel
