@@ -2078,7 +2078,7 @@ ParseMaxDoubleLength(string, end)
 	    case 'C': case 'D': case 'E': case 'F': case 'I': case 'N':
 	    case 'P': case 'X': case 'a': case 'b': case 'c': case 'd':
 	    case 'e': case 'f': case 'i': case 'n': case 'p': case 'x':
-	    case '.': case '+': case '-':
+	    case '.': case '+': case '-': case '(': case ' ': case ')':
 		p++;
 		break;
 	    default:
