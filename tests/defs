@@ -484,7 +484,7 @@ proc viewFile {name} {
 # exposing that Tcl uses UTF-8 internally.
 
 proc bytestring {string} {
-    testencoding toutf $string identity
+    encoding convertfrom identity $string
 }
 
 # Locate tcltest executable
