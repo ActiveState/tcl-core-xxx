@@ -219,7 +219,8 @@ GENERIC_OBJS = panic.o regexp.o tclAsync.o tclBasic.o tclBinary.o tclCkalloc.o \
 	tclIndexObj.o tclInterp.o tclIO.o tclIOCmd.o tclIOSock.o \
 	tclIOUtil.o tclLink.o tclListObj.o tclLoad.o tclMain.o tclNamesp.o \
 	tclNotify.o tclObj.o tclParse.o tclPipe.o tclPkg.o tclPosixStr.o \
-	tclPreserve.o tclProc.o tclStringObj.o tclTimer.o tclUtil.o tclVar.o
+	tclPreserve.o tclProc.o tclStringObj.o tclTimer.o tclUtil.o tclVar.o \
+	tclResolve.o
 
 OBJS = ${GENERIC_OBJS} ${UNIX_OBJS} ${NOTIFY_OBJS} ${COMPAT_OBJS} @DL_OBJS@
 
@@ -270,6 +271,7 @@ GENERIC_SRCS = \
 	$(GENERIC_DIR)/tclPosixStr.c \
 	$(GENERIC_DIR)/tclPreserve.c \
 	$(GENERIC_DIR)/tclProc.c \
+	$(GENERIC_DIR)/tclResolve.c \
 	$(GENERIC_DIR)/tclStringObj.c \
 	$(GENERIC_DIR)/tclTest.c \
 	$(GENERIC_DIR)/tclTestObj.c \
@@ -705,6 +707,9 @@ tclPreserve.o: $(GENERIC_DIR)/tclPreserve.c
 
 tclProc.o: $(GENERIC_DIR)/tclProc.c
 	$(CC) -c $(CC_SWITCHES) $(GENERIC_DIR)/tclProc.c
+
+tclResolve.o: $(GENERIC_DIR)/tclResolve.c
+	$(CC) -c $(CC_SWITCHES) $(GENERIC_DIR)/tclResolve.c
 
 tclStringObj.o: $(GENERIC_DIR)/tclStringObj.c
 	$(CC) -c $(CC_SWITCHES) $(GENERIC_DIR)/tclStringObj.c
