@@ -565,6 +565,13 @@ if {[info commands testlocale]==""} {
 		    "FreeBSD" {
 			set isoLocale fr_FR.ISO_8859-1
 		    }
+		    HP-UX {
+			set isoLocale fr_FR.iso88591
+		    }
+		    Linux -
+		    IRIX {
+			set isoLocale fr
+		    }
 		    default {
 			# Works on SunOS 4 and Solaris, and maybe others...
 			# define it to something else on your system
@@ -583,7 +590,7 @@ if {[info commands testlocale]==""} {
     restore_locale
 
     if {$testConfig(hasIsoLocale) == 0} {
-	puts "(will skip tests that needs to set an iso8859-1 locale)"
+	puts "(will skip tests that need to set an iso8859-1 locale)"
     }
 
 } 
