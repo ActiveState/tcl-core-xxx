@@ -58,7 +58,7 @@ mp_mul_d (mp_int * a, mp_digit b, mp_int * c)
   }
 
   /* store final carry [if any] */
-  *tmpc++ = u;
+  *tmpc++ = u; ++ix;
 
   /* now zero digits above the top */
   while (ix++ < olduse) {
