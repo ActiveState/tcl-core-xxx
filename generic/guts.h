@@ -30,7 +30,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) guts.h 1.7 98/01/21 14:33:04
+ * RCS: @(#) $Id$
  */
 
 #include "tclInt.h"

@@ -31,7 +31,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) locale.c 1.11 98/01/27 20:10:09
+ * RCS: @(#) $Id$
  */
 
 /*

@@ -32,7 +32,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) color.c 1.10 98/02/11 17:23:09
+ * RCS: @(#) $Id$
  */
 
 /*

@@ -30,7 +30,7 @@
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * SCCS: @(#) compile.c 1.12 98/02/11 17:25:30
+ * RCS: @(#) $Id$
  */
 
 #include "tclInt.h"
