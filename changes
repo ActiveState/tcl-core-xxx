@@ -3526,3 +3526,5 @@ The goal of this patch is that simple extensions compiled against
 Tcl 8.0.3 will also work with Tcl 8.1.
 Contributed by Jan Nijtmans (JN)
 
+7/1/97 (bug fix) The commands "info args, body, default, procs" did
+not correctly handle imported procedures. (RJ)
