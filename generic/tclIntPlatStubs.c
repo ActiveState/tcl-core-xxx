@@ -107,28 +107,13 @@ TclpGetPid(pid)
 }
 
 /* Slot 9 */
-void
-TclpFinalize()
-{
-    (tclIntPlatStubsPtr->tclpFinalize)();
-}
-
-/* Slot 10 */
 int
 TclWinGetPlatformId()
 {
     return (tclIntPlatStubsPtr->tclWinGetPlatformId)();
 }
 
-/* Slot 11 */
-void
-TclWinInit(hInst)
-    HINSTANCE hInst;
-{
-    (tclIntPlatStubsPtr->tclWinInit)(hInst);
-}
-
-/* Slot 12 */
+/* Slot 10 */
 int
 TclWinSynchSpawn(args, type, trans, pidPtr)
     void * args;
@@ -139,7 +124,7 @@ TclWinSynchSpawn(args, type, trans, pidPtr)
     return (tclIntPlatStubsPtr->tclWinSynchSpawn)(args, type, trans, pidPtr);
 }
 
-/* Slot 13 */
+/* Slot 11 */
 void
 TclGetAndDetachPids(interp, chan)
     Tcl_Interp * interp;
@@ -148,7 +133,7 @@ TclGetAndDetachPids(interp, chan)
     (tclIntPlatStubsPtr->tclGetAndDetachPids)(interp, chan);
 }
 
-/* Slot 14 */
+/* Slot 12 */
 int
 TclpCloseFile(file)
     TclFile file;
@@ -156,7 +141,7 @@ TclpCloseFile(file)
     return (tclIntPlatStubsPtr->tclpCloseFile)(file);
 }
 
-/* Slot 15 */
+/* Slot 13 */
 Tcl_Channel
 TclpCreateCommandChannel(readFile, writeFile, errorFile, numPids, pidPtr)
     TclFile readFile;
@@ -168,7 +153,7 @@ TclpCreateCommandChannel(readFile, writeFile, errorFile, numPids, pidPtr)
     return (tclIntPlatStubsPtr->tclpCreateCommandChannel)(readFile, writeFile, errorFile, numPids, pidPtr);
 }
 
-/* Slot 16 */
+/* Slot 14 */
 int
 TclpCreatePipe(readPipe, writePipe)
     TclFile * readPipe;
@@ -177,7 +162,7 @@ TclpCreatePipe(readPipe, writePipe)
     return (tclIntPlatStubsPtr->tclpCreatePipe)(readPipe, writePipe);
 }
 
-/* Slot 17 */
+/* Slot 15 */
 int
 TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr)
     Tcl_Interp * interp;
@@ -191,7 +176,7 @@ TclpCreateProcess(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr)
     return (tclIntPlatStubsPtr->tclpCreateProcess)(interp, argc, argv, inputFile, outputFile, errorFile, pidPtr);
 }
 
-/* Slot 18 */
+/* Slot 16 */
 TclFile
 TclpCreateTempFile(contents, namePtr)
     char * contents;
@@ -200,14 +185,14 @@ TclpCreateTempFile(contents, namePtr)
     return (tclIntPlatStubsPtr->tclpCreateTempFile)(contents, namePtr);
 }
 
-/* Slot 19 */
+/* Slot 17 */
 char *
 TclpGetTZName()
 {
     return (tclIntPlatStubsPtr->tclpGetTZName)();
 }
 
-/* Slot 20 */
+/* Slot 18 */
 TclFile
 TclpMakeFile(channel, direction)
     Tcl_Channel channel;
@@ -216,7 +201,7 @@ TclpMakeFile(channel, direction)
     return (tclIntPlatStubsPtr->tclpMakeFile)(channel, direction);
 }
 
-/* Slot 21 */
+/* Slot 19 */
 TclFile
 TclpOpenFile(fname, mode)
     char * fname;
