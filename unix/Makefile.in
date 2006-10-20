@@ -259,6 +259,10 @@ CC			= @CC@
 # should be installed (symlinks, compression, package name suffix).
 MAN_FLAGS               = @MAN_FLAGS@
 
+# If non-empty, install the timezone files that are included with Tcl,
+# otherwise use the ones that ship with the OS.
+INSTALL_TZDATA		= @INSTALL_TZDATA@
+
 #----------------------------------------------------------------
 # The information below is usually usable as is.  The configure
 # script won't modify it and it only exists to make working
@@ -750,7 +754,7 @@ install-binaries: binaries
 	fi
 	@EXTRA_INSTALL_BINARIES@
 
-install-libraries: libraries install-tzdata install-msgs
+install-libraries: libraries $(INSTALL_TZDATA) install-msgs
 	@for i in $(INCLUDE_INSTALL_DIR) $(SCRIPT_INSTALL_DIR); \
 	    do \
 	    if [ ! -d $$i ] ; then \
@@ -799,8 +803,8 @@ install-libraries: libraries install-tzdata install-msgs
 	    done;
 	@echo "Installing package msgcat 1.4.2 as a Tcl Module";
 	@$(INSTALL_DATA) $(TOP_DIR)/library/msgcat/msgcat.tcl $(SCRIPT_INSTALL_DIR)/../tcl8/8.5/msgcat-1.4.2.tm;
-	@echo "Installing package tcltest 2.3.0 as a Tcl Module";
-	@$(INSTALL_DATA) $(TOP_DIR)/library/tcltest/tcltest.tcl $(SCRIPT_INSTALL_DIR)/../tcl8/8.3/tcltest-2.3.0.tm;
+	@echo "Installing package tcltest 2.3a1 as a Tcl Module";
+	@$(INSTALL_DATA) $(TOP_DIR)/library/tcltest/tcltest.tcl $(SCRIPT_INSTALL_DIR)/../tcl8/8.5/tcltest-2.3a1.tm;
 	@echo "Installing library encoding directory";
 	@for i in $(TOP_DIR)/library/encoding/*.enc ; do \
 		$(INSTALL_DATA) $$i $(SCRIPT_INSTALL_DIR)/encoding; \
