@@ -12,7 +12,7 @@
  * The library is free for all purposes without any express
  * guarantee it works.
  *
- * Tom St Denis, tomstdenis@iahu.ca, http://math.libtomcrypt.org
+ * Tom St Denis, tomstdenis@gmail.com, http://math.libtomcrypt.com
  */
 
 /* read a string [ASCII] in a given radix */
@@ -83,3 +83,9 @@ int mp_read_radix (mp_int * a, const char *str, int radix)
   return MP_OKAY;
 }
 #endif
+
+/* $Source$ */
+/* Tom's revision is 1.4. */
+/* $Revision$ */
+/* $Date$ */
+
