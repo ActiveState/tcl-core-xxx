@@ -15,7 +15,10 @@ if {[lsearch [namespace children] ::tcltest] == -1} {
     namespace import -force ::tcltest::*
 }
 
-if {[testConstraint unix]} {
+testConstraint tailcall [llength [info commands ::tcl::unsupported::tailcall]]
+testConstraint teststacklimit [llength [info commands teststacklimit]]
+
+if {[testConstraint teststacklimit]} {
     #
     # Workaround for gnu-make bug http://savannah.gnu.org/bugs/?18396
     #
@@ -26,8 +29,6 @@ if {[testConstraint unix]} {
     set oldLimit [teststacklimit 2048]
 }
 
-
-testConstraint tailcall [llength [info commands ::tcl::unsupported::tailcall]]
 
 #
 # The first few tests will blow the C stack if the NR machinery is not working
@@ -300,7 +301,7 @@ test NRE-T.6 {tailcall does remove callframes} {tailcall} {
 # cleanup
 ::tcltest::cleanupTests
 
-if {[testConstraint unix]} {
+if {[testConstraint teststacklimit]} {
     teststacklimit $oldLimit
 }
 
