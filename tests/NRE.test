@@ -285,6 +285,23 @@ test NRE-6.2 {[uplevel] is not recursive} -setup {
     rename a {}
 } -result {0 20001}
 
+test NRE-7.1 {[catch] is not recursive} -setup {
+    proc a i {
+	variable x [depthDiff]
+	if {[incr i] > 10} {
+	    return
+	}
+	uplevel 1 [list catch "a $i"]
+    }
+} -body {
+    catch {a 0}
+    lrange $x 0 3
+} -cleanup {
+    rename a {}
+    unset x
+} -result {0 3 3 0}
+
+
 #
 #  Basic TclOO tests
 #
