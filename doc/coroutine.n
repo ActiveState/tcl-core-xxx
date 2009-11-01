@@ -129,7 +129,7 @@ namespace eval demo {
     }
     proc makeExample {} {
         puts "making from [info level]"
-        puts [coroutine coroEg example]
+        puts [\fBcoroutine\fR coroEg example]
     }
     makeExample
 }
