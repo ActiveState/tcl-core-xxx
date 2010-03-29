@@ -592,6 +592,11 @@ typedef int socklen_t;
 #   define inet_ntoa(x)	TclpInetNtoa(x)
 #endif /* TCL_THREADS */
 
+/* FIXME */
+#ifndef AF_INET6
+#define AF_INET6 10
+#endif
+
 /*
  * Set of MT-safe implementations of some
  * known-to-be-MT-unsafe library calls.
