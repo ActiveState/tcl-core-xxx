@@ -107,6 +107,134 @@ TclSockMinimumBuffers(
 }
 
 /*
+ *----------------------------------------------------------------------
+ *
+ * TclCreateSocketAddress --
+ *
+ *	This function initializes a sockaddr structure for a host and port.
+ *
+ * Results:
+ *	1 if the host was valid, 0 if the host could not be converted to an IP
+ *	address.
+ *
+ * Side effects:
+ *	Fills in the *sockaddrPtr structure.
+ *
+ *----------------------------------------------------------------------
+ */
+
+int
+TclCreateSocketAddress(
+    struct addrinfo **addrlist,		/* Socket address list */
+    const char *host,			/* Host. NULL implies INADDR_ANY */
+    int port,				/* Port number */
+    int willBind,			/* Is this an address to bind() to or
+					 * to connect() to? */
+    const char **errorMsgPtr)		/* Place to store the error message
+					 * detail, if available. */
+{
+    struct addrinfo hints;
+    struct addrinfo *p;
+    struct addrinfo *v4head = NULL, *v4ptr = NULL;
+    struct addrinfo *v6head = NULL, *v6ptr = NULL;
+    char *native = NULL, portstring[TCL_INTEGER_SPACE];
+    Tcl_DString ds;
+    int result, i;
+
+    TclFormatInt(portstring, port);
+
+    if (host != NULL) {
+	native = Tcl_UtfToExternalDString(NULL, host, -1, &ds);
+    }
+    
+    (void) memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+#ifdef AI_ADDRCONFIG
+    /* Missing on: OpenBSD, NetBSD */
+    hints.ai_flags |= AI_ADDRCONFIG;
+#endif
+    if (willBind) {
+	hints.ai_flags |= AI_PASSIVE;
+    } 
+
+    result = getaddrinfo(native, portstring, &hints, addrlist);
+
+    if (host != NULL) {
+	Tcl_DStringFree(&ds);
+    }
+
+    /*
+     * Put IPv4 addresses before IPv6 addresses to maximize backwards
+     * compatibility of [fconfigure -sockname] output.
+     *
+     * There might be more elegant/efficient ways to do this.
+     */
+    if (willBind) {
+	for (p = *addrlist; p != NULL; p = p->ai_next) {
+	    if (p->ai_family == AF_INET) {
+		if (v4head == NULL) {
+		    v4head = p;
+		} else {
+		    v4ptr->ai_next = p;
+		}
+		v4ptr = p;
+	    } else {
+		if (v6head == NULL) {
+		    v6head = p;
+		} else {
+		    v6ptr->ai_next = p;
+		}
+		v6ptr = p;
+	    }
+	}
+	*addrlist = NULL;
+	if (v6head != NULL) {
+	    *addrlist = v6head;
+	    v6ptr->ai_next = NULL;
+	}
+	if (v4head != NULL) {
+	    v4ptr->ai_next = *addrlist;
+	    *addrlist = v4head;
+	}
+    }
+    i = 0;
+    for (p = *addrlist; p != NULL; p = p->ai_next) {
+	i++;
+    }
+    
+    if (result == 0) {
+	return 1;
+    }
+	
+    /*
+     * Ought to use gai_strerror() here...
+     */
+
+    switch (result) {
+    case EAI_NONAME:
+    case EAI_SERVICE:
+#if defined(EAI_ADDRFAMILY) && EAI_ADDRFAMILY != EAI_NONAME
+    case EAI_ADDRFAMILY:
+#endif
+#if defined(EAI_NODATA) && EAI_NODATA != EAI_NONAME
+    case EAI_NODATA:
+#endif
+	*errorMsgPtr = gai_strerror(result);
+	errno = EHOSTUNREACH;
+	return 0;
+#ifdef EAI_SYSTEM
+    case EAI_SYSTEM:
+	return 0;
+#endif
+    default:
+	*errorMsgPtr = gai_strerror(result);
+	errno = ENXIO;
+	return 0;
+    }
+}
+
+/*
  * Local Variables:
  * mode: c
  * c-basic-offset: 4
