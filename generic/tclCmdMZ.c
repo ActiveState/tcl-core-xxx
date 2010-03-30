@@ -10,7 +10,7 @@
  * Copyright (c) 1994-1997 Sun Microsystems, Inc.
  * Copyright (c) 1998-2000 Scriptics Corporation.
  * Copyright (c) 2002 ActiveState Corporation.
- * Copyright (c) 2003 Donal K. Fellows.
+ * Copyright (c) 2003-2009 Donal K. Fellows.
  *
  * See the file "license.terms" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -4159,14 +4159,11 @@ TclNRTryObjCmd(
 {
     Tcl_Obj *bodyObj, *handlersObj, *finallyObj = NULL;
     int i, bodyShared, haveHandlers, dummy, code;
-    static const char *handlerNames[] = {
+    static const char *const handlerNames[] = {
 	"finally", "on", "trap", NULL
     };
     enum Handlers {
 	TryFinally, TryOn, TryTrap
-    };
-    static const char *exceptionNames[] = {
-	"ok", "error", "return", "break", "continue", NULL
     };
 
     /*
@@ -4217,13 +4214,7 @@ TclNRTryObjCmd(
 		Tcl_DecrRefCount(handlersObj);
 		return TCL_ERROR;
 	    }
-	    if (Tcl_GetIntFromObj(NULL, objv[i+1], &code) != TCL_OK
-		    && Tcl_GetIndexFromObj(NULL, objv[i+1], exceptionNames,
-			    "code", 0, &code) != TCL_OK) {
-		Tcl_SetObjResult(interp, Tcl_ObjPrintf(
-			"bad code '%s': must be integer, \"ok\", \"error\", "
-			"\"return\", \"break\" or \"continue\"",
-			Tcl_GetString(objv[i+1])));
+	    if (TCL_ERROR == TclGetCompletionCodeFromObj(interp, objv[i+1], &code)) {
 		Tcl_DecrRefCount(handlersObj);
 		return TCL_ERROR;
 	    }
@@ -4286,8 +4277,8 @@ TclNRTryObjCmd(
      * Execute the body.
      */
 
-    Tcl_NRAddCallback(interp, TryPostBody, handlersObj, finallyObj, objv[0],
-	    NULL);
+    Tcl_NRAddCallback(interp, TryPostBody, handlersObj, finallyObj,
+	    (ClientData)objv, INT2PTR(objc));
     return TclNREvalObjEx(interp, bodyObj, 0,
 	    ((Interp *) interp)->cmdFramePtr, 1);
 }
@@ -4349,25 +4340,43 @@ TryPostBody(
     Tcl_Interp *interp,
     int result)
 {
-    Tcl_Obj *resultObj, *options, *handlersObj, *finallyObj, *cmdObj;
-    int i, dummy, code;
+    Tcl_Obj *resultObj, *options, *handlersObj, *finallyObj, *cmdObj, **objv;
+    int i, dummy, code, objc;
+    int numHandlers = 0;
 
     handlersObj = data[0];
     finallyObj = data[1];
-    cmdObj = data[2];
+    objv = data[2];
+    objc = PTR2INT(data[3]);
+
+    cmdObj = objv[0];
+
+    /*
+     * Check for limits/rewinding, which override normal trapping behaviour.
+     */
+
+    if (((Interp*) interp)->execEnvPtr->rewind || Tcl_LimitExceeded(interp)) {
+	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
+		"\n    (\"%s\" body line %d)", TclGetString(cmdObj),
+		Tcl_GetErrorLine(interp)));
+	if (handlersObj != NULL) {
+	    Tcl_DecrRefCount(handlersObj);
+	}
+	return TCL_ERROR;
+    }
 
     /*
      * Basic processing of the outcome of the script, including adding of
      * errorinfo trace.
      */
 
-    resultObj = Tcl_GetObjResult(interp);
-    Tcl_IncrRefCount(resultObj);
     if (result == TCL_ERROR) {
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
 		"\n    (\"%s\" body line %d)", TclGetString(cmdObj),
 		Tcl_GetErrorLine(interp)));
     }
+    resultObj = Tcl_GetObjResult(interp);
+    Tcl_IncrRefCount(resultObj);
     options = Tcl_GetReturnOptions(interp, result);
     Tcl_IncrRefCount(options);
     Tcl_ResetResult(interp);
@@ -4377,7 +4386,7 @@ TryPostBody(
      */
 
     if (handlersObj != NULL) {
-	int numHandlers, found = 0;
+	int found = 0;
 	Tcl_Obj **handlers, **info;
 
 	Tcl_ListObjGetElements(NULL, handlersObj, &numHandlers, &handlers);
@@ -4483,11 +4492,11 @@ TryPostBody(
 	     */
 
 	    handlerBodyObj = info[4];
-	    Tcl_NRAddCallback(interp, TryPostHandler, cmdObj, options,
-		    info[0], finallyObj);
+	    Tcl_NRAddCallback(interp, TryPostHandler, objv, options, info[0],
+		    INT2PTR((finallyObj == NULL) ? 0 : objc - 1));
 	    Tcl_DecrRefCount(handlersObj);
 	    return TclNREvalObjEx(interp, handlerBodyObj, 0,
-		    ((Interp *) interp)->cmdFramePtr, -1);
+		    ((Interp *) interp)->cmdFramePtr, 4*i + 5);
 
 	handlerFailed:
 	    options = During(interp, result, options, NULL);
@@ -4509,10 +4518,10 @@ TryPostBody(
      */
 
     if (finallyObj != NULL) {
-	Tcl_NRAddCallback(interp, TryPostFinal, resultObj, INT2PTR(result),
-		options, cmdObj);
+	Tcl_NRAddCallback(interp, TryPostFinal, resultObj, options, cmdObj,
+		NULL);
 	return TclNREvalObjEx(interp, finallyObj, 0,
-		((Interp *) interp)->cmdFramePtr, -1);
+		((Interp *) interp)->cmdFramePtr, objc - 1);
     }
 
     /*
@@ -4544,13 +4553,30 @@ TryPostHandler(
     Tcl_Interp *interp,
     int result)
 {
-    Tcl_Obj *resultObj, *cmdObj, *options, *handlerKindObj;
+    Tcl_Obj *resultObj, *cmdObj, *options, *handlerKindObj, **objv;
     Tcl_Obj *finallyObj;
+    int finally;
 
-    cmdObj = data[0];
+    objv = data[0];
     options = data[1];
     handlerKindObj = data[2];
-    finallyObj = data[3];
+    finally = PTR2INT(data[3]);
+
+    cmdObj = objv[0];
+    finallyObj = finally ? objv[finally] : 0;
+
+    /*
+     * Check for limits/rewinding, which override normal trapping behaviour.
+     */
+
+    if (((Interp*) interp)->execEnvPtr->rewind || Tcl_LimitExceeded(interp)) {
+	options = During(interp, result, options, Tcl_ObjPrintf(
+		"\n    (\"%s ... %s\" handler line %d)",
+		TclGetString(cmdObj), TclGetString(handlerKindObj),
+		Tcl_GetErrorLine(interp)));
+	Tcl_DecrRefCount(options);
+	return TCL_ERROR;
+    }
 
     /*
      * The handler result completely substitutes for the result of the body.
@@ -4574,10 +4600,14 @@ TryPostHandler(
      */
 
     if (finallyObj != NULL) {
-	Tcl_NRAddCallback(interp, TryPostFinal, resultObj, INT2PTR(result),
-		options, cmdObj);
-	return TclNREvalObjEx(interp, finallyObj, 0,
-		((Interp *) interp)->cmdFramePtr, -1);
+	Interp *iPtr = (Interp *) interp;
+
+	Tcl_NRAddCallback(interp, TryPostFinal, resultObj, options, cmdObj,
+		NULL);
+
+	/* The 'finally' script is always the last argument word. */
+	return TclNREvalObjEx(interp, finallyObj, 0, iPtr->cmdFramePtr,
+		finally);
     }
 
     /*
@@ -4607,24 +4637,21 @@ static int
 TryPostFinal(
     ClientData data[],
     Tcl_Interp *interp,
-    int finalResult)
+    int result)
 {
     Tcl_Obj *resultObj, *options, *cmdObj;
-    int result;
 
     resultObj = data[0];
-    result = PTR2INT(data[1]);
-    options = data[2];
-    cmdObj = data[3];
+    options = data[1];
+    cmdObj = data[2];
 
     /*
      * If the result wasn't OK, we need to adjust the result options.
      */
 
-    if (finalResult != TCL_OK) {
+    if (result != TCL_OK) {
 	Tcl_DecrRefCount(resultObj);
 	resultObj = NULL;
-	result = finalResult;
 	if (result == TCL_ERROR) {
 	    options = During(interp, result, options, Tcl_ObjPrintf(
 		    "\n    (\"%s ... finally\" body line %d)",

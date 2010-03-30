@@ -1,43 +1,153 @@
+2010-03-29  Jan Nijtmans  <nijtmans@users.sf.net>
+
+	* unix/tcl.m4             Only test for -visibility=hidden with gcc
+	                          (Second remark in [Bug 2976508])
+	* unix/configure          regen
+
+2010-03-29  Don Porter  <dgp@users.sourceforge.net>
+
+	* generic/tclStringObj.c:       Fix array overrun in test format-1.12
+	caught by valgrind testing.
+
+2010-03-27  Jan Nijtmans  <nijtmans@users.sf.net>
+
+	* generic/tclInt.h:	[FRQ 2974744]: share exception codes
+	* generic/tclResult.c:	(ObjType?)
+	* generic/tclCmdMZ.c:
+	* generic/tclCompCmdsSZ.c:
+
+2010-03-26  Jan Nijtmans  <nijtmans@users.sf.net>
+
+	* generic/tclExecute.c: [Bug 2976508]: Tcl HEAD fails on HP-UX
+
+2010-03-25  Donal K. Fellows  <dkf@users.sf.net>
+
+	* unix/tclUnixFCmd.c (TclUnixCopyFile): [Bug 2976504]: Corrected
+	number of arguments to fstatfs() call.
+
+	* macosx/tclMacOSXBundle.c, macosx/tclMacOSXFCmd.c: 
+	* macosx/tclMacOSXNotify.c: Reduce the level of ifdeffery in the
+	functions of these files to improve readability. They need to be
+	audited for whether complexity can be removed based on the minimum
+	supported version of OSX, but that requires a real expert.
+
+2010-03-24  Don Porter  <dgp@users.sourceforge.net>
+
+	* generic/tclResult.c:  [Bug 2383005]: Revise [return -errorcode] so
+	* tests/result.test:    that it rejects illegal non-list values.
+
+2010-03-24  Donal K. Fellows  <dkf@users.sf.net>
+
+	* generic/tclOOInfo.c (InfoObjectMethodTypeCmd)
+	(InfoClassMethodTypeCmd): Added introspection of method types so that
+	it is possible to find this info out without using errors.
+	* generic/tclOOMethod.c (procMethodType): Now that introspection can
+	reveal the name of method types, regularize the name of normal methods
+	to be the name of the definition type used to create them.
+
+	* tests/async.test (async-4.*): Reduce obscurity of these tests by
+	putting the bulk of the code for them inside the test body with the
+	help of [apply].
+
+	* generic/tclCmdMZ.c (TryPostBody, TryPostHandler): Make sure that the
+	[try] command does not trap unwinding due to limits.
+
+2010-03-23  Don Porter  <dgp@users.sourceforge.net>
+
+	* generic/tclCmdMZ.c:	[Bug 2973361]: Revised fix for computing
+	indices of script arguments to [try].
+
+2010-03-23  Jan Nijtmans  <nijtmans@users.sf.net>
+
+	* generic/tclCmdMZ.c:      Make error message in "try" implementation
+	* generic/tclCompCmdsSZ.c: exactly the same as the one in "return"
+	* tests/error.test:
+	* libtommath/mtests/mpi.c: Single "const" addition
+
+2010-03-22  Don Porter  <dgp@users.sourceforge.net>
+
+	* generic/tclCmdMZ.c:	[Bug 2973361]: Compute the correct integer
+	values to identify the argument indices of the various script
+	arguments to [try]. Passing in -1 led to invalid memory reads.
+
+2010-03-20  Donal K. Fellows  <dkf@users.sf.net>
+
+	* doc/exec.n: Make it a bit clearer that there is an option to run a
+	pipeline in the background.
+
+	* generic/tclIOCmd.c (Tcl_FcopyObjCmd):		Lift the restriction
+	* generic/tclIO.c (TclCopyChannel, CopyData):	on the [fcopy] command
+	* generic/tclIO.h (CopyState):			that forced it to only
+	copy up to 2GB per script-level callback. Now it is anything that can
+	fit in a (signed) 64-bit integer. Problem identified by Frederic
+	Bonnet on comp.lang.tcl. Note that individual low-level reads and
+	writes are still smaller as the optimal buffer size is smaller.
+
+2010-03-20  Jan Nijtmans  <nijtmans@users.sf.net>
+
+	* win/stub16.c:         Don't hide that we use the ASCII API here.
+	                        (does someone still use that?)
+	* win/tclWinPipe.c:     2 unnecessary type casts.
+
+2010-03-19  Donal K. Fellows  <dkf@users.sf.net>
+
+	* generic/tclCompCmdsSZ.c (TclCompileThrowCmd): Added compilation for
+	the [throw] command.
+
+2010-03-18  Don Porter  <dgp@users.sourceforge.net>
+
+	* generic/tclListObj.c:	[Bug 2971669]: Prevent in overflow trouble in
+	* generic/tclTestObj.c:	ListObjReplace operations. Thanks to kbk for
+	* tests/listObj.test:	fix and test.
+
+2010-03-18  Donal K. Fellows  <dkf@users.sf.net>
+
+	* generic/tclCompCmdsSZ.c (IssueTryFinallyInstructions):
+	[Bug 2971921]: Corrected jump so that it doesn't skip into the middle
+	of an instruction! Tightened the instruction issuing. Moved endCatch
+	calls closer to their point that they guard, ensuring correct ordering
+	of result values.
+
 2010-03-17  Andreas Kupries  <andreask@activestate.com>
 
-	* generic/tclIORTrans.c (ReflectInput, ReflectOutput,
-	ReflectSeekWide): [Bug 2921116]: Added missing TclEventuallyFree
+	* generic/tclIORTrans.c (ReflectInput, ReflectOutput)
+	(ReflectSeekWide): [Bug 2921116]: Added missing TclEventuallyFree
 	calls for preserved ReflectedTransform* structures. Reworked
-	ReflectInput to preserve the structure for its whole life, not
-	only in InvokeTclMethod.
+	ReflectInput to preserve the structure for its whole life, not only in
+	InvokeTclMethod.
 
-	* generic/tclIO.c (Tcl_GetsObj): [Bug 2921116]: Regenerate
-	topChan, may have been changed by a self-modifying transformation.
+	* generic/tclIO.c (Tcl_GetsObj): [Bug 2921116]: Regenerate topChan,
+	may have been changed by a self-modifying transformation.
 
-	* tests/ioTrans/test (iortrans-4.8, iortrans-4.9, iortrans-5.11,
-	iortrans-7.4, iortrans-8.3): New test cases.
+	* tests/ioTrans/test (iortrans-4.8, iortrans-4.9, iortrans-5.11)
+	(iortrans-7.4, iortrans-8.3): New test cases.
 
 2010-03-16  Jan Nijtmans  <nijtmans@users.sf.net>
 
-	* compat/zlib/*           Upgrade zlib to version 1.2.4
-	* win/makefile.vc
-	* unix/Makefile.in
-	* win/tclWinChan.c        don't cast away "const" without reason.
+	* compat/zlib/*:	Upgrade zlib to version 1.2.4.
+	* win/makefile.vc:
+	* unix/Makefile.in:
+	* win/tclWinChan.c:	Don't cast away "const" without reason.
 
 2010-03-12  Jan Nijtmans  <nijtmans@users.sf.net>
 
-	* win/makefile.vc         Fix [Bug 2967340]: Static build failure
-	* win/.cvsignore
+	* win/makefile.vc: [Bug 2967340]: Static build was failing.
+	* win/.cvsignore:
 
 2010-03-10  Jan Nijtmans  <nijtmans@users.sf.net>
 
-	* generic/tclTest.c       Remove unnecessary '&' decoration for function
-	* generic/tclIOUtil.c     pointers
-	* win/tclWin32Dll.c       Double declaration of TclNativeDupInternalRep
-	* unix/tclIOUtil.c
-	* unix/dltest/.cvsignore Ignore *.so here
+	* generic/tclTest.c:	Remove unnecessary '&' decoration for
+	* generic/tclIOUtil.c:	function pointers
+	* win/tclWin32Dll.c:	Double declaration of TclNativeDupInternalRep
+	* unix/tclIOUtil.c:
+	* unix/dltest/.cvsignore: Ignore *.so here
 
 2010-03-09  Andreas Kupries  <andreask@activestate.com>
 
 	* generic/tclIORChan.c: [Bug 2936225]: Thanks to Alexandre Ferrieux
-	* doc/refchan.n: <ferrieux@users.sourceforge.net> for debugging and fixing
-	* tests/ioCmd.test: the problem. It is the write-side equivalent
-	to the bug fixed 2009-08-06.
+	* doc/refchan.n:    <ferrieux@users.sourceforge.net> for debugging and
+	* tests/ioCmd.test: fixing the problem. It is the write-side
+	equivalent to the bug fixed 2009-08-06.
 
 2010-03-09  Don Porter  <dgp@users.sourceforge.net>
 
@@ -55,20 +165,22 @@
 
 2010-03-07  Jan Nijtmans  <nijtmans@users.sf.net>
 
-	* generic/tclTest.c       test that tclOO stubs are present in stub library
-	* generic/tclOOMethod.c   Applied missing part of [Patch 2961556]
-	* win/tclWinInt.h         Change all tclWinProcs signatures to use
-	* win/tclWin32Dll.c       TCHAR* in stead of WCHAR*. This is meant
-	* win/tclWinDde.c         as preparation to make [Enh 2965056]
-	* win/tclWinFCmd.c        possible at all.
-	* win/tclWinFile.c
-	* win/tclWinPipe.c
-	* win/tclWinSock.c
+	* generic/tclTest.c:	  Test that tclOO stubs are present in stub
+				  library
+	* generic/tclOOMethod.c:  Applied missing part of [Patch 2961556]
+	* win/tclWinInt.h:	  Change all tclWinProcs signatures to use
+	* win/tclWin32Dll.c:	  TCHAR* in stead of WCHAR*. This is meant
+	* win/tclWinDde.c:	  as preparation to make [Enh 2965056]
+	* win/tclWinFCmd.c:	  possible at all.
+	* win/tclWinFile.c:
+	* win/tclWinPipe.c:
+	* win/tclWinSock.c:
 
 2010-03-06  Jan Nijtmans  <nijtmans@users.sf.net>
 
-	* generic/tclStubLib.c  remove presence of tclTomMathStubsPtr here
-	* generic/tclTest.c     test that tommath stubs are present in stub library
+	* generic/tclStubLib.c:	Remove presence of tclTomMathStubsPtr here.
+	* generic/tclTest.c:	Test that tommath stubs are present in stub
+				library.
 
 2010-03-05  Donal K. Fellows  <dkf@users.sf.net>
 

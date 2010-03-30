@@ -145,6 +145,10 @@ const AuxDataType tclJumptableInfoType = {
     (var) = CurrentOffset(envPtr);TclEmitInstInt4(INST_##name,0,envPtr)
 #define FIXJUMP(var) \
     TclStoreInt4AtPtr(CurrentOffset(envPtr)-(var),envPtr->codeStart+(var)+1)
+#define LOAD(idx) \
+    if ((idx)<256) {OP1(LOAD_SCALAR1,(idx));} else {OP4(LOAD_SCALAR4,(idx));}
+#define STORE(idx) \
+    if ((idx)<256) {OP1(STORE_SCALAR1,(idx));} else {OP4(STORE_SCALAR4,(idx));}
 
 /*
  *----------------------------------------------------------------------
@@ -1785,6 +1789,116 @@ PrintJumptableInfo(
 /*
  *----------------------------------------------------------------------
  *
+ * TclCompileThrowCmd --
+ *
+ *	Procedure called to compile the "throw" command.
+ *
+ * Results:
+ *	Returns TCL_OK for a successful compile. Returns TCL_ERROR to defer
+ *	evaluation to runtime.
+ *
+ * Side effects:
+ *	Instructions are added to envPtr to execute the "throw" command at
+ *	runtime.
+ *
+ *----------------------------------------------------------------------
+ */
+
+int
+TclCompileThrowCmd(
+    Tcl_Interp *interp,		/* Used for error reporting. */
+    Tcl_Parse *parsePtr,	/* Points to a parse structure for the command
+				 * created by Tcl_ParseCommand. */
+    Command *cmdPtr,		/* Points to defintion of command being
+				 * compiled. */
+    CompileEnv *envPtr)		/* Holds resulting instructions. */
+{
+    DefineLineInformation;	/* TIP #280 */
+    int numWords = parsePtr->numWords;
+    Tcl_Token *codeToken, *msgToken;
+    Tcl_Obj *objPtr;
+
+    if (numWords != 3) {
+	return TCL_ERROR;
+    }
+    codeToken = TokenAfter(parsePtr->tokenPtr);
+    msgToken = TokenAfter(codeToken);
+
+    TclNewObj(objPtr);
+    Tcl_IncrRefCount(objPtr);
+    if (TclWordKnownAtCompileTime(codeToken, objPtr)) {
+	Tcl_Obj *errPtr, *dictPtr;
+	const char *string;
+	int len;
+
+	/*
+	 * The code is known at compilation time. This allows us to issue a
+	 * very efficient sequence of instructions.
+	 */
+
+	if (Tcl_ListObjLength(interp, objPtr, &len) != TCL_OK) {
+	    /*
+	     * Must still do this; might generate an error when getting this
+	     * "ignored" value prepared as an argument.
+	     */
+
+	    CompileWord(envPtr, msgToken, interp, 2);
+	    TclCompileSyntaxError(interp, envPtr);
+	    return TCL_OK;
+	}
+	if (len == 0) {
+	    /*
+	     * Must still do this; might generate an error when getting this
+	     * "ignored" value prepared as an argument.
+	     */
+
+	    CompileWord(envPtr, msgToken, interp, 2);
+	    goto issueErrorForEmptyCode;
+	}
+	TclNewLiteralStringObj(errPtr, "-errorcode");
+	TclNewObj(dictPtr);
+	Tcl_DictObjPut(NULL, dictPtr, errPtr, objPtr);
+	Tcl_IncrRefCount(dictPtr);
+	string = Tcl_GetStringFromObj(dictPtr, &len);
+	CompileWord(envPtr, msgToken, interp, 2);
+	PushLiteral(envPtr, string, len);
+	TclDecrRefCount(dictPtr);
+	OP44(				RETURN_IMM, 1, 0);
+    } else {
+	/*
+	 * When the code token is not known at compilation time, we need to do
+	 * a little bit more work. The main tricky bit here is that the error
+	 * code has to be a list (a [throw] restriction) so we must emit extra
+	 * instructions to enforce that condition.
+	 */
+
+	CompileWord(envPtr, codeToken, interp, 1);
+	PUSH(				"-errorcode");
+	CompileWord(envPtr, msgToken, interp, 2);
+	OP4(				REVERSE, 3);
+	OP(				DUP);
+	OP(				LIST_LENGTH);
+	OP1(				JUMP_FALSE1, 16);
+	OP4(				LIST, 2);
+	OP44(				RETURN_IMM, 1, 0);
+
+	/*
+	 * Generate an error for being an empty list. Can't leverage anything
+	 * else to do this for us.
+	 */
+
+    issueErrorForEmptyCode:
+	PUSH(				"type must be non-empty list");
+	PUSH(				"");
+	OP44(				RETURN_IMM, 1, 0);
+    }
+    TclDecrRefCount(objPtr);
+    return TCL_OK;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
  * TclCompileTryCmd --
  *
  *	Procedure called to compile the "try" command.
@@ -1878,9 +1992,6 @@ TclCompileTryCmd(
 	    } else if (tokenPtr[1].size == 2
 		    && !strncmp(tokenPtr[1].start, "on", 2)) {
 		int code;
-		static const char *codes[] = {
-		    "ok", "error", "return", "break", "continue", NULL
-		};
 
 		/*
 		 * Parse the result code to look for.
@@ -1893,9 +2004,7 @@ TclCompileTryCmd(
 		    TclDecrRefCount(tmpObj);
 		    goto failedToCompile;
 		}
-		if (Tcl_GetIntFromObj(NULL, tmpObj, &code) != TCL_OK
-			&& Tcl_GetIndexFromObj(NULL, tmpObj, codes, "",
-				TCL_EXACT, &code) != TCL_OK) {
+		if (TCL_ERROR == TclGetCompletionCodeFromObj(NULL, tmpObj, &code)) {
 		    TclDecrRefCount(tmpObj);
 		    goto failedToCompile;
 		}
@@ -2072,16 +2181,18 @@ IssueTryInstructions(
     ExceptionRangeStarts(envPtr, range);
     BODY(				bodyToken, 1);
     ExceptionRangeEnds(envPtr, range);
-    OP1(				JUMP1, 3);
+    PUSH(				"0");
+    OP4(				REVERSE, 2);
+    OP1(				JUMP1, 4);
     ExceptionRangeTarget(envPtr, range, catchOffset);
-    OP(					PUSH_RESULT);
-    OP4(				STORE_SCALAR4, resultVar);
-    OP(					POP);
-    OP(					PUSH_RETURN_OPTIONS);
-    OP4(				STORE_SCALAR4, optionsVar);
-    OP(					POP);
     OP(					PUSH_RETURN_CODE);
+    OP(					PUSH_RESULT);
+    OP(					PUSH_RETURN_OPTIONS);
     OP(					END_CATCH);
+    STORE(				optionsVar);
+    OP(					POP);
+    STORE(				resultVar);
+    OP(					POP);
 
     /*
      * Now we handle all the registered 'on' and 'trap' handlers in order.
@@ -2106,7 +2217,7 @@ IssueTryInstructions(
 	     * Match the errorcode according to try/trap rules.
 	     */
 
-	    OP4(			LOAD_SCALAR4, optionsVar);
+	    LOAD(			optionsVar);
 	    PUSH(			"-errorcode");
 	    OP4(			DICT_GET, 1);
 	    OP44(			LIST_RANGE_IMM, 0, len-1);
@@ -2125,12 +2236,12 @@ IssueTryInstructions(
 	 */
 
 	if (resultVars[i] >= 0) {
-	    OP4(			LOAD_SCALAR4, resultVar);
-	    OP4(			STORE_SCALAR4, resultVars[i]);
+	    LOAD(			resultVar);
+	    STORE(			resultVars[i]);
 	    OP(				POP);
 	    if (optionVars[i] >= 0) {
-		OP4(			LOAD_SCALAR4, optionsVar);
-		OP4(			STORE_SCALAR4, optionVars[i]);
+		LOAD(			optionsVar);
+		STORE(			optionVars[i]);
 		OP(			POP);
 	    }
 	}
@@ -2166,8 +2277,8 @@ IssueTryInstructions(
      */
 
     OP(					POP);
-    OP4(				LOAD_SCALAR4, optionsVar);
-    OP4(				LOAD_SCALAR4, resultVar);
+    LOAD(				optionsVar);
+    LOAD(				resultVar);
     OP(					RETURN_STK);
 
     /*
@@ -2218,16 +2329,18 @@ IssueTryFinallyInstructions(
     ExceptionRangeStarts(envPtr, range);
     BODY(				bodyToken, 1);
     ExceptionRangeEnds(envPtr, range);
-    OP1(				JUMP1, 3);
+    PUSH(				"0");
+    OP4(				REVERSE, 2);
+    OP1(				JUMP1, 4);
     ExceptionRangeTarget(envPtr, range, catchOffset);
-    OP(					PUSH_RESULT);
-    OP4(				STORE_SCALAR4, resultVar);
-    OP(					POP);
-    OP(					PUSH_RETURN_OPTIONS);
-    OP4(				STORE_SCALAR4, optionsVar);
-    OP(					POP);
     OP(					PUSH_RETURN_CODE);
+    OP(					PUSH_RESULT);
+    OP(					PUSH_RETURN_OPTIONS);
     OP(					END_CATCH);
+    STORE(				optionsVar);
+    OP(					POP);
+    STORE(				resultVar);
+    OP(					POP);
     envPtr->currStackDepth = savedStackDepth + 1;
 
     /*
@@ -2255,7 +2368,7 @@ IssueTryFinallyInstructions(
 		 * Match the errorcode according to try/trap rules.
 		 */
 
-		OP4(			LOAD_SCALAR4, optionsVar);
+		LOAD(			optionsVar);
 		PUSH(			"-errorcode");
 		OP4(			DICT_GET, 1);
 		OP44(			LIST_RANGE_IMM, 0, len-1);
@@ -2279,12 +2392,12 @@ IssueTryFinallyInstructions(
 		ExceptionRangeStarts(envPtr, range);
 	    }
 	    if (resultVars[i] >= 0) {
-		OP4(			LOAD_SCALAR4, resultVar);
-		OP4(			STORE_SCALAR4, resultVars[i]);
+		LOAD(			resultVar);
+		STORE(			resultVars[i]);
 		OP(			POP);
 		if (optionVars[i] >= 0) {
-		    OP4(		LOAD_SCALAR4, optionsVar);
-		    OP4(		STORE_SCALAR4, optionVars[i]);
+		    LOAD(		optionsVar);
+		    STORE(		optionVars[i]);
 		    OP(			POP);
 		}
 	    }
@@ -2321,8 +2434,9 @@ IssueTryFinallyInstructions(
 		}
 		BODY(			handlerTokens[i], 5+i*4);
 		ExceptionRangeEnds(envPtr, range);
-		OP(			POP);
-		OP1(			JUMP1, 6);
+		OP(			PUSH_RETURN_OPTIONS);
+		OP4(			REVERSE, 2);
+		OP1(			JUMP1, 4);
 		forwardsToFix[i] = -1;
 
 		/*
@@ -2334,13 +2448,13 @@ IssueTryFinallyInstructions(
 
 	    finishTrapCatchHandling:
 		ExceptionRangeTarget(envPtr, range, catchOffset);
-		OP(			PUSH_RESULT);
-		OP4(			STORE_SCALAR4, resultVar);
-		OP(			POP);
 		OP(			PUSH_RETURN_OPTIONS);
-		OP4(			STORE_SCALAR4, optionsVar);
-		OP(			POP);
+		OP(			PUSH_RESULT);
 		OP(			END_CATCH);
+		STORE(			resultVar);
+		OP(			POP);
+		STORE(			optionsVar);
+		OP(			POP);
 	    }
 	    if (i+1 < numHandlers) {
 		JUMP(addrsToFix[i],	JUMP4);
@@ -2380,8 +2494,8 @@ IssueTryFinallyInstructions(
 
     BODY(				finallyToken, 3 + 4*numHandlers);
     OP(					POP);
-    OP4(				LOAD_SCALAR4, optionsVar);
-    OP4(				LOAD_SCALAR4, resultVar);
+    LOAD(				optionsVar);
+    LOAD(				resultVar);
     OP(					RETURN_STK);
 
     return TCL_OK;
