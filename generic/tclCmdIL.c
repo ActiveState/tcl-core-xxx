@@ -118,6 +118,9 @@ static int		InfoCompleteCmd(ClientData dummy, Tcl_Interp *interp,
 			    int objc, Tcl_Obj *const objv[]);
 static int		InfoDefaultCmd(ClientData dummy, Tcl_Interp *interp,
 			    int objc, Tcl_Obj *const objv[]);
+/* TIP #348 - New 'info' subcommand 'errorstack' */
+static int		InfoErrorStackCmd(ClientData dummy, Tcl_Interp *interp,
+			    int objc, Tcl_Obj *const objv[]);
 /* TIP #280 - New 'info' subcommand 'frame' */
 static int		InfoFrameCmd(ClientData dummy, Tcl_Interp *interp,
 			    int objc, Tcl_Obj *const objv[]);
@@ -164,6 +167,7 @@ static const EnsembleImplMap defaultInfoMap[] = {
     {"complete",	   InfoCompleteCmd,	    NULL, NULL, NULL},
     {"coroutine",	   TclInfoCoroutineCmd,     NULL, NULL, NULL},
     {"default",		   InfoDefaultCmd,	    NULL, NULL, NULL},
+    {"errorstack",	   InfoErrorStackCmd,	    NULL, NULL, NULL},
     {"exists",		   TclInfoExistsCmd,	    TclCompileInfoExistsCmd, NULL, NULL},
     {"frame",		   InfoFrameCmd,	    NULL, NULL, NULL},
     {"functions",	   InfoFunctionsCmd,	    NULL, NULL, NULL},
@@ -1022,6 +1026,55 @@ InfoDefaultCmd(
 /*
  *----------------------------------------------------------------------
  *
+ * InfoErrorStackCmd --
+ *
+ *	Called to implement the "info errorstack" command that returns information
+ *	about the last error's call stack. Handles the following syntax:
+ *
+ *	    info errorstack ?interp?
+ *
+ * Results:
+ *	Returns TCL_OK if successful and TCL_ERROR if there is an error.
+ *
+ * Side effects:
+ *	Returns a result in the interpreter's result object. If there is an
+ *	error, the result is an error message.
+ *
+ *----------------------------------------------------------------------
+ */
+
+static int
+InfoErrorStackCmd(
+    ClientData dummy,		/* Not used. */
+    Tcl_Interp *interp,		/* Current interpreter. */
+    int objc,			/* Number of arguments. */
+    Tcl_Obj *const objv[])	/* Argument objects. */
+{
+    Tcl_Interp *target;
+    Interp *iPtr;
+
+    if ((objc != 1) && (objc != 2)) {
+	Tcl_WrongNumArgs(interp, 1, objv, "?interp?");
+	return TCL_ERROR;
+    }
+    
+    target = interp;
+    if (objc == 2) {
+        target = Tcl_GetSlave(interp, Tcl_GetString(objv[1]));
+        if (target == NULL) {
+            return TCL_ERROR;
+        }
+    }
+
+    iPtr = (Interp *) target;
+    Tcl_SetObjResult(interp, iPtr->errorStack);
+    
+    return TCL_OK;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
  * TclInfoExistsCmd --
  *
  *	Called to implement the "info exists" command that determines whether
@@ -1318,19 +1371,16 @@ TclInfoFrame(
 	Tcl_HashEntry *namePtr = procPtr->cmdPtr->hPtr;
 
 	if (namePtr) {
-	    char *procName = Tcl_GetHashKey(namePtr->tablePtr, namePtr);
-	    char *nsName = procPtr->cmdPtr->nsPtr->fullName;
+            Tcl_Obj *procNameObj;
 
 	    /*
 	     * This is a regular command.
 	     */
 
-	    ADD_PAIR("proc", Tcl_NewStringObj(nsName, -1));
-
-	    if (strcmp(nsName, "::") != 0) {
-		Tcl_AppendToObj(lv[lc-1], "::", -1);
-	    }
-	    Tcl_AppendToObj(lv[lc-1], procName, -1);
+            TclNewObj(procNameObj);
+            Tcl_GetCommandFullName(interp, (Tcl_Command) procPtr->cmdPtr,
+                    procNameObj);
+	    ADD_PAIR("proc", procNameObj);
 	} else if (procPtr->cmdPtr->clientData) {
 	    ExtraFrameInfo *efiPtr = procPtr->cmdPtr->clientData;
 	    int i;
@@ -4401,5 +4451,7 @@ SelectObjFromSublist(
  * mode: c
  * c-basic-offset: 4
  * fill-column: 78
+ * tab-width: 8
+ * indent-tabs-mode: nil
  * End:
  */

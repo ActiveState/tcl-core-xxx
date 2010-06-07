@@ -553,10 +553,13 @@ UpdateStringOfByteArray(
      */
 
     size = length;
-    for (i = 0; i < length; i++) {
+    for (i = 0; i < length && size >= 0; i++) {
 	if ((src[i] == 0) || (src[i] > 127)) {
 	    size++;
 	}
+    }
+    if (size < 0) {
+	Tcl_Panic("max size for a Tcl value (%d bytes) exceeded", INT_MAX);
     }
 
     dst = (char *) ckalloc((unsigned) (size + 1));
@@ -571,6 +574,88 @@ UpdateStringOfByteArray(
 	    dst += Tcl_UniCharToUtf(src[i], dst);
 	}
 	*dst = '\0';
+    }
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * TclAppendBytesToByteArray --
+ *
+ *	This function appends an array of bytes to a byte array object. Note
+ *	that the object *must* be unshared, and the array of bytes *must not*
+ *	refer to the object being appended to.  Also the caller must have
+ *	already checked that the final length of the bytearray after the
+ *	append operations is complete will not overflow the int range.
+ *
+ * Results:
+ *	None.
+ *
+ * Side effects:
+ *	Allocates enough memory for an array of bytes of the requested total
+ *	size, or possibly larger. [Bug 2992970]
+ *
+ *----------------------------------------------------------------------
+ */
+
+void
+TclAppendBytesToByteArray(
+    Tcl_Obj *objPtr,
+    const unsigned char *bytes,
+    int len)
+{
+    ByteArray *byteArrayPtr;
+
+    if (Tcl_IsShared(objPtr)) {
+	Tcl_Panic("%s called with shared object","TclAppendBytesToByteArray");
+    }
+    if (objPtr->typePtr != &tclByteArrayType) {
+	SetByteArrayFromAny(NULL, objPtr);
+    }
+    byteArrayPtr = GET_BYTEARRAY(objPtr);
+
+    /*
+     * If we need to, resize the allocated space in the byte array.
+     */
+
+    if (byteArrayPtr->used + len > byteArrayPtr->allocated) {
+	unsigned int attempt, used = byteArrayPtr->used;
+	ByteArray *tmpByteArrayPtr = NULL;
+
+	attempt = byteArrayPtr->allocated;
+	do {
+	    attempt *= 2;
+	} while (attempt < used+len);
+
+	if (BYTEARRAY_SIZE(attempt) > BYTEARRAY_SIZE(used)) {
+	    tmpByteArrayPtr = (ByteArray *)
+		    attemptckrealloc((char *) byteArrayPtr,
+			    BYTEARRAY_SIZE(attempt));
+	}
+
+	if (tmpByteArrayPtr == NULL) {
+	    attempt = used + len;
+	    if (BYTEARRAY_SIZE(attempt) < BYTEARRAY_SIZE(used)) {
+		Tcl_Panic("attempt to allocate a bigger buffer than we can handle");
+	    }
+	    tmpByteArrayPtr = (ByteArray *) ckrealloc((char *) byteArrayPtr,
+		    BYTEARRAY_SIZE(attempt));
+	}
+
+	byteArrayPtr = tmpByteArrayPtr;
+	byteArrayPtr->allocated = attempt;
+	byteArrayPtr->used = used;
+	SET_BYTEARRAY(objPtr, byteArrayPtr);
+    }
+
+    /*
+     * Do the append if there's any point.
+     */
+
+    if (len > 0) {
+	memcpy(byteArrayPtr->bytes + byteArrayPtr->used, bytes, len);
+	byteArrayPtr->used += len;
+	Tcl_InvalidateStringRep(objPtr);
     }
 }
 
@@ -1043,7 +1128,7 @@ BinaryFormatCmd(
 		 * this is safe since we aren't going to modify the array.
 		 */
 
-		listv = (Tcl_Obj**)(objv + arg);
+		listv = (Tcl_Obj **) (objv + arg);
 		listc = 1;
 		count = 1;
 	    } else {

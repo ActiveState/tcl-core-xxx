@@ -19,14 +19,9 @@
  *----------------------------------------------------------------------
  */
 
-#include <tclInt.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <float.h>
-#include <limits.h>
+#include "tclInt.h"
+#include "tommath.h"
 #include <math.h>
-#include <ctype.h>
-#include <tommath.h>
 
 /*
  * Define KILL_OCTAL to suppress interpretation of numbers with leading zero
@@ -110,7 +105,7 @@ static int log2FLT_RADIX;	/* Logarithm of the floating point radix. */
 static int mantBits;		/* Number of bits in a double's significand */
 static mp_int pow5[9];		/* Table of powers of 5**(2**n), up to
 				 * 5**256 */
-static double tiny;		/* The smallest representable double */
+static double tiny = 0.0;		/* The smallest representable double */
 static int maxDigits;		/* The maximum number of digits to the left of
 				 * the decimal point of a double. */
 static int minDigits;		/* The maximum number of digits to the right
@@ -143,7 +138,7 @@ static int n770_fp;		/* Flag is 1 on Nokia N770 floating point.
 static double		AbsoluteValue(double v, int *signum);
 static int		AccumulateDecimalDigit(unsigned, int, 
 			    Tcl_WideUInt *, mp_int *, int);
-static double		BignumToBiasedFrExp(mp_int *big, int *machexp);
+static double		BignumToBiasedFrExp(const mp_int *big, int *machexp);
 static int		GetIntegerTimesPower(double v, mp_int *r, int *e);
 static double		MakeHighPrecisionDouble(int signum,
 			    mp_int *significand, int nSigDigs, int exponent);
@@ -955,13 +950,14 @@ TclParseNumber(
 	case sINFIN:
 	case sINFINI:
 	case sINFINIT:
+#ifdef IEEE_FLOATING_POINT
 	case sN:
 	case sNA:
 	case sNANPAREN:
 	case sNANHEX:
 	    Tcl_Panic("TclParseNumber: bad acceptState %d parsing '%s'",
 		    acceptState, bytes);
-
+#endif
 	case BINARY:
 	    shift = numTrailZeros;
 	    if (!significandOverflow && significandWide != 0 &&
@@ -1142,12 +1138,13 @@ TclParseNumber(
 	    objPtr->typePtr = &tclDoubleType;
 	    break;
 
+#ifdef IEEE_FLOATING_POINT
 	case sNAN:
 	case sNANFINISH:
 	    objPtr->internalRep.doubleValue = MakeNaN(signum, significandWide);
 	    objPtr->typePtr = &tclDoubleType;
 	    break;
-
+#endif
 	case INITIAL:
 	    /* This case only to silence compiler warning */
 	    Tcl_Panic("TclParseNumber: state INITIAL can't happen here");
@@ -1490,6 +1487,9 @@ MakeHighPrecisionDouble(
 	goto returnValue;
     }
     retval = SafeLdExp(retval, machexp);
+	if (tiny == 0.0) {
+	    tiny = SafeLdExp(1.0, DBL_MIN_EXP * log2FLT_RADIX - mantBits);
+	}
     if (retval < tiny) {
 	retval = tiny;
     }
@@ -2245,7 +2245,6 @@ TclInitDoubleConversion(void)
      * the significand of a double.
      */
 
-    tiny = SafeLdExp(1.0, DBL_MIN_EXP * log2FLT_RADIX - mantBits);
     maxDigits = (int) ((DBL_MAX_EXP * log((double) FLT_RADIX)
 	    + 0.5 * log(10.)) / log(10.));
     minDigits = (int) floor((DBL_MIN_EXP - DBL_MANT_DIG)
@@ -2376,7 +2375,7 @@ Tcl_InitBignumFromDouble(
 
 double
 TclBignumToDouble(
-    mp_int *a)			/* Integer to convert. */
+    const mp_int *a)			/* Integer to convert. */
 {
     mp_int b;
     int bits, shift, i;
@@ -2437,7 +2436,7 @@ TclBignumToDouble(
 
 double
 TclCeil(
-    mp_int *a)			/* Integer to convert. */
+    const mp_int *a)			/* Integer to convert. */
 {
     double r = 0.0;
     mp_int b;
@@ -2480,7 +2479,7 @@ TclCeil(
 
 double
 TclFloor(
-    mp_int *a)			/* Integer to convert. */
+    const mp_int *a)			/* Integer to convert. */
 {
     double r = 0.0;
     mp_int b;
@@ -2536,7 +2535,7 @@ TclFloor(
 
 static double
 BignumToBiasedFrExp(
-    mp_int *a,			/* Integer to convert */
+    const mp_int *a,	/* Integer to convert */
     int *machexp)		/* Power of two */
 {
     mp_int b;

@@ -18,8 +18,8 @@
  * RCS: @(#) $Id$
  */
 
-#include <tclInt.h>
-#include <tclIO.h>
+#include "tclInt.h"
+#include "tclIO.h"
 #include <assert.h>
 
 #ifndef EINVAL
