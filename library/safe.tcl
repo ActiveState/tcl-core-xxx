@@ -699,7 +699,6 @@ proc ::safe::AliasGlob {slave args} {
 		set got($opt) 1
 		set virtualdir [lindex $args [incr at]]
 		incr at
-		lappend cmd -directory $dir
 	    }
 	    pkgIndex.tcl {
 		# Oops, this is globbing a subdirectory in regular package
@@ -734,6 +733,7 @@ proc ::safe::AliasGlob {slave args} {
 		return
 	    }
 	}
+	lappend cmd -directory $dir
     }
 
     # Apply the -join semantics ourselves
