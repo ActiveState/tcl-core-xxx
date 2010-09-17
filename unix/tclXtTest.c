@@ -5,8 +5,8 @@
  *
  * Copyright (c) 1997 by Sun Microsystems, Inc.
  *
- * See the file "license.terms" for information on usage and redistribution of
- * this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ * See the file "license.terms" for information on usage and redistribution
+ * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
  * RCS: @(#) $Id$
  */
@@ -17,21 +17,15 @@
 #include <X11/Intrinsic.h>
 #include "tcl.h"
 
-static int	TesteventloopCmd(ClientData clientData,
-		    Tcl_Interp *interp, int argc, const char **argv);
-extern void	InitNotifier(void);
+static Tcl_CmdProc TesteventloopCmd;
+extern DLLEXPORT Tcl_PackageInitProc Tclxttest_Init;
 
 /*
- * TCL_STORAGE_CLASS is set unconditionally to DLLEXPORT because the
- * Tcltest_Init declaration is in the source file itself, which is only
- * accessed when we are building a library.
+ * Functions defined in tclXtNotify.c for use by users of the Xt Notifier:
  */
 
-#undef TCL_STORAGE_CLASS
-#define TCL_STORAGE_CLASS DLLEXPORT
-EXTERN int		Tclxttest_Init(Tcl_Interp *interp);
-
-
+extern void	InitNotifier(void);
+extern XtAppContext	TclSetAppContext(XtAppContext ctx);
 
 /*
  *----------------------------------------------------------------------
@@ -95,10 +89,10 @@ TesteventloopCmd(
 				 * innermost invocation of the "wait"
 				 * subcommand. */
 
-   if (argc < 2) {
+    if (argc < 2) {
 	Tcl_AppendResult(interp, "wrong # arguments: should be \"", argv[0],
 		" option ... \"", NULL);
-        return TCL_ERROR;
+	return TCL_ERROR;
     }
     if (strcmp(argv[1], "done") == 0) {
 	*framePtr = 1;

@@ -541,10 +541,11 @@ proc make-man-pages {html args} {
 	    open-text
 	    set haserror 0
 	    if {[next-op-is .HS rest]} {
-		set manual($manual(name)-title) \
-			"[lrange $rest 1 end] [lindex $rest 0] manual page"
+		set manual($manual(wing-file)-$manual(name)-title) \
+		    "[join [lrange $rest 1 end] { }] [lindex $rest 0] manual page"
 	    } elseif {[next-op-is .TH rest]} {
-		set manual($manual(name)-title) "[lindex $rest 0] manual page - [lrange $rest 4 end]"
+		set manual($manual(wing-file)-$manual(name)-title) \
+		    "[lindex $rest 0] manual page - [join [lrange $rest 4 end] { }]"
 	    } else {
 		set haserror 1
 		if {!$verbose} {
@@ -712,7 +713,7 @@ proc make-man-pages {html args} {
 		puts -nonewline stderr .
 	    }
 	    set outfd [open $html/$manual(wing-file)/$manual(name).htm w]
-	    puts $outfd [htmlhead "$manual($manual(name)-title)" \
+	    puts $outfd [htmlhead "$manual($manual(wing-file)-$manual(name)-title)" \
 		    $manual(name) $manual(wing-file) "[indexfile]" \
 		    $overall_title "../[indexfile]"]
 	    if {($ntext > 60) && ($ntoc > 32)} {
@@ -768,7 +769,13 @@ proc plus-pkgs {type args} {
     set result {}
     foreach {dir name} $args {
 	set globpat $tcltkdir/$tcldir/pkgs/$dir/doc/*.$type
-	if {![llength [glob -nocomplain $globpat]]} continue
+	if {![llength [glob -nocomplain $globpat]]} {
+	    # Fallback for manpages generated using doctools
+	    set globpat $tcltkdir/$tcldir/pkgs/$dir/doc/man/*.$type
+	    if {![llength [glob -nocomplain $globpat]]} {
+		continue
+	    }
+	}
 	switch $type {
 	    n {
 		set title "$name Package Commands"
@@ -900,6 +907,7 @@ try {
 	set packageDirNameMap {
 	    itcl {[incr Tcl]}
 	    tdbc {TDBC}
+	    Thread Thread
 	}
     }
 

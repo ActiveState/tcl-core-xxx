@@ -323,7 +323,7 @@ test tailcall-8 {tailcall tailcall} -setup {
     namespace eval ::foo c
 } -cleanup {
     namespace delete ::foo
-} -match glob -result *tailcall* -returnCodes error
+} -result cbac
 
 test tailcall-9 {tailcall factorial} -setup {
     proc fact {n {b 1}} {
@@ -383,6 +383,20 @@ test tailcall-11b {tailcall and uplevel} -setup {
 } -cleanup {
     unset -nocomplain ::x
 } -match glob -result *tailcall* -returnCodes error
+
+test tailcall-11c {tailcall and uplevel} -setup {
+    proc a {} {
+	uplevel 1 {tailcall lappend ::x 2}
+	set ::x 1
+    }
+    proc b {} {set ::x 0; a; lappend ::x 3}
+} -body {
+    list [b] $::x
+} -cleanup {
+    rename a {}
+    rename b {}
+    unset -nocomplain ::x
+} -result {{0 3 2} {0 3 2}}
 
 test tailcall-12.1 {[Bug 2649975]} -setup {
     proc dump {{text {}}} {
@@ -545,46 +559,88 @@ test tailcall-12.2 {[Bug 2649975]} -setup {
 1: exiting from foo's alpha
 }
 
-test tailcall-12.3a {[Bug 2695587]} {
+test tailcall-12.3a0 {[Bug 2695587]} -body {
     apply {{} {
-	list [catch [list tailcall foo] msg opt] $msg [errorcode $opt]
+	catch [list tailcall foo]
     }}
-} {1 {tailcall called from within a catch environment} {TCL TAILCALL ILLEGAL}}
+} -returnCodes 1 -result {invalid command name "foo"}
 
-test tailcall-12.3b {[Bug 2695587]} {
+test tailcall-12.3a1 {[Bug 2695587]} -body {
     apply {{} {
-	list [catch {tailcall foo} msg opt] $msg [errorcode $opt]
+	catch [list tailcall foo]
+	tailcall
     }}
-} {1 {tailcall called from within a catch environment} {TCL TAILCALL ILLEGAL}}
+} -result {}
 
-test tailcall-13.1 {tailcall and coroutine} -setup {
-    set lambda {i {
-	if {$i == 1} {
-	    depthDiff
-	}
-	if {[incr i] > 10} {
-	    return [depthDiff]
-	}
-	tailcall coroutine foo ::apply $::lambda $i
+test tailcall-12.3a2 {[Bug 2695587]} -body {
+    apply {{} {
+	catch [list tailcall foo]
+	tailcall moo
     }}
-} -body {
-    coroutine moo ::apply $::lambda 0
+} -returnCodes 1 -result {invalid command name "moo"}
+
+test tailcall-12.3a3 {[Bug 2695587]} -body {
+    set x 0
+    apply {{} {
+	catch [list tailcall foo]
+	tailcall lappend x 1
+    }}
+    set x
 } -cleanup {
-    unset lambda 
-} -result {0 0 0 0 0 0}
+    unset x
+} -result {0 1} 
 
-test tailcall-14.1 {directly tailcalling the tailcall command is an error} {
+test tailcall-12.3b0 {[Bug 2695587]} -body {
+    apply {{} {
+	set catch catch
+	$catch [list tailcall foo]
+    }}
+} -returnCodes 1 -result {invalid command name "foo"}
+
+test tailcall-12.3b1 {[Bug 2695587]} -body {
+    apply {{} {
+	set catch catch
+	$catch [list tailcall foo]
+	tailcall
+    }}
+} -result {}
+
+test tailcall-12.3b2 {[Bug 2695587]} -body {
+    apply {{} {
+	set catch catch
+	$catch [list tailcall foo]
+	tailcall moo
+    }}
+} -returnCodes 1 -result {invalid command name "moo"}
+
+test tailcall-12.3b3 {[Bug 2695587]} -body {
+    set x 0
+    apply {{} {
+	set catch catch
+	$catch [list tailcall foo]
+	tailcall lappend x 1
+    }}
+    set x
+} -cleanup {
+    unset x
+} -result {0 1} 
+
+# MORE VARIANTS MISSING: bc'ed caught script vs (bc'ed, not-bc'ed)
+# catch. Actually superfluous now, as tailcall just returns TCL_RETURN so that
+# standard catch behaviour is required.
+
+test tailcall-13.1 {directly tailcalling the tailcall command is ok} {
     list [catch {
 	apply {{} {
 	    apply {{} {
-		tailcall tailcall subst a
+		tailcall tailcall subst ok
 		subst b
 	    }}
 	    subst c
 	}}
     } msg opt] $msg [errorcode $opt]
-} {1 {tailcall cannot be invoked recursively} {TCL TAILCALL REENTRY}}
-test tailcall-14.2 {indirectly tailcalling the tailcall command is ok} {
+} {0 ok NONE}
+test tailcall-13.2 {indirectly tailcalling the tailcall command is ok} {
     list [catch {
 	apply {{} {
 	    apply {{} {

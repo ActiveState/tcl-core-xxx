@@ -153,10 +153,18 @@ proc ::safe::interpConfigure {args} {
 	    set item [::tcl::OptCurDesc $desc]
 	    set name [::tcl::OptName $item]
 	    switch -exact -- $name {
-		-accessPath {return [list -accessPath $state(access_path)]}
-		-statics    {return [list -statics    $state(staticsok)]}
-		-nested     {return [list -nested     $state(nestedok)]}
-		-deleteHook {return [list -deleteHook $state(cleanupHook)]}
+		-accessPath {
+		    return [list -accessPath $state(access_path)]
+		}
+		-statics    {
+		    return [list -statics $state(staticsok)]
+		}
+		-nested     {
+		    return [list -nested $state(nestedok)]
+		}
+		-deleteHook {
+		    return [list -deleteHook $state(cleanupHook)]
+		}
 		-noStatics {
 		    # it is most probably a set in fact but we would need
 		    # then to jump to the set part and it is not *sure*
@@ -700,7 +708,6 @@ proc ::safe::AliasGlob {slave args} {
 		set got($opt) 1
 		set virtualdir [lindex $args [incr at]]
 		incr at
-		lappend cmd -directory $dir
 	    }
 	    pkgIndex.tcl {
 		# Oops, this is globbing a subdirectory in regular package
@@ -717,7 +724,7 @@ proc ::safe::AliasGlob {slave args} {
 		break
 	    }
 	}
-	if {$got(--) || $got(-join)} break
+	if {$got(--)} break
     }
 
     # Get the real path from the virtual one and check that the path is in the
@@ -734,6 +741,7 @@ proc ::safe::AliasGlob {slave args} {
 	    }
 	    return -code error "permission denied"
 	}
+	lappend cmd -directory $dir
     }
 
     # Apply the -join semantics ourselves
@@ -767,18 +775,18 @@ proc ::safe::AliasGlob {slave args} {
 	return
     }
     try {
-	::interp invokehidden $slave glob {*}$cmd
+	set entries [::interp invokehidden $slave glob {*}$cmd]
     } on error msg {
 	Log $slave $msg
 	return -code error "script error"
     }
 
-    Log $slave "GLOB @ $msg" NOTICE
+    Log $slave "GLOB @ $entries" NOTICE
 
     # Translate path back to what the slave should see.
     set res {}
     set l [string length $dir]
-    foreach p $msg {
+    foreach p $entries {
 	if {[string equal -length $l $dir $p]} {
 	    set p [string replace $p 0 [expr {$l-1}] $virtualdir]
 	}
@@ -925,13 +933,11 @@ proc ::safe::AliasLoad {slave file args} {
     }
 
     try {
-	::interp invokehidden $slave load $file $package $target
+	return [::interp invokehidden $slave load $file $package $target]
     } on error msg {
 	Log $slave $msg
 	return -code error $msg
     }
-
-    return $msg
 }
 
 # FileInAccessPath raises an error if the file is not found in the list of
@@ -1011,7 +1017,7 @@ proc ::safe::AliasEncoding {slave option args} {
     }
 
     if {[string equal -length [string length $option] $option "system"]} {
-	if {[llength $args] == 0} {
+	if {![llength $args]} {
 	    # passed all the tests , lets source it:
 	    try {
 		return [::interp invokehidden $slave encoding system]
