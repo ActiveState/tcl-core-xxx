@@ -268,7 +268,6 @@ test source-7.6 {source -encoding: mismatch encoding error} -setup {
 } -cleanup {
     removeFile source.file
 } -returnCodes error -match glob -result {invalid command name*}
-
 
 cleanupTests
 }

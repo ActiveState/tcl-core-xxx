@@ -2,7 +2,7 @@
  * tclCompCmdsSZ.c --
  *
  *	This file contains compilation procedures that compile various Tcl
-*	commands (beginning with the letters 's' through 'z', except for
+ *	commands (beginning with the letters 's' through 'z', except for
  *	[upvar] and [variable]) into a sequence of instructions ("bytecodes").
  *	Also includes the operator command compilers.
  *

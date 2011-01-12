@@ -238,7 +238,7 @@ TclOO_Object_Destroy(
     }
     AddRef(oPtr);
     if (!(oPtr->flags & DESTRUCTOR_CALLED)) {
-	CallContext *contextPtr = TclOOGetCallContext(oPtr, NULL, DESTRUCTOR, NULL);
+	CallContext *contextPtr = TclOOGetCallContext(oPtr, NULL, DESTRUCTOR);
 
 	oPtr->flags |= DESTRUCTOR_CALLED;
 	if (contextPtr != NULL) {
@@ -277,9 +277,8 @@ TclOO_Object_Eval(
     CallContext *contextPtr = (CallContext *) context;
     Tcl_Object object = Tcl_ObjectContextObject(context);
     register const int skip = Tcl_ObjectContextSkippedArgs(context);
-    CallFrame *framePtr, **framePtrPtr = &framePtr;
-    Tcl_Obj *scriptPtr;
-    int result, flags;
+    CallFrame *framePtr, **framePtrPtr;
+    int result;
 
     if (objc-1 < skip) {
 	Tcl_WrongNumArgs(interp, skip, objv, "arg ?arg ...?");
@@ -291,6 +290,8 @@ TclOO_Object_Eval(
      * command(s).
      */
 
+    /* This is needed to satisfy GCC 3.3's strict aliasing rules */
+    framePtrPtr = &framePtr;
     result = TclPushStackFrame(interp, (Tcl_CallFrame **) framePtrPtr,
 	    Tcl_GetObjectNamespace(object), 0);
     if (result != TCL_OK) {
@@ -301,44 +302,36 @@ TclOO_Object_Eval(
 				 * incremented here. */
 
     if (!(contextPtr->callPtr->flags & PUBLIC_METHOD)) {
-	object = NULL;		/* Now just for error mesage printing. */
+	object = NULL;
     }
 
-    /*
-     * Work out what script we are actually going to evaluate.
-     *
-     * When there's more than one argument, we concatenate them together with
-     * spaces between, then evaluate the result. Tcl_EvalObjEx will delete the
-     * object when it decrements its refcount after eval'ing it.
-     */
-
-    if (objc != skip+1) {
-	scriptPtr = Tcl_ConcatObj(objc-skip, objv+skip);
-	flags = TCL_EVAL_DIRECT;
+    if (objc == skip+1) {
+	result = Tcl_EvalObjEx(interp, objv[skip], 0);
     } else {
-	scriptPtr = objv[skip];
-	flags = 0;
+	Tcl_Obj *objPtr;
+
+	/*
+	 * More than one argument: concatenate them together with spaces
+	 * between, then evaluate the result. Tcl_EvalObjEx will delete the
+	 * object when it decrements its refcount after eval'ing it.
+	 */
+
+	objPtr = Tcl_ConcatObj(objc-skip, objv+skip);
+	result = Tcl_EvalObjEx(interp, objPtr, TCL_EVAL_DIRECT);
     }
 
-    /*
-     * Evaluate the script now.
-     * TODO: make NRE-aware
-     */
-
-    result = Tcl_EvalObjEx(interp, scriptPtr, flags);
     if (result == TCL_ERROR) {
-	Tcl_Obj *objnameObj;
+	const char* namePtr;
 
 	if (object) {
-	    objnameObj = TclOOObjectName(interp, (Object *) object);
+	    namePtr = TclGetString(TclOOObjectName(interp, (Object *) object));
 	} else {
-	    objnameObj = Tcl_NewStringObj("my", 2);
+	    namePtr = "my";
 	}
-	Tcl_IncrRefCount(objnameObj);
+
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
 		"\n    (in \"%s eval\" script line %d)",
-		TclGetString(objnameObj), Tcl_GetErrorLine(interp)));
-	Tcl_DecrRefCount(objnameObj);
+		namePtr, Tcl_GetErrorLine(interp)));
     }
 
     /*
@@ -683,7 +676,7 @@ TclOOSelfObjCmd(
     int objc,
     Tcl_Obj *const *objv)
 {
-    static const char *const subcmds[] = {
+    static const char *subcmds[] = {
 	"caller", "class", "filter", "method", "namespace", "next", "object",
 	"target", NULL
     };
@@ -784,7 +777,7 @@ TclOOSelfObjCmd(
 	}
     case SELF_CALLER:
 	if ((framePtr->callerVarPtr == NULL) ||
-		!(framePtr->callerVarPtr->isProcCallFrame & FRAME_IS_METHOD)){
+		!(framePtr->callerVarPtr->isProcCallFrame & FRAME_IS_METHOD)) {
 	    Tcl_AppendResult(interp, "caller is not an object", NULL);
 	    Tcl_SetErrorCode(interp, "TCL", "OO", "CONTEXT_REQUIRED", NULL);
 	    return TCL_ERROR;
@@ -883,7 +876,13 @@ TclOOSelfObjCmd(
 		return TCL_ERROR;
 	    }
 	    result[0] = TclOOObjectName(interp, declarerPtr);
-	    result[1] = mPtr->namePtr;
+	    if (contextPtr->callPtr->flags & CONSTRUCTOR) {
+		result[1] = declarerPtr->fPtr->constructorName;
+	    } else if (contextPtr->callPtr->flags & DESTRUCTOR) {
+		result[1] = declarerPtr->fPtr->destructorName;
+	    } else {
+		result[1] = mPtr->namePtr;
+	    }
 	    Tcl_SetObjResult(interp, Tcl_NewListObj(2, result));
 	    return TCL_OK;
 	}
@@ -989,14 +988,14 @@ TclOOUpcatchCmd(
     Tcl_Obj *resultObj[2];
     int result;
 
-    if (objc != 2) {
-	Tcl_WrongNumArgs(interp, 1, objv, "script");
+    if (objc < 2) {
+	Tcl_WrongNumArgs(interp, 1, objv, "cmd ...");
 	return TCL_ERROR;
     }
     if (iPtr->varFramePtr->callerVarPtr != NULL) {
 	iPtr->varFramePtr = iPtr->varFramePtr->callerVarPtr;
     }
-    result = Tcl_EvalObjEx(interp, objv[1], 0);
+    result = Tcl_EvalObjv(interp, objc-1, objv+1, TCL_EVAL_INVOKE);
     iPtr->varFramePtr = savedFramePtr;
     if (Tcl_LimitExceeded(interp)) {
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(

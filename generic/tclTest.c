@@ -638,7 +638,7 @@ Tcltest_Init(
     Tcl_CreateCommand(interp, "testsetnoerr", TestsetCmd,
 	    NULL, NULL);
     Tcl_CreateCommand(interp, "testseterr", TestsetCmd,
-	    (ClientData)  TCL_LEAVE_ERR_MSG, NULL);
+	    (ClientData) TCL_LEAVE_ERR_MSG, NULL);
     Tcl_CreateCommand(interp, "testset2", Testset2Cmd,
 	    (ClientData) TCL_LEAVE_ERR_MSG, NULL);
     Tcl_CreateCommand(interp, "testseterrorcode", TestseterrorcodeCmd,
@@ -668,10 +668,10 @@ Tcltest_Init(
 	    NULL);
 
     if (TclObjTest_Init(interp) != TCL_OK) {
- 	return TCL_ERROR;
+	return TCL_ERROR;
     }
     if (Procbodytest_Init(interp) != TCL_OK) {
- 	return TCL_ERROR;
+	return TCL_ERROR;
     }
 #ifdef TCL_THREADS
     if (TclThread_Init(interp) != TCL_OK) {
@@ -6921,7 +6921,7 @@ TestconcatobjCmd(
 	if (Tcl_IsShared(tmpPtr)) {
 	    Tcl_DecrRefCount(tmpPtr);
 	}
-	tmpPtr = Tcl_DuplicateObj(list1Ptr);    
+	tmpPtr = Tcl_DuplicateObj(list1Ptr);
 	objv[0] = tmpPtr;
     }
     Tcl_DecrRefCount(concatPtr);
@@ -6933,22 +6933,22 @@ TestconcatobjCmd(
     if (concatPtr->refCount != 0) {
 	result = TCL_ERROR;
 	Tcl_AppendResult(interp,
-	    "\n\t* (f) concatObj does not have refCount 0", NULL);
+		"\n\t* (f) concatObj does not have refCount 0", NULL);
     }
     if (concatPtr == tmpPtr) {
 	int len;
-	
+
 	result = TCL_ERROR;
 	Tcl_AppendResult(interp, "\n\t* (f) concatObj is not a new obj ",
-	    NULL);
+		NULL);
 
 	(void) Tcl_ListObjLength(NULL, concatPtr, &len);
 	switch (tmpPtr->refCount) {
-	    case 3:
-		Tcl_AppendResult(interp, "(failed to concat)", NULL);
-		break;
-	    default:
-		Tcl_AppendResult(interp, "(corrupted input!)", NULL);
+	case 3:
+	    Tcl_AppendResult(interp, "(failed to concat)", NULL);
+	    break;
+	default:
+	    Tcl_AppendResult(interp, "(corrupted input!)", NULL);
 	}
 	if (Tcl_IsShared(tmpPtr)) {
 	    Tcl_DecrRefCount(tmpPtr);

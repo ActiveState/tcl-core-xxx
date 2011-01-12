@@ -180,7 +180,7 @@ typedef struct ByteArray {
 } ByteArray;
 
 #define BYTEARRAY_SIZE(len) \
-		((unsigned) (TclOffset(ByteArray,bytes) + (len)))
+		((unsigned) (TclOffset(ByteArray, bytes) + (len)))
 #define GET_BYTEARRAY(objPtr) \
 		((ByteArray *) (objPtr)->internalRep.otherValuePtr)
 #define SET_BYTEARRAY(objPtr, baPtr) \
@@ -691,29 +691,30 @@ TclAppendBytesToByteArray(
  *----------------------------------------------------------------------
  */
 
+static const EnsembleImplMap binaryMap[] = {
+{ "format", BinaryFormatCmd, NULL, NULL, 0 },
+{ "scan",   BinaryScanCmd, NULL, NULL, 0 },
+{ "encode", NULL, NULL, NULL, 0 },
+{ "decode", NULL, NULL, NULL, 0 },
+{ NULL, NULL, NULL, NULL, 0 }
+};
+static const EnsembleImplMap encodeMap[] = {
+{ "hex",      BinaryEncodeHex, NULL, (ClientData)HexDigits, 0 },
+{ "uuencode", BinaryEncode64,  NULL, (ClientData)UueDigits, 0 },
+{ "base64",   BinaryEncode64,  NULL, (ClientData)B64Digits, 0 },
+{ NULL, NULL, NULL, NULL, 0 }
+};
+static const EnsembleImplMap decodeMap[] = {
+{ "hex",      BinaryDecodeHex, NULL, NULL, 0 },
+{ "uuencode", BinaryDecodeUu,  NULL, NULL, 0 },
+{ "base64",   BinaryDecode64,  NULL, NULL, 0 },
+{ NULL, NULL, NULL, NULL, 0 }
+};
+
 Tcl_Command
 TclInitBinaryCmd(
     Tcl_Interp *interp)
 {
-    const EnsembleImplMap binaryMap[] = {
-	{ "format", BinaryFormatCmd, NULL, NULL },
-	{ "scan",   BinaryScanCmd, NULL,NULL },
-	{ "encode", NULL, NULL, NULL },
-	{ "decode", NULL, NULL, NULL },
-	{ NULL, NULL, NULL, NULL }
-    };
-    const EnsembleImplMap encodeMap[] = {
-	{ "hex",      BinaryEncodeHex, NULL, (ClientData)HexDigits },
-	{ "uuencode", BinaryEncode64,  NULL, (ClientData)UueDigits },
-	{ "base64",   BinaryEncode64,  NULL, (ClientData)B64Digits },
-	{ NULL, NULL, NULL, NULL }
-    };
-    const EnsembleImplMap decodeMap[] = {
-	{ "hex",      BinaryDecodeHex, NULL, NULL },
-	{ "uuencode", BinaryDecodeUu,  NULL, NULL },
-	{ "base64",   BinaryDecode64,  NULL, NULL },
-	{ NULL, NULL, NULL, NULL }
-    };
     Tcl_Command binaryEnsemble;
 
     binaryEnsemble = TclMakeEnsemble(interp, "binary", binaryMap);

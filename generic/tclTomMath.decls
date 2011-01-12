@@ -69,7 +69,7 @@ declare 13 {
     int TclBN_mp_div(mp_int *a, mp_int *b, mp_int *q, mp_int *r)
 }
 declare 14 {
-    int TclBN_mp_div_d(mp_int *a, mp_digit b, mp_int *q, mp_digit* r)
+    int TclBN_mp_div_d(mp_int *a, mp_digit b, mp_int *q, mp_digit *r)
 }
 declare 15 {
     int TclBN_mp_div_2(mp_int *a, mp_int *q)
@@ -78,7 +78,7 @@ declare 16 {
     int TclBN_mp_div_2d(const mp_int *a, int b, mp_int *q, mp_int *r)
 }
 declare 17 {
-    int TclBN_mp_div_3(mp_int *a, mp_int *q, mp_digit* r)
+    int TclBN_mp_div_3(mp_int *a, mp_int *q, mp_digit *r)
 }
 declare 18 {
     void TclBN_mp_exch(mp_int *a, mp_int *b)
@@ -93,7 +93,7 @@ declare 21 {
     int TclBN_mp_init(mp_int *a)
 }
 declare 22 {
-    int TclBN_mp_init_copy(mp_int * a, mp_int *b)
+    int TclBN_mp_init_copy(mp_int *a, mp_int *b)
 }
 declare 23 {
     int TclBN_mp_init_multi(mp_int *a, ...)
@@ -132,13 +132,13 @@ declare 34 {
     int TclBN_mp_or(mp_int *a, mp_int *b, mp_int *c)
 }
 declare 35 {
-    int TclBN_mp_radix_size(mp_int *a, int radix, int* size)
+    int TclBN_mp_radix_size(mp_int *a, int radix, int *size)
 }
 declare 36 {
-    int TclBN_mp_read_radix(mp_int *a, const char* str, int radix)
+    int TclBN_mp_read_radix(mp_int *a, const char *str, int radix)
 }
 declare 37 {
-    void TclBN_mp_rshd(mp_int * a, int shift)
+    void TclBN_mp_rshd(mp_int *a, int shift)
 }
 declare 38 {
     int TclBN_mp_shrink(mp_int *a)
@@ -159,14 +159,14 @@ declare 43 {
     int TclBN_mp_sub_d(mp_int *a, mp_digit b, mp_int *c)
 }
 declare 44 {
-    int TclBN_mp_to_unsigned_bin(mp_int *a, unsigned char* b)
+    int TclBN_mp_to_unsigned_bin(mp_int *a, unsigned char *b)
 }
 declare 45 {
-    int TclBN_mp_to_unsigned_bin_n(mp_int *a, unsigned char* b,
-	    unsigned long* outlen)
+    int TclBN_mp_to_unsigned_bin_n(mp_int *a, unsigned char *b,
+	    unsigned long *outlen)
 }
 declare 46 {
-    int TclBN_mp_toradix_n(mp_int *a, char* str, int radix, int maxlen)
+    int TclBN_mp_toradix_n(mp_int *a, char *str, int radix, int maxlen)
 }
 declare 47 {
     int TclBN_mp_unsigned_bin_size(mp_int *a)
@@ -182,7 +182,7 @@ declare 49 {
 # exported to accommodate the "tommath" extension
 
 declare 50 {
-    void TclBN_reverse(unsigned char* s, int len)
+    void TclBN_reverse(unsigned char *s, int len)
 }
 declare 51 {
     int TclBN_fast_s_mp_mul_digs(mp_int *a, mp_int *b, mp_int *c, int digs)

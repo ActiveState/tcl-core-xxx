@@ -1957,26 +1957,26 @@ TclInitChanCmd(
      * function at the moment.
      */
     static const EnsembleImplMap initMap[] = {
-	{"blocked",	Tcl_FblockedObjCmd, NULL, NULL},
-	{"close",	Tcl_CloseObjCmd, NULL, NULL},
-	{"copy",	Tcl_FcopyObjCmd, NULL, NULL},
-	{"create",	TclChanCreateObjCmd, NULL, NULL},		/* TIP #219 */
-	{"eof",		Tcl_EofObjCmd, NULL, NULL},
-	{"event",	Tcl_FileEventObjCmd, NULL, NULL},
-	{"flush",	Tcl_FlushObjCmd, NULL, NULL},
-	{"gets",	Tcl_GetsObjCmd, NULL, NULL},
-	{"names",	TclChannelNamesCmd, NULL, NULL},
-	{"pending",	ChanPendingObjCmd, NULL, NULL},		/* TIP #287 */
-	{"pop",		TclChanPopObjCmd, NULL, NULL},		/* TIP #230 */
-	{"postevent",	TclChanPostEventObjCmd, NULL, NULL},	/* TIP #219 */
-	{"push",	TclChanPushObjCmd, NULL, NULL},		/* TIP #230 */
-	{"puts",	Tcl_PutsObjCmd, NULL, NULL},
-	{"read",	Tcl_ReadObjCmd, NULL, NULL},
-	{"seek",	Tcl_SeekObjCmd, NULL, NULL},
-	{"pipe",	ChanPipeObjCmd, NULL, NULL},		/* TIP #304 */
-	{"tell",	Tcl_TellObjCmd, NULL, NULL},
-	{"truncate",	ChanTruncateObjCmd, NULL, NULL},		/* TIP #208 */
-	{NULL, NULL, NULL, NULL}
+	{"blocked",	Tcl_FblockedObjCmd, NULL, NULL, 0},
+	{"close",	Tcl_CloseObjCmd, NULL, NULL, 0},
+	{"copy",	Tcl_FcopyObjCmd, NULL, NULL, 0},
+	{"create",	TclChanCreateObjCmd, NULL, NULL, 0},		/* TIP #219 */
+	{"eof",		Tcl_EofObjCmd, NULL, NULL, 0},
+	{"event",	Tcl_FileEventObjCmd, NULL, NULL, 0},
+	{"flush",	Tcl_FlushObjCmd, NULL, NULL, 0},
+	{"gets",	Tcl_GetsObjCmd, NULL, NULL, 0},
+	{"names",	TclChannelNamesCmd, NULL, NULL, 0},
+	{"pending",	ChanPendingObjCmd, NULL, NULL, 0},		/* TIP #287 */
+	{"pop",		TclChanPopObjCmd, NULL, NULL, 0},		/* TIP #230 */
+	{"postevent",	TclChanPostEventObjCmd, NULL, NULL, 0},	/* TIP #219 */
+	{"push",	TclChanPushObjCmd, NULL, NULL, 0},		/* TIP #230 */
+	{"puts",	Tcl_PutsObjCmd, NULL, NULL, 0},
+	{"read",	Tcl_ReadObjCmd, NULL, NULL, 0},
+	{"seek",	Tcl_SeekObjCmd, NULL, NULL, 0},
+	{"pipe",	ChanPipeObjCmd, NULL, NULL, 0},		/* TIP #304 */
+	{"tell",	Tcl_TellObjCmd, NULL, NULL, 0},
+	{"truncate",	ChanTruncateObjCmd, NULL, NULL, 0},		/* TIP #208 */
+	{NULL, NULL, NULL, NULL, 0}
     };
     static const char *const extras[] = {
 	"configure",	"::fconfigure",

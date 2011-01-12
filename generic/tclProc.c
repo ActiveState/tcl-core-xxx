@@ -608,8 +608,7 @@ TclCreateProc(
 	     */
 
 	    localPtr = (CompiledLocal *) ckalloc((unsigned)
-		    (sizeof(CompiledLocal) - sizeof(localPtr->name)
-			    + nameLength + 1));
+		    (TclOffset(CompiledLocal, name) + nameLength + 1));
 	    if (procPtr->firstLocalPtr == NULL) {
 		procPtr->firstLocalPtr = procPtr->lastLocalPtr = localPtr;
 	    } else {
@@ -629,7 +628,7 @@ TclCreateProc(
 	    } else {
 		localPtr->defValuePtr = NULL;
 	    }
-	    strcpy(localPtr->name, fieldValues[0]);
+	    memcpy(localPtr->name, fieldValues[0], nameLength + 1);
 	    if ((i == numArgs - 1)
 		    && (localPtr->nameLength == 4)
 		    && (localPtr->name[0] == 'a')
@@ -911,6 +910,7 @@ Tcl_UplevelObjCmd(
     int word = 0;
     int result;
     CallFrame *savedVarFramePtr, *framePtr;
+    Tcl_Obj *objPtr;
 
     if (objc < 2) {
     uplevelSyntax:
@@ -949,7 +949,8 @@ Tcl_UplevelObjCmd(
 	 */
 
 	TclArgumentGet(interp, objv[0], &invoker, &word);
-	result = TclEvalObjEx(interp, objv[0], 0, invoker, word);
+	objPtr = objv[0];
+
     } else {
 	/*
 	 * More than one argument: concatenate them together with spaces
@@ -957,11 +958,11 @@ Tcl_UplevelObjCmd(
 	 * object when it decrements its refcount after eval'ing it.
 	 */
 
-	Tcl_Obj *objPtr;
-
 	objPtr = Tcl_ConcatObj(objc, objv);
-	result = Tcl_EvalObjEx(interp, objPtr, TCL_EVAL_DIRECT);
     }
+
+    result = TclEvalObjEx(interp, objPtr, 0, invoker, word);
+
     if (result == TCL_ERROR) {
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
 		"\n    (\"uplevel\" body line %d)", Tcl_GetErrorLine(interp)));
@@ -1012,7 +1013,7 @@ TclFindProc(
     }
     cmdPtr = (Command *) cmd;
 
-    return TclIsProc (cmdPtr);
+    return TclIsProc(cmdPtr);
 }
 
 /*
@@ -1645,14 +1646,17 @@ TclObjInterpProc(
 				 * procedure. */
     Tcl_Obj *const objv[])	/* Argument value objects. */
 {
-    int result;
+    /*
+     * Not used much in the core; external interface for iTcl
+     */
 
-    result = PushProcCallFrame(clientData, interp, objc, objv, /*isLambda*/ 0);
-    if (result == TCL_OK) {
-	return TclObjInterpProcCore(interp, objv[0], 1, &MakeProcError);
-    } else {
+    int result = PushProcCallFrame(clientData, interp, objc, objv,
+	    /*isLambda*/ 0);
+
+    if (result != TCL_OK) {
 	return TCL_ERROR;
     }
+    return TclObjInterpProcCore(interp, objv[0], 1, &MakeProcError);
 }
 
 /*
@@ -1771,15 +1775,13 @@ TclObjInterpProcCore(
 	if (TCL_DTRACE_PROC_RETURN_ENABLED()) {
 	    TCL_DTRACE_PROC_RETURN(TclGetString(procNameObj), result);
 	}
-	codePtr->refCount--;
-	if (codePtr->refCount <= 0) {
+	if (--codePtr->refCount <= 0) {
 	    TclCleanupByteCode(codePtr);
 	}
     }
 
     iPtr->numLevels--;
-    procPtr->refCount--;
-    if (procPtr->refCount <= 0) {
+    if (--procPtr->refCount <= 0) {
 	TclProcCleanupProc(procPtr);
     }
 
@@ -1846,7 +1848,7 @@ TclObjInterpProcCore(
 		TclGetString(r), r);
     }
 
-  procDone:
+ procDone:
     /*
      * Free the stack-allocated compiled locals and CallFrame. It is important
      * to pop the call frame without freeing it first: the compiledLocals
@@ -2609,6 +2611,12 @@ Tcl_ApplyObjCmd(
     }
 
 #define JOE_EXTENSION 0
+/*
+ * Note: this code is NOT FUNCTIONAL due to the NR implementation; DO NOT
+ * ENABLE! Leaving here as reminder to (a) TIP the suggestion, and (b) adapt
+ * the code. (MS)
+ */
+
 #if JOE_EXTENSION
     else {
 	/*
@@ -2635,8 +2643,20 @@ Tcl_ApplyObjCmd(
 	procPtr = lambdaPtr->internalRep.twoPtrValue.ptr1;
     }
 
+    /*
+     * Find the namespace where this lambda should run, and push a call frame
+     * for that namespace. Note that TclObjInterpProc() will pop it.
+     */
+
+    nsObjPtr = lambdaPtr->internalRep.twoPtrValue.ptr2;
+    result = TclGetNamespaceFromObj(interp, nsObjPtr, &nsPtr);
+    if (result != TCL_OK) {
+	return TCL_ERROR;
+    }
+
     memset(&cmd, 0, sizeof(Command));
     procPtr->cmdPtr = &cmd;
+    cmd.nsPtr = (Namespace *) nsPtr;
 
     /*
      * TIP#280 (semi-)HACK!
@@ -2654,19 +2674,6 @@ Tcl_ApplyObjCmd(
     efi.fields[0].clientData = lambdaPtr;
     cmd.clientData = &efi;
 
-    /*
-     * Find the namespace where this lambda should run, and push a call frame
-     * for that namespace. Note that TclObjInterpProc() will pop it.
-     */
-
-    nsObjPtr = lambdaPtr->internalRep.twoPtrValue.ptr2;
-    result = TclGetNamespaceFromObj(interp, nsObjPtr, &nsPtr);
-    if (result != TCL_OK) {
-	return result;
-    }
-
-    cmd.nsPtr = (Namespace *) nsPtr;
-
     isRootEnsemble = (iPtr->ensembleRewrite.sourceObjs == NULL);
     if (isRootEnsemble) {
 	iPtr->ensembleRewrite.sourceObjs = objv;
@@ -2677,16 +2684,15 @@ Tcl_ApplyObjCmd(
     }
 
     result = PushProcCallFrame(procPtr, interp, objc, objv, 1);
+
     if (result == TCL_OK) {
 	result = TclObjInterpProcCore(interp, objv[1], 2, &MakeLambdaError);
     }
-
     if (isRootEnsemble) {
 	iPtr->ensembleRewrite.sourceObjs = NULL;
 	iPtr->ensembleRewrite.numRemovedObjs = 0;
 	iPtr->ensembleRewrite.numInsertedObjs = 0;
     }
-
     return result;
 }
 

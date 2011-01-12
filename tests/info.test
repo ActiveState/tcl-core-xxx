@@ -1323,7 +1323,7 @@ test info-37.0 {eval pure list, single line} -match glob -body {
 * {type eval line 1 cmd foreac proc ::tcltest::RunTest}} -cleanup {unset foo cmd res b c}
 
 # -------------------------------------------------------------------------
-
+interp debug {} -frame 1
 # 6 cases.
 ## DV. direct-var          - unchanged
 ## DPV direct-proc-var     - ditto

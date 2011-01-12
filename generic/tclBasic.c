@@ -11,6 +11,7 @@
  * Copyright (c) 2001, 2002 by Kevin B. Kenny.  All rights reserved.
  * Copyright (c) 2007 Daniel A. Steffen <das@users.sourceforge.net>
  * Copyright (c) 2006-2008 by Joe Mistachkin.  All rights reserved.
+ * Copyright (c) 2008 Miguel Sofer <msofer@users.sourceforge.net>
  *
  * See the file "license.terms" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -85,7 +86,6 @@ static void		DeleteOpCmdClientData(ClientData clientData);
 #ifdef USE_DTRACE
 static Tcl_ObjCmdProc	DTraceObjCmd;
 #else
-#   define DTraceCmdReturn	NULL
 #endif /* USE_DTRACE */
 static Tcl_ObjCmdProc	ExprAbsFunc;
 static Tcl_ObjCmdProc	ExprBinaryFunc;
@@ -102,9 +102,8 @@ static Tcl_ObjCmdProc	ExprSqrtFunc;
 static Tcl_ObjCmdProc	ExprSrandFunc;
 static Tcl_ObjCmdProc	ExprUnaryFunc;
 static Tcl_ObjCmdProc	ExprWideFunc;
-static Tcl_Obj *        GetCommandSource(Interp *iPtr,
-			    const char *command, int numChars,
-			    int objc, Tcl_Obj *const objv[]);
+static Tcl_Obj *	GetCommandSource(Interp *iPtr, const char* command,
+                            int numChars, int objc, Tcl_Obj *const objv[]);
 static void		MathFuncWrongNumArgs(Tcl_Interp *interp, int expected,
 			    int actual, Tcl_Obj *const *objv);
 static Tcl_ObjCmdProc	OldMathFuncProc;
@@ -797,7 +796,7 @@ Tcl_CreateInterp(void)
 	    Tcl_DisassembleObjCmd, NULL, NULL);
     Tcl_CreateObjCommand(interp, "::tcl::unsupported::representation",
 	    Tcl_RepresentationCmd, NULL, NULL);
-
+    
 #ifdef USE_DTRACE
     /*
      * Register the tcl::dtrace command.
@@ -2634,7 +2633,7 @@ Tcl_SetCommandInfoFromToken(
 	cmdPtr->objProc = TclInvokeStringCommand;
 	cmdPtr->objClientData = cmdPtr;
     } else {
-	cmdPtr->objProc = infoPtr->objProc;
+        cmdPtr->objProc = infoPtr->objProc;
 	cmdPtr->objClientData = infoPtr->objClientData;
     }
     cmdPtr->deleteProc = infoPtr->deleteProc;
@@ -2974,7 +2973,7 @@ Tcl_DeleteCommandFromToken(
 	 * created when a command was imported into a namespace, this client
 	 * data will be a pointer to a ImportedCmdData structure describing
 	 * the "real" command that this imported command refers to.
-         *
+	 *
 	 * If you are getting a crash during the call to deleteProc and
 	 * cmdPtr->deleteProc is a pointer to the function free(), the most
 	 * likely cause is that your extension allocated memory for the
@@ -3237,14 +3236,6 @@ CancelEvalProc(
  *	This function returns a Tcl_Obj with the full source string for the
  *	command. This insures that traces get a correct NUL-terminated command
  *	string.
- *
- *	*** MAINTAINER WARNING ***
- *	The returned Tcl_Obj is all wrong for any purpose but getting the
- *	source string for an objc/objv command line in the stringRep (no
- *	stringRep if no source is available) and the corresponding substituted
- *	version in the List intrep.
- *	This means that the intRep and stringRep DO NOT COINCIDE! Using these
- *	Tcl_Objs normally is likely to break things.
  *
  *----------------------------------------------------------------------
  */
@@ -3734,7 +3725,7 @@ TclInterpReady(
 	Tcl_AppendResult(interp,
 		"out of stack space (infinite loop?)", NULL);
     } else {
-	Tcl_AppendResult(interp,
+        Tcl_AppendResult(interp,
 		"too many nested evaluations (infinite loop?)", NULL);
         Tcl_SetErrorCode(interp, "TCL", "LIMIT", "STACK", NULL);
     }
@@ -3995,6 +3986,30 @@ Tcl_CancelEval(
   done:
     Tcl_MutexUnlock(&cancelLock);
     return code;
+}
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * Tcl_InterpActive --
+ *
+ *	Returns non-zero if the specified interpreter is in use, i.e. if there
+ *	is an evaluation currently active in the interpreter.
+ *
+ * Results:
+ *	See above.
+ *
+ * Side effects:
+ *	None.
+ *
+ *----------------------------------------------------------------------
+ */
+
+int
+Tcl_InterpActive(
+    Tcl_Interp *interp)
+{
+    return ((Interp *) interp)->numLevels > 0;
 }
 
 /*
@@ -4377,30 +4392,6 @@ TclEvalObjvInternal(
 /*
  *----------------------------------------------------------------------
  *
- * Tcl_InterpActive --
- *
- *	Returns non-zero if the specified interpreter is in use, i.e. if there
- *	is an evaluation currently active in the interpreter.
- *
- * Results:
- *	See above.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
-
-int
-Tcl_InterpActive(
-    Tcl_Interp *interp)
-{
-    return ((Interp *) interp)->numLevels > 0;
-}
-
-/*
- *----------------------------------------------------------------------
- *
  * Tcl_EvalObjv --
  *
  *	This function evaluates a Tcl command that has already been parsed
@@ -4657,7 +4648,12 @@ TclEvalEx(
 				 * to the table entry holding the location of
 				 * the next invisible continuation line to
 				 * look for, while parsing the script. */
-
+    //extern int xyz ; xyz = 1;
+    //fprintf(stderr,"pp %p\n",parsePtr);
+    //fprintf(stderr,"ee %p\n",eeFramePtr);
+    //fprintf(stderr,"so %p\n",stackObjArray);
+    //fprintf(stderr,"es %p\n",expandStack);
+    //fprintf(stderr,"ls %p\n",linesStack);
     if (iPtr->scriptCLLocPtr) {
 	if (clNextOuter) {
 	    clNext = clNextOuter;
@@ -4846,7 +4842,7 @@ TclEvalEx(
 			Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
 				"\n    (expanding word %d)", objectsUsed));
 			Tcl_DecrRefCount(objv[objectsUsed]);
-                        break;
+			break;
 		    }
 		    expandRequested = 1;
 		    expand[objectsUsed] = 1;
@@ -5048,6 +5044,12 @@ TclEvalEx(
     if (eeFramePtr->type == TCL_LOCATION_SOURCE) {
 	Tcl_DecrRefCount(eeFramePtr->data.eval.path);
     }
+    //fprintf(stderr,"pp %p\n",parsePtr);
+    //fprintf(stderr,"ee %p\n",eeFramePtr);
+    //fprintf(stderr,"so %p\n",stackObjArray);
+    //fprintf(stderr,"es %p\n",expandStack);
+    //fprintf(stderr,"ls %p\n",linesStack);
+
     TclStackFree(interp, linesStack);
     TclStackFree(interp, expandStack);
     TclStackFree(interp, stackObjArray);
@@ -5432,12 +5434,12 @@ TclArgumentBCRelease(
 
 void
 TclArgumentGet(
-     Tcl_Interp *interp,
-     Tcl_Obj *obj,
-     CmdFrame **cfPtrPtr,
-     int *wordPtr)
+    Tcl_Interp *interp,
+    Tcl_Obj *obj,
+    CmdFrame **cfPtrPtr,
+    int *wordPtr)
 {
-    Interp *iPtr = (Interp*) interp;
+    Interp *iPtr = (Interp *) interp;
     Tcl_HashEntry *hPtr;
     CmdFrame *framePtr;
 
@@ -5452,7 +5454,7 @@ TclArgumentGet(
 	    ((List *) obj->internalRep.twoPtrValue.ptr1)->canonicalFlag)) {
 	return;
     }
-    
+
     /*
      * First look for location information recorded in the argument
      * stack. That is nearest.
@@ -5462,7 +5464,7 @@ TclArgumentGet(
     if (hPtr) {
 	CFWord *cfwPtr = Tcl_GetHashValue(hPtr);
 
-	*wordPtr  = cfwPtr->word;
+	*wordPtr = cfwPtr->word;
 	*cfPtrPtr = cfwPtr->framePtr;
 	return;
     }
@@ -5474,14 +5476,14 @@ TclArgumentGet(
 
     hPtr = Tcl_FindHashEntry(iPtr->lineLABCPtr, (char *) obj);
     if (hPtr) {
- 	CFWordBC *cfwPtr = Tcl_GetHashValue(hPtr);
-	
- 	framePtr = cfwPtr->framePtr;
- 	framePtr->data.tebc.pc = (char*) (((ByteCode*)
-	        framePtr->data.tebc.codePtr)->codeStart + cfwPtr->pc);
- 	*cfPtrPtr = cfwPtr->framePtr;
- 	*wordPtr  = cfwPtr->word;
- 	return;
+	CFWordBC *cfwPtr = Tcl_GetHashValue(hPtr);
+
+	framePtr = cfwPtr->framePtr;
+	framePtr->data.tebc.pc = (char *) (((ByteCode *)
+		framePtr->data.tebc.codePtr)->codeStart + cfwPtr->pc);
+	*cfPtrPtr = cfwPtr->framePtr;
+	*wordPtr = cfwPtr->word;
+	return;
     }
 }
 
@@ -5613,55 +5615,52 @@ TclEvalObjEx(
     int result;
     CallFrame *savedVarFramePtr;/* Saves old copy of iPtr->varFramePtr in case
 				 * TCL_EVAL_GLOBAL was set. */
-    int allowExceptions = (iPtr->evalFlags & TCL_ALLOW_EXCEPTIONS);
 
     Tcl_IncrRefCount(objPtr);
 
     /*
-     * Pure List Optimization (no string representation). In this case, we
-     * can safely use Tcl_EvalObjv instead and get an appreciable
-     * improvement in execution speed. This is because it allows us to
-     * avoid a setFromAny step that would just pack everything into a
-     * string and back out again.
+     * Pure List Optimization (no string representation). In this case, we can
+     * safely use Tcl_EvalObjv instead and get an appreciable improvement in
+     * execution speed. This is because it allows us to avoid a setFromAny
+     * step that would just pack everything into a string and back out again.
      *
      * This also preserves any associations between list elements and location
      * information for such elements.
      *
      * This restriction has been relaxed a bit by storing in lists whether
-     * they are "canonical" or not (a canonical list being one that is
-     * either pure or that has its string rep derived by
-     * UpdateStringOfList from the internal rep).
+     * they are "canonical" or not (a canonical list being one that is either
+     * pure or that has its string rep derived by UpdateStringOfList from the
+     * internal rep).
      */
-    
+
     if (objPtr->typePtr == &tclListType) {	/* is a list... */
 	List *listRepPtr = objPtr->internalRep.twoPtrValue.ptr1;
-	
+
 	if (objPtr->bytes == NULL ||	/* ...without a string rep */
-		listRepPtr->canonicalFlag) {/* ...or that is canonical */
+	    listRepPtr->canonicalFlag) {/* ...or that is canonical */
 	    /*
-	     * TIP #280 Structures for tracking lines. As we know that
-	     * this is dynamic execution we ignore the invoker, even if
-	     * known.
+	     * TIP #280 Structures for tracking lines. As we know that this is
+	     * dynamic execution we ignore the invoker, even if known.
 	     */
-	    
+
 	    int nelements;
 	    Tcl_Obj **elements, *copyPtr = TclListObjCopy(NULL, objPtr);
 	    CmdFrame *eoFramePtr = (CmdFrame *)
 		TclStackAlloc(interp, sizeof(CmdFrame));
-	    
+
 	    eoFramePtr->type = TCL_LOCATION_EVAL_LIST;
 	    eoFramePtr->level = (iPtr->cmdFramePtr == NULL?
-		    1 : iPtr->cmdFramePtr->level + 1);
+				 1 : iPtr->cmdFramePtr->level + 1);
 	    eoFramePtr->framePtr = iPtr->framePtr;
 	    eoFramePtr->nextPtr = iPtr->cmdFramePtr;
 
-	    eoFramePtr->line = NULL;
 	    eoFramePtr->nline = 0;
-	    
+	    eoFramePtr->line = NULL;
+
 	    eoFramePtr->cmd.listPtr  = objPtr;
 	    Tcl_IncrRefCount(eoFramePtr->cmd.listPtr);
 	    eoFramePtr->data.eval.path = NULL;
-	    
+
 	    /*
 	     * TIP #280 We do _not_ compute all the line numbers for the words
 	     * in the command. For the eval of a pure list the most sensible
@@ -5671,19 +5670,19 @@ TclEvalObjEx(
 	     * TclInitCompileEnv), are special-cased to use the proper line
 	     * number directly instead of accessing the 'line' array.
 	     */
-	    
+
 	    Tcl_ListObjGetElements(NULL, copyPtr,
 				   &nelements, &elements);
-	    
+
 	    iPtr->cmdFramePtr = eoFramePtr;
 	    result = Tcl_EvalObjv(interp, nelements, elements,
-		    flags);
-	    
+				  flags);
+
 	    Tcl_DecrRefCount(copyPtr);
 	    iPtr->cmdFramePtr = iPtr->cmdFramePtr->nextPtr;
 	    Tcl_DecrRefCount(eoFramePtr->cmd.listPtr);
 	    TclStackFree(interp, eoFramePtr);
-	    
+
 	    goto done;
 	}
     }
@@ -5703,33 +5702,33 @@ TclEvalObjEx(
 	 * in the bytecode compiler.
 	 */
 
- 	/*
- 	 * Now we check if we have data about invisible continuation lines for
- 	 * the script, and make it available to the direct script parser and
- 	 * evaluator we are about to call, if so.
- 	 *
- 	 * It may be possible that the script Tcl_Obj* can be free'd while the
- 	 * evaluator is using it, leading to the release of the associated
- 	 * ContLineLoc structure as well. To ensure that the latter doesn't
- 	 * happen we set a lock on it. We release this lock later in this
- 	 * function, after the evaluator is done. The relevant "lineCLPtr"
- 	 * hashtable is managed in the file "tclObj.c".
- 	 *
- 	 * Another important action is to save (and later restore) the
- 	 * continuation line information of the caller, in case we are
- 	 * executing nested commands in the eval/direct path.
- 	 */
- 
- 	ContLineLoc* saveCLLocPtr = iPtr->scriptCLLocPtr;
- 	ContLineLoc* clLocPtr = TclContinuationsGet (objPtr);
- 
- 	if (clLocPtr) {
- 	    iPtr->scriptCLLocPtr = clLocPtr;
- 	    Tcl_Preserve (iPtr->scriptCLLocPtr);
- 	} else {
- 	    iPtr->scriptCLLocPtr = NULL;
- 	}
- 
+	/*
+	 * Now we check if we have data about invisible continuation lines for
+	 * the script, and make it available to the direct script parser and
+	 * evaluator we are about to call, if so.
+	 *
+	 * It may be possible that the script Tcl_Obj* can be free'd while the
+	 * evaluator is using it, leading to the release of the associated
+	 * ContLineLoc structure as well. To ensure that the latter doesn't
+	 * happen we set a lock on it. We release this lock later in this
+	 * function, after the evaluator is done.  The relevant "lineCLPtr"
+	 * hashtable is managed in the file "tclObj.c".
+	 *
+	 * Another important action is to save (and later restore) the
+	 * continuation line information of the caller, in case we are
+	 * executing nested commands in the eval/direct path.
+	 */
+
+	ContLineLoc* saveCLLocPtr = iPtr->scriptCLLocPtr;
+	ContLineLoc* clLocPtr = TclContinuationsGet (objPtr);
+
+	if (clLocPtr) {
+	    iPtr->scriptCLLocPtr = clLocPtr;
+	    Tcl_Preserve (iPtr->scriptCLLocPtr);
+	} else {
+	    iPtr->scriptCLLocPtr = NULL;
+	}
+
 	if (invoker == NULL) {
 	    /*
 	     * No context, force opening of our own.
@@ -5768,8 +5767,8 @@ TclEvalObjEx(
 
 	    script = Tcl_GetStringFromObj(objPtr, &numSrcBytes);
 
-	    if ((invoker->nline <= word) ||
-		(invoker->line[word] < 0) ||
+	    if ((ctxPtr->nline <= word) ||
+		(ctxPtr->line[word] < 0) ||
 		(ctxPtr->type != TCL_LOCATION_SOURCE)) {
 		/*
 		 * Dynamic script, or dynamic context, force our own
@@ -5788,8 +5787,8 @@ TclEvalObjEx(
 
 		result = TclEvalEx(interp, script, numSrcBytes, flags,
 				   ctxPtr->line[word], NULL, script);
-
 	    }
+
 	    if (pc && (ctxPtr->type == TCL_LOCATION_SOURCE)) {
 		/*
 		 * Death of SrcInfo reference.
@@ -5806,7 +5805,7 @@ TclEvalObjEx(
 	 */
 
 	if (iPtr->scriptCLLocPtr) {
-	    Tcl_Release(iPtr->scriptCLLocPtr);
+	    Tcl_Release (iPtr->scriptCLLocPtr);
 	}
 	iPtr->scriptCLLocPtr = saveCLLocPtr;
     } else {
@@ -5816,6 +5815,7 @@ TclEvalObjEx(
 	 * TIP #280 The invoker provides us with the context for the script.
 	 * We transfer this to the byte code compiler.
 	 */
+	int allowExceptions = (iPtr->evalFlags & TCL_ALLOW_EXCEPTIONS);
 
 	savedVarFramePtr = iPtr->varFramePtr;
 	if (flags & TCL_EVAL_GLOBAL) {
@@ -7320,7 +7320,7 @@ ExprRandFunc(
 	 * to insure different seeds in different threads (bug #416643)
 	 */
 
-	iPtr->randSeed = TclpGetClicks() + ((long)Tcl_GetCurrentThread()<<12);
+	iPtr->randSeed = TclpGetClicks() + (PTR2INT(Tcl_GetCurrentThread())<<12);
 
 	/*
 	 * Make sure 1 <= randSeed <= (2^31) - 2. See below.
@@ -7653,47 +7653,13 @@ TclDTraceInfo(
 	}
     }
 }
-
-#undef iPtr
 
-/*
- *----------------------------------------------------------------------
- *
- * DTraceCmdReturn --
- *
- *	NR callback for DTrace command return probes.
- *
- * Results:
- *	None.
- *
- * Side effects:
- *	None.
- *
- *----------------------------------------------------------------------
- */
-
-static int
-DTraceCmdReturn(
-    ClientData data[],
-    Tcl_Interp *interp,
-    int result)
-{
-    char *cmdName = TclGetString((Tcl_Obj *) data[0]);
-
-    if (TCL_DTRACE_CMD_RETURN_ENABLED()) {
-	TCL_DTRACE_CMD_RETURN(cmdName, result);
-    }
-    if (TCL_DTRACE_CMD_RESULT_ENABLED()) {
-	Tcl_Obj *r = Tcl_GetObjResult(interp);
-
-	TCL_DTRACE_CMD_RESULT(cmdName, result, TclGetString(r), r);
-    }
-    return result;
-}
 
 TCL_DTRACE_DEBUG_LOG()
 
 #endif /* USE_DTRACE */
+
+#undef iPtr
 
 /*
  * Local Variables:

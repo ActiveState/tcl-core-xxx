@@ -10,8 +10,8 @@
 # RCS: @(#) $Id$
 
 package require -exact TclOO 0.6.2 ;# Must match value in generic/tclOO.h
-if {[lsearch [namespace children] ::tcltest] == -1} {
-    package require tcltest 2
+package require tcltest 2
+if {"::tcltest" in [namespace children]} {
     namespace import -force ::tcltest::*
 }
 
@@ -328,8 +328,8 @@ test oo-2.5 {OO constructor - Bug 2531577} -setup {
 } -result {1 1}
 
 test oo-3.1 {basic test of OO functionality: destructor} -setup {
-    # This is a bit complex because it needs to run in a sub-interp as
-    # we're modifying the root object class's constructor
+    # This is a bit complex because it needs to run in a sub-interp as we're
+    # modifying the root object class's constructor
     interp create subinterp
     initInterpreter subinterp
     subinterp eval {
@@ -1698,50 +1698,6 @@ test oo-17.10 {OO: class introspection} -setup {
     oo::define foo unexport {*}[info class methods foo -all]
     info class methods foo -all
 } -result {}
-test oo-20.13 {OO: variable method use in non-methods [Bug 2903811]} -setup {
-    oo::object create fooObj
-    oo::objdefine fooObj export variable
-} -cleanup {
-    fooObj destroy
-} -body {
-    apply {{} {fooObj variable x; set x ok; return}}
-    apply {{} {fooObj variable x; return $x}}
-} -result ok
-test oo-20.14 {OO: variable method use in non-methods [Bug 2903811]} -setup {
-    oo::object create fooObj
-    oo::objdefine fooObj export variable
-    namespace eval ns1 {}
-    namespace eval ns2 {}
-    set x bad
-} -cleanup {
-    fooObj destroy
-    namespace delete ns1 ns2
-    unset x
-} -body {
-    namespace eval ns1 {fooObj variable x; set x ok; subst ""}
-    set x bad
-    namespace eval ns2 {fooObj variable x; return $x}
-} -result ok
-test oo-20.15 {OO: variable method use in non-methods [Bug 2903811]} -setup {
-    oo::object create fooObj
-    oo::objdefine fooObj export variable varname
-} -cleanup {
-    fooObj destroy
-} -body {
-    apply {{} {fooObj variable x; set x ok; return}}
-    return [set [fooObj varname x]]
-} -result ok
-test oo-20.16 {variable method: leak per instance} -setup {
-    oo::class create foo {
-	constructor {} {
-	    set [my variable v] 0
-	}
-    }
-} -constraints memory -body {
-    leaktest {[foo new] destroy}
-} -cleanup {
-    foo destroy
-} -result 0
 
 test oo-18.1 {OO: define command support} {
     list [catch {oo::define oo::object {error foo}} msg] $msg $errorInfo
@@ -2648,6 +2604,7 @@ test oo-30.2 {Bug 2903011: deleting an object in a constructor} -setup {
 } -returnCodes error -cleanup {
     cls destroy
 } -result {object deleted in constructor}
+
 
 cleanupTests
 return

@@ -13,11 +13,11 @@
 #
 # RCS: @(#) $Id$
 
-if {[lsearch [namespace children] ::tcltest] == -1} {
+if {"::tcltest" ni [namespace children]} {
     package require tcltest 2
     namespace import -force ::tcltest::*
 }
-
+
 test switch-1.1 {simple patterns} {
     switch a a {subst 1} b {subst 2} c {subst 3} default {subst 4}
 } 1
@@ -737,7 +737,7 @@ test switch-14.16 {switch -regexp compilation} {
 	}
     }}
 } no
-
+
 # cleanup
 catch {rename foo {}}
 ::tcltest::cleanupTests

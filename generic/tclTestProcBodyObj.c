@@ -261,9 +261,9 @@ ProcBodyTestProcObjCmd(
      */
 
     if (cmdPtr->objClientData != TclIsProc(cmdPtr)) {
-        Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+	Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
 		"command \"", fullName, "\" is not a Tcl procedure", NULL);
-        return TCL_ERROR;
+	return TCL_ERROR;
     }
 
     /*

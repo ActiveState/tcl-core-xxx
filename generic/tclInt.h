@@ -10,6 +10,7 @@
  * Copyright (c) 2001, 2002 by Kevin B. Kenny.  All rights reserved.
  * Copyright (c) 2007 Daniel A. Steffen <das@users.sourceforge.net>
  * Copyright (c) 2006-2008 by Joe Mistachkin.  All rights reserved.
+ * Copyright (c) 2008 by Miguel Sofer. All rights reserved.
  *
  * See the file "license.terms" for information on usage and redistribution of
  * this file, and for a DISCLAIMER OF ALL WARRANTIES.
@@ -457,8 +458,8 @@ typedef struct EnsembleConfig {
 				 * all lists, and cannot be found by scanning
 				 * the list from the namespace's ensemble
 				 * field. */
-    int flags;			/* ORed combo of TCL_ENSEMBLE_PREFIX, ENSEMBLE_DEAD
-				 * and ENSEMBLE_COMPILE. */
+    int flags;			/* ORed combo of TCL_ENSEMBLE_PREFIX,
+				 * ENSEMBLE_DEAD and ENSEMBLE_COMPILE. */
 
     /* OBJECT FIELDS FOR ENSEMBLE CONFIGURATION */
 
@@ -493,9 +494,6 @@ typedef struct EnsembleConfig {
 				 * the length of the list in the parameterList
 				 * field. */
 } EnsembleConfig;
-
-#define ENSEMBLE_DEAD	0x1	/* Flag value to say that the ensemble is dead
-				 * and on its way out. */
 
 /*
  * Various bits for the EnsembleConfig.flags field.
@@ -956,7 +954,7 @@ typedef struct CompiledLocal {
 				 * is marked by a unique ClientData tag during
 				 * compilation, and that same tag is used to
 				 * find the variable at runtime. */
-    char name[4];		/* Name of the local variable starts here. If
+    char name[1];		/* Name of the local variable starts here. If
 				 * the name is NULL, this will just be '\0'.
 				 * The actual size of this field will be large
 				 * enough to hold the name. MUST BE THE LAST
@@ -1679,9 +1677,9 @@ typedef struct Command {
  * (these last two flags are defined in tcl.h)
  */
 
-#define CMD_IS_DELETED		0x1
-#define CMD_TRACE_ACTIVE	0x2
-#define CMD_HAS_EXEC_TRACES	0x4
+#define CMD_IS_DELETED		    0x1
+#define CMD_TRACE_ACTIVE	    0x2
+#define CMD_HAS_EXEC_TRACES	    0x4
 
 /*
  *----------------------------------------------------------------
@@ -2188,8 +2186,8 @@ typedef struct InterpList {
  */
 
 #define TCL_ALLOW_EXCEPTIONS	4
-#define TCL_EVAL_FILE             2
-#define TCL_EVAL_CTX              8
+#define TCL_EVAL_FILE		2
+#define TCL_EVAL_CTX		8
 
 /*
  * Flag bits for Interp structures:
@@ -2739,21 +2737,21 @@ struct Tcl_LoadHandle_ {
 
 MODULE_SCOPE void	TclAppendBytesToByteArray(Tcl_Obj *objPtr,
 			    const unsigned char *bytes, int len);
-MODULE_SCOPE void       TclAdvanceContinuations(int *line, int **next,
+MODULE_SCOPE void	TclAdvanceContinuations(int *line, int **next,
 			    int loc);
-MODULE_SCOPE void       TclAdvanceLines(int *line, const char *start,
+MODULE_SCOPE void	TclAdvanceLines(int *line, const char *start,
 			    const char *end);
-MODULE_SCOPE void       TclArgumentEnter(Tcl_Interp* interp,
-			    Tcl_Obj* objv[], int objc, CmdFrame* cf);
-MODULE_SCOPE void       TclArgumentRelease(Tcl_Interp* interp,
-			    Tcl_Obj* objv[], int objc);
-MODULE_SCOPE void       TclArgumentBCEnter(Tcl_Interp* interp,
+MODULE_SCOPE void	TclArgumentEnter(Tcl_Interp *interp,
+			    Tcl_Obj *objv[], int objc, CmdFrame *cf);
+MODULE_SCOPE void	TclArgumentRelease(Tcl_Interp *interp,
+			    Tcl_Obj *objv[], int objc);
+MODULE_SCOPE void	TclArgumentBCEnter(Tcl_Interp *interp,
 			    Tcl_Obj *objv[], int objc,
 			    void *codePtr, CmdFrame *cfPtr, int pc);
-MODULE_SCOPE void       TclArgumentBCRelease(Tcl_Interp* interp,
+MODULE_SCOPE void	TclArgumentBCRelease(Tcl_Interp *interp,
 			    CmdFrame *cfPtr);
-MODULE_SCOPE void       TclArgumentGet(Tcl_Interp* interp, Tcl_Obj* obj,
-			    CmdFrame** cfPtrPtr, int* wordPtr);
+MODULE_SCOPE void	TclArgumentGet(Tcl_Interp *interp, Tcl_Obj *obj,
+			    CmdFrame **cfPtrPtr, int *wordPtr);
 MODULE_SCOPE int	TclArraySet(Tcl_Interp *interp,
 			    Tcl_Obj *arrayNameObj, Tcl_Obj *arrayElemObj);
 MODULE_SCOPE double	TclBignumToDouble(const mp_int *bignum);
@@ -2769,17 +2767,17 @@ MODULE_SCOPE Tcl_ObjCmdProc TclChannelNamesCmd;
 MODULE_SCOPE void	TclCleanupLiteralTable(Tcl_Interp *interp,
 			    LiteralTable *tablePtr);
 MODULE_SCOPE ContLineLoc *TclContinuationsEnter(Tcl_Obj *objPtr, int num,
-			   int *loc);
-MODULE_SCOPE void         TclContinuationsEnterDerived(Tcl_Obj *objPtr,
-			      int start, int *clNext);
+			    int *loc);
+MODULE_SCOPE void	TclContinuationsEnterDerived(Tcl_Obj *objPtr,
+			    int start, int *clNext);
 MODULE_SCOPE ContLineLoc *TclContinuationsGet(Tcl_Obj *objPtr);
-MODULE_SCOPE void         TclContinuationsCopy(Tcl_Obj *objPtr,
-			      Tcl_Obj *originObjPtr);
-MODULE_SCOPE void       TclDeleteNamespaceVars(Namespace *nsPtr);
+MODULE_SCOPE void	TclContinuationsCopy(Tcl_Obj *objPtr,
+			    Tcl_Obj *originObjPtr);
+MODULE_SCOPE void	TclDeleteNamespaceVars(Namespace *nsPtr);
 /* TIP #280 - Modified token based evaluation, with line information. */
-MODULE_SCOPE int        TclEvalEx(Tcl_Interp *interp, const char *script,
+MODULE_SCOPE int	TclEvalEx(Tcl_Interp *interp, const char *script,
 			    int numBytes, int flags, int line,
- 			    int *clNextOuter, const char *outerScript);
+			    int *clNextOuter, const char *outerScript);
 MODULE_SCOPE Tcl_ObjCmdProc TclFileAttrsCmd;
 MODULE_SCOPE Tcl_ObjCmdProc TclFileCopyCmd;
 MODULE_SCOPE Tcl_ObjCmdProc TclFileDeleteCmd;
@@ -3029,10 +3027,10 @@ MODULE_SCOPE double	TclpWideClicksToNanoseconds(Tcl_WideInt clicks);
 #endif
 MODULE_SCOPE Tcl_Obj *	TclDisassembleByteCodeObj(Tcl_Obj *objPtr);
 MODULE_SCOPE int	TclZlibInit(Tcl_Interp *interp);
-MODULE_SCOPE void *     TclpThreadCreateKey(void);
-MODULE_SCOPE void       TclpThreadDeleteKey(void *keyPtr);
-MODULE_SCOPE void       TclpThreadSetMasterTSD(void *tsdKeyPtr, void *ptr);
-MODULE_SCOPE void *     TclpThreadGetMasterTSD(void *tsdKeyPtr);
+MODULE_SCOPE void *	TclpThreadCreateKey(void);
+MODULE_SCOPE void	TclpThreadDeleteKey(void *keyPtr);
+MODULE_SCOPE void	TclpThreadSetMasterTSD(void *tsdKeyPtr, void *ptr);
+MODULE_SCOPE void *	TclpThreadGetMasterTSD(void *tsdKeyPtr);
 
 MODULE_SCOPE void	TclErrorStackResetIf(Tcl_Interp *interp, const char *msg, int length);
 
@@ -4340,7 +4338,7 @@ MODULE_SCOPE Tcl_PackageInitProc Procbodytest_SafeInit;
 
 /*
  * Compile-time assertions: these produce a compile time error if the
- * expression is not known to be true at compile time.  If the assertion is
+ * expression is not known to be true at compile time. If the assertion is
  * known to be false, the compiler (or optimizer?) will error out with
  * "division by zero". If the assertion cannot be evaluated at compile time,
  * the compiler will error out with "non-static initializer".
@@ -4374,7 +4372,7 @@ void Tcl_Panic(const char *, ...) __attribute__((analyzer_noreturn));
 #include "tclTomMathDecls.h"
 
 #endif /* _TCLINT */
-
+
 /*
  * Local Variables:
  * mode: c

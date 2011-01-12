@@ -29,13 +29,16 @@
  */
 
 typedef struct SortElement {
-    union {
+    union {                     /* The value that we sorting by. */
 	const char *strValuePtr;
 	long intValue;
 	double doubleValue;
 	Tcl_Obj *objValuePtr;
-    } index;
-    Tcl_Obj *objPtr;		/* Object being sorted, or its index. */
+    } collationKey;
+    union {             	/* Object being sorted, or its index. */
+        Tcl_Obj *objPtr;
+        int index;
+    } payload;
     struct SortElement *nextPtr;/* Next element in the list, or NULL for end
 				 * of list. */
 } SortElement;
@@ -158,30 +161,30 @@ static Tcl_Obj *	SelectObjFromSublist(Tcl_Obj *firstPtr,
  */
 
 static const EnsembleImplMap defaultInfoMap[] = {
-    {"args",		   InfoArgsCmd,		    NULL},
-    {"body",		   InfoBodyCmd,		    NULL},
-    {"cmdcount",	   InfoCmdCountCmd,	    NULL},
-    {"commands",	   InfoCommandsCmd,	    NULL},
-    {"complete",	   InfoCompleteCmd,	    NULL},
-    {"default",		   InfoDefaultCmd,	    NULL},
-    {"errorstack",	   InfoErrorStackCmd,	    NULL},
-    {"exists",		   TclInfoExistsCmd,	    TclCompileInfoExistsCmd},
-    {"frame",		   InfoFrameCmd,	    NULL},
-    {"functions",	   InfoFunctionsCmd,	    NULL},
-    {"globals",		   TclInfoGlobalsCmd,	    NULL},
-    {"hostname",	   InfoHostnameCmd,	    NULL},
-    {"level",		   InfoLevelCmd,	    NULL},
-    {"library",		   InfoLibraryCmd,	    NULL},
-    {"loaded",		   InfoLoadedCmd,	    NULL},
-    {"locals",		   TclInfoLocalsCmd,	    NULL},
-    {"nameofexecutable",   InfoNameOfExecutableCmd, NULL},
-    {"patchlevel",	   InfoPatchLevelCmd,	    NULL},
-    {"procs",		   InfoProcsCmd,	    NULL},
-    {"script",		   InfoScriptCmd,	    NULL},
-    {"sharedlibextension", InfoSharedlibCmd,	    NULL},
-    {"tclversion",	   InfoTclVersionCmd,	    NULL},
-    {"vars",		   TclInfoVarsCmd,	    NULL},
-    {NULL, NULL, NULL}
+    {"args",		   InfoArgsCmd,		    NULL, NULL, 0},
+    {"body",		   InfoBodyCmd,		    NULL, NULL, 0},
+    {"cmdcount",	   InfoCmdCountCmd,	    NULL, NULL, 0},
+    {"commands",	   InfoCommandsCmd,	    NULL, NULL, 0},
+    {"complete",	   InfoCompleteCmd,	    NULL, NULL, 0},
+    {"default",		   InfoDefaultCmd,	    NULL, NULL, 0},
+    {"errorstack",	   InfoErrorStackCmd,	    NULL, NULL, 0},
+    {"exists",		   TclInfoExistsCmd,	    TclCompileInfoExistsCmd, NULL, 0},
+    {"frame",		   InfoFrameCmd,	    NULL, NULL, 0},
+    {"functions",	   InfoFunctionsCmd,	    NULL, NULL, 0},
+    {"globals",		   TclInfoGlobalsCmd,	    NULL, NULL, 0},
+    {"hostname",	   InfoHostnameCmd,	    NULL, NULL, 0},
+    {"level",		   InfoLevelCmd,	    NULL, NULL, 0},
+    {"library",		   InfoLibraryCmd,	    NULL, NULL, 0},
+    {"loaded",		   InfoLoadedCmd,	    NULL, NULL, 0},
+    {"locals",		   TclInfoLocalsCmd,	    NULL, NULL, 0},
+    {"nameofexecutable",   InfoNameOfExecutableCmd, NULL, NULL, 0},
+    {"patchlevel",	   InfoPatchLevelCmd,	    NULL, NULL, 0},
+    {"procs",		   InfoProcsCmd,	    NULL, NULL, 0},
+    {"script",		   InfoScriptCmd,	    NULL, NULL, 0},
+    {"sharedlibextension", InfoSharedlibCmd,	    NULL, NULL, 0},
+    {"tclversion",	   InfoTclVersionCmd,	    NULL, NULL, 0},
+    {"vars",		   TclInfoVarsCmd,	    NULL, NULL, 0},
+    {NULL, NULL, NULL, NULL, 0}
 };
 
 /*
@@ -1092,18 +1095,20 @@ InfoFrameCmd(
     Tcl_Obj *const objv[])	/* Argument objects. */
 {
     Interp *iPtr = (Interp *) interp;
-    int level;
+    int level, topLevel;
     CmdFrame *framePtr;
+
+    topLevel = ((iPtr->cmdFramePtr == NULL)
+	    ? 0
+	    : iPtr->cmdFramePtr->level);
+
 
     if (objc == 1) {
 	/*
 	 * Just "info frame".
 	 */
 
-	int levels =
-		(iPtr->cmdFramePtr == NULL ? 0 : iPtr->cmdFramePtr->level);
-
-	Tcl_SetObjResult(interp, Tcl_NewIntObj(levels));
+	Tcl_SetObjResult(interp, Tcl_NewIntObj(topLevel));
 	return TCL_OK;
     } else if (objc != 2) {
 	Tcl_WrongNumArgs(interp, 1, objv, "?number?");
@@ -1117,36 +1122,30 @@ InfoFrameCmd(
     if (TclGetIntFromObj(interp, objv[1], &level) != TCL_OK) {
 	return TCL_ERROR;
     }
-    if (level <= 0) {
-	/*
-	 * Negative levels are adressing relative to the current frame's
-	 * depth.
-	 */
 
-	if (iPtr->cmdFramePtr == NULL) {
-	levelError:
-	    Tcl_AppendResult(interp, "bad level \"", TclGetString(objv[1]), "\"",
-		    NULL);
-	    Tcl_SetErrorCode(interp, "TCL", "LOOKUP", "STACK_FRAME",
+    if ((level > topLevel) || (level <= - topLevel)) {
+    levelError:
+	Tcl_AppendResult(interp, "bad level \"", TclGetString(objv[1]), "\"",
+		NULL);
+	Tcl_SetErrorCode(interp, "TCL", "LOOKUP", "STACK_FRAME",
 		TclGetString(objv[1]), NULL);
-	    return TCL_ERROR;
-	}
-
-	/*
-	 * Convert to absolute.
-	 */
-
-	level += iPtr->cmdFramePtr->level;
+	return TCL_ERROR;
     }
 
-    for (framePtr = iPtr->cmdFramePtr; framePtr != NULL;
-	    framePtr = framePtr->nextPtr) {
-	if (framePtr->level == level) {
-	    break;
-	}
+    /*
+     * Let us convert to relative so that we know how many levels to go back
+     */
+
+    if (level > 0) {
+	level -= topLevel;
     }
-    if (framePtr == NULL) {
-	goto levelError;
+
+    framePtr = iPtr->cmdFramePtr;
+    while (++level <= 0) {
+	framePtr = framePtr->nextPtr;
+	if (!framePtr) {
+	    goto levelError;
+	}
     }
 
     Tcl_SetObjResult(interp, TclInfoFrame(interp, framePtr));
@@ -3571,6 +3570,7 @@ Tcl_LsortObjCmd(
     group = 0;
     groupSize = 1;
     groupOffset = 0;
+    indexPtr = NULL;
     for (i = 1; i < objc-1; i++) {
 	if (Tcl_GetIndexFromObj(interp, objv[i], switches, "option", 0,
 		&index) != TCL_OK) {
@@ -3603,66 +3603,40 @@ Tcl_LsortObjCmd(
 	    sortInfo.isIncreasing = 1;
 	    break;
 	case LSORT_INDEX: {
+            int indexc, dummy;
 	    Tcl_Obj **indexv;
 
-	    /* === START SPECIAL CASE ===
-	     *
-	     * When reviewing code flow in this function, note that from here
-	     * to the line a bit below (END SPECIAL CASE) the contents of the
-	     * indexc and indexv fields of the sortInfo structure may not be
-	     * matched, so jumping to the done2 label to exit is wrong.
-	     */
-
-	    if (sortInfo.indexc > 1) {
-		TclStackFree(interp, sortInfo.indexv);
-	    }
 	    if (i == objc-2) {
 		Tcl_AppendResult(interp, "\"-index\" option must be "
 			"followed by list index", NULL);
-		return TCL_ERROR;
+                sortInfo.resultCode = TCL_ERROR;
+                goto done2;
 	    }
-
-	    /*
-	     * Take copy to prevent shimmering problems.
-	     */
-
-	    if (TclListObjGetElements(interp, objv[i+1], &sortInfo.indexc,
+	    if (TclListObjGetElements(interp, objv[i+1], &indexc,
 		    &indexv) != TCL_OK) {
-		return TCL_ERROR;
-	    }
-	    /* === END SPECIAL CASE === */
-
-	    switch (sortInfo.indexc) {
-	    case 0:
-		sortInfo.indexv = NULL;
-		break;
-	    case 1:
-		sortInfo.indexv = &sortInfo.singleIndex;
-		break;
-	    default:
-		sortInfo.indexv =
-			TclStackAlloc(interp, sizeof(int) * sortInfo.indexc);
-		allocatedIndexVector = 1;	/* Cannot use indexc field, as
-						 * it might be decreased by 1
-						 * later. */
+                sortInfo.resultCode = TCL_ERROR;
+                goto done2;
 	    }
 
-	    /*
-	     * Fill the array by parsing each index. We don't know whether
-	     * their scale is sensible yet, but we at least perform the
-	     * syntactic check here.
-	     */
+            /*
+             * Check each of the indices for syntactic correctness. Note that
+             * we do not store the converted values here because we do not
+             * know if this is the only -index option yet and so we can't
+             * allocate any space; that happens after the scan through all the
+             * options is done.
+             */
 
-	    for (j=0 ; j<sortInfo.indexc ; j++) {
+	    for (j=0 ; j<indexc ; j++) {
 		if (TclGetIntForIndexM(interp, indexv[j], SORTIDX_END,
-			&sortInfo.indexv[j]) != TCL_OK) {
+			&dummy) != TCL_OK) {
 		    Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
 			    "\n    (-index option item number %d)", j));
 		    sortInfo.resultCode = TCL_ERROR;
 		    goto done2;
 		}
 	    }
-	    i++;
+	    indexPtr = objv[i+1];
+            i++;
 	    break;
 	}
 	case LSORT_INTEGER:
@@ -3704,6 +3678,35 @@ Tcl_LsortObjCmd(
     }
     if (nocase && (sortInfo.sortMode == SORTMODE_ASCII)) {
 	sortInfo.sortMode = SORTMODE_ASCII_NC;
+    }
+
+    /*
+     * Now extract the -index list for real, if present. No failures are
+     * expected here; the values are all of the right type or convertible to
+     * it.
+     */
+
+    if (indexPtr) {
+        Tcl_Obj **indexv;
+
+        TclListObjGetElements(interp, indexPtr, &sortInfo.indexc, &indexv);
+        switch (sortInfo.indexc) {
+        case 0:
+            sortInfo.indexv = NULL;
+            break;
+        case 1:
+            sortInfo.indexv = &sortInfo.singleIndex;
+            break;
+        default:
+            sortInfo.indexv =
+		    TclStackAlloc(interp, sizeof(int) * sortInfo.indexc);
+            allocatedIndexVector = 1;	/* Cannot use indexc field, as it
+                                         * might be decreased by 1 later. */
+        }
+        for (j=0 ; j<sortInfo.indexc ; j++) {
+            TclGetIntForIndexM(interp, indexv[j], SORTIDX_END,
+		    &sortInfo.indexv[j]);
+        }
     }
 
     listObj = objv[objc-1];
@@ -3849,7 +3852,7 @@ Tcl_LsortObjCmd(
 	 */
 
 	if (sortMode == SORTMODE_ASCII) {
-	    elementArray[i].index.strValuePtr = TclGetString(indexPtr);
+	    elementArray[i].collationKey.strValuePtr = TclGetString(indexPtr);
 	} else if (sortMode == SORTMODE_INTEGER) {
 	    long a;
 
@@ -3857,7 +3860,7 @@ Tcl_LsortObjCmd(
 		sortInfo.resultCode = TCL_ERROR;
 		goto done1;
 	    }
-	    elementArray[i].index.intValue = a;
+	    elementArray[i].collationKey.intValue = a;
 	} else if (sortInfo.sortMode == SORTMODE_REAL) {
 	    double a;
 
@@ -3866,9 +3869,9 @@ Tcl_LsortObjCmd(
 		sortInfo.resultCode = TCL_ERROR;
 		goto done1;
 	    }
-	    elementArray[i].index.doubleValue = a;
+	    elementArray[i].collationKey.doubleValue = a;
 	} else {
-	    elementArray[i].index.objValuePtr = indexPtr;
+	    elementArray[i].collationKey.objValuePtr = indexPtr;
 	}
 
 	/*
@@ -3877,9 +3880,9 @@ Tcl_LsortObjCmd(
 	 */
 
 	if (indices || group) {
-	    elementArray[i].objPtr = INT2PTR(idx);
+	    elementArray[i].payload.index = idx;
 	} else {
-	    elementArray[i].objPtr = listObjPtrs[idx];
+	    elementArray[i].payload.objPtr = listObjPtrs[idx];
 	}
 
 	/*
@@ -3921,7 +3924,7 @@ Tcl_LsortObjCmd(
 	newArray = &listRepPtr->elements;
 	if (group) {
 	    for (i=0; elementPtr!=NULL ; elementPtr=elementPtr->nextPtr) {
-		idx = PTR2INT(elementPtr->objPtr);
+		idx = elementPtr->payload.index;
 		for (j = 0; j < groupSize; j++) {
 		    if (indices) {
 			objPtr = Tcl_NewIntObj(idx + j - groupOffset);
@@ -3936,13 +3939,13 @@ Tcl_LsortObjCmd(
 	    }
 	} else if (indices) {
 	    for (i=0; elementPtr != NULL ; elementPtr = elementPtr->nextPtr) {
-		objPtr = Tcl_NewIntObj(PTR2INT(elementPtr->objPtr));
+		objPtr = Tcl_NewIntObj(elementPtr->payload.index);
 		newArray[i++] = objPtr;
 		Tcl_IncrRefCount(objPtr);
 	    }
 	} else {
 	    for (i=0; elementPtr != NULL ; elementPtr = elementPtr->nextPtr) {
-		objPtr = elementPtr->objPtr;
+		objPtr = elementPtr->payload.objPtr;
 		newArray[i++] = objPtr;
 		Tcl_IncrRefCount(objPtr);
 	    }
@@ -4097,25 +4100,25 @@ SortCompare(
     int order = 0;
 
     if (infoPtr->sortMode == SORTMODE_ASCII) {
-	order = strcmp(elemPtr1->index.strValuePtr,
-		elemPtr2->index.strValuePtr);
+	order = strcmp(elemPtr1->collationKey.strValuePtr,
+		elemPtr2->collationKey.strValuePtr);
     } else if (infoPtr->sortMode == SORTMODE_ASCII_NC) {
-	order = strcasecmp(elemPtr1->index.strValuePtr,
-		elemPtr2->index.strValuePtr);
+	order = strcasecmp(elemPtr1->collationKey.strValuePtr,
+		elemPtr2->collationKey.strValuePtr);
     } else if (infoPtr->sortMode == SORTMODE_DICTIONARY) {
-	order = DictionaryCompare(elemPtr1->index.strValuePtr,
-		elemPtr2->index.strValuePtr);
+	order = DictionaryCompare(elemPtr1->collationKey.strValuePtr,
+		elemPtr2->collationKey.strValuePtr);
     } else if (infoPtr->sortMode == SORTMODE_INTEGER) {
 	long a, b;
 
-	a = elemPtr1->index.intValue;
-	b = elemPtr2->index.intValue;
+	a = elemPtr1->collationKey.intValue;
+	b = elemPtr2->collationKey.intValue;
 	order = ((a >= b) - (a <= b));
     } else if (infoPtr->sortMode == SORTMODE_REAL) {
 	double a, b;
 
-	a = elemPtr1->index.doubleValue;
-	b = elemPtr2->index.doubleValue;
+	a = elemPtr1->collationKey.doubleValue;
+	b = elemPtr2->collationKey.doubleValue;
 	order = ((a >= b) - (a <= b));
     } else {
 	Tcl_Obj **objv, *paramObjv[2];
@@ -4132,8 +4135,8 @@ SortCompare(
 	}
 
 
-	objPtr1 = elemPtr1->index.objValuePtr;
-	objPtr2 = elemPtr2->index.objValuePtr;
+	objPtr1 = elemPtr1->collationKey.objValuePtr;
+	objPtr2 = elemPtr2->collationKey.objValuePtr;
 
 	paramObjv[0] = objPtr1;
 	paramObjv[1] = objPtr2;

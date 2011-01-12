@@ -80,26 +80,26 @@ static inline int	DeleteChainEntry(struct Dict *dict, Tcl_Obj *keyPtr);
  */
 
 static const EnsembleImplMap implementationMap[] = {
-    {"append",  DictAppendCmd,  TclCompileDictAppendCmd },
-    {"create",  DictCreateCmd,  NULL },
-    {"exists",  DictExistsCmd,  NULL },
-    {"filter",  DictFilterCmd,  NULL },
-    {"for",     DictForCmd,     TclCompileDictForCmd },
-    {"get",     DictGetCmd,     TclCompileDictGetCmd },
-    {"incr",    DictIncrCmd,    TclCompileDictIncrCmd },
-    {"info",    DictInfoCmd,    NULL },
-    {"keys",    DictKeysCmd,    NULL },
-    {"lappend", DictLappendCmd, TclCompileDictLappendCmd },
-    {"merge",   DictMergeCmd,   NULL },
-    {"remove",  DictRemoveCmd,  NULL },
-    {"replace", DictReplaceCmd, NULL },
-    {"set",     DictSetCmd,     TclCompileDictSetCmd },
-    {"size",    DictSizeCmd,    NULL },
-    {"unset",   DictUnsetCmd,   NULL },
-    {"update",  DictUpdateCmd,  TclCompileDictUpdateCmd },
-    {"values",  DictValuesCmd,  NULL },
-    {"with",    DictWithCmd,    NULL },
-    {NULL, NULL, NULL }
+    {"append",	DictAppendCmd,	TclCompileDictAppendCmd, NULL, 0 },
+    {"create",	DictCreateCmd, NULL, NULL, 0 },
+    {"exists",	DictExistsCmd, NULL, NULL, 0 },
+    {"filter",	DictFilterCmd, NULL, NULL, 0 },
+    {"for",	DictForCmd,	TclCompileDictForCmd, NULL, 0 },
+    {"get",	DictGetCmd,	TclCompileDictGetCmd, NULL, 0 },
+    {"incr",	DictIncrCmd,	TclCompileDictIncrCmd, NULL, 0 },
+    {"info",	DictInfoCmd, NULL, NULL, 0 },
+    {"keys",	DictKeysCmd, NULL, NULL, 0 },
+    {"lappend",	DictLappendCmd,	TclCompileDictLappendCmd, NULL, 0 },
+    {"merge",	DictMergeCmd, NULL, NULL, 0 },
+    {"remove",	DictRemoveCmd, NULL, NULL, 0 },
+    {"replace",	DictReplaceCmd, NULL, NULL, 0 },
+    {"set",	DictSetCmd,	TclCompileDictSetCmd, NULL, 0 },
+    {"size",	DictSizeCmd, NULL, NULL, 0 },
+    {"unset",	DictUnsetCmd, NULL, NULL, 0 },
+    {"update",	DictUpdateCmd,	TclCompileDictUpdateCmd, NULL, 0 },
+    {"values",	DictValuesCmd, NULL, NULL, 0 },
+    {"with",	DictWithCmd, NULL, NULL, 0 },
+    {NULL, NULL, NULL, NULL, 0}
 };
 
 /*

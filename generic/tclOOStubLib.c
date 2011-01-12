@@ -23,7 +23,7 @@ MODULE_SCOPE const TclOOIntStubs *tclOOIntStubsPtr;
 
 const TclOOStubs *tclOOStubsPtr = NULL;
 const TclOOIntStubs *tclOOIntStubsPtr = NULL;
-
+
 /*
  *----------------------------------------------------------------------
  *
@@ -43,7 +43,8 @@ const TclOOIntStubs *tclOOIntStubsPtr = NULL;
 
 MODULE_SCOPE const char *
 TclOOInitializeStubs(
-    Tcl_Interp *interp, const char *version)
+    Tcl_Interp *interp,
+    const char *version)
 {
     int exact = 0;
     const char *packageName = "TclOO";
@@ -83,3 +84,11 @@ TclOOInitializeStubs(
 	return NULL;
     }
 }
+
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */

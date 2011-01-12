@@ -2126,7 +2126,7 @@ declare 581 {
 # TIP#304 (chan pipe) aferrieux
 declare 582 {
     int Tcl_CreatePipe(Tcl_Interp  *interp, Tcl_Channel *rchan,
-	   Tcl_Channel *wchan, int flags)
+	    Tcl_Channel *wchan, int flags)
 }
 
 # TIP#316 (Tcl_StatBuf reader functions) dkf

@@ -21,7 +21,7 @@
 #include "tclInt.h"
 #include "tclRegexp.h"
 
-static inline Tcl_Obj*  During(Tcl_Interp *interp, int resultCode,
+static inline Tcl_Obj *	During(Tcl_Interp *interp, int resultCode,
 			    Tcl_Obj *oldOptions, Tcl_Obj *errorInfo);
 static int		TryPostBody(Tcl_Obj* handlersObj,
 				    Tcl_Obj* finallyObj, Tcl_Obj *const objv[], int objc,
@@ -971,7 +971,7 @@ Tcl_SourceObjCmd(
     fileName = objv[objc-1];
 
     if (objc == 4) {
-	static const char *const options[] = {
+	static const char *options[] = {
 	    "-encoding", NULL
 	};
 	int index;
@@ -3338,29 +3338,29 @@ TclInitStringCmd(
     Tcl_Interp *interp)		/* Current interpreter. */
 {
     static const EnsembleImplMap stringImplMap[] = {
-	{"bytelength",	StringBytesCmd,	NULL, NULL},
-	{"compare",	StringCmpCmd,	TclCompileStringCmpCmd, NULL},
-	{"equal",	StringEqualCmd,	TclCompileStringEqualCmd, NULL},
-	{"first",	StringFirstCmd,	NULL, NULL},
-	{"index",	StringIndexCmd,	TclCompileStringIndexCmd, NULL},
-	{"is",		StringIsCmd,	NULL, NULL},
-	{"last",	StringLastCmd,	NULL, NULL},
-	{"length",	StringLenCmd,	TclCompileStringLenCmd, NULL},
-	{"map",		StringMapCmd,	NULL, NULL},
-	{"match",	StringMatchCmd,	TclCompileStringMatchCmd, NULL},
-	{"range",	StringRangeCmd,	NULL, NULL},
-	{"repeat",	StringReptCmd,	NULL, NULL},
-	{"replace",	StringRplcCmd,	NULL, NULL},
-	{"reverse",	StringRevCmd,	NULL, NULL},
-	{"tolower",	StringLowerCmd,	NULL, NULL},
-	{"toupper",	StringUpperCmd,	NULL, NULL},
-	{"totitle",	StringTitleCmd,	NULL, NULL},
-	{"trim",	StringTrimCmd,	NULL, NULL},
-	{"trimleft",	StringTrimLCmd,	NULL, NULL},
-	{"trimright",	StringTrimRCmd,	NULL, NULL},
-	{"wordend",	StringEndCmd,	NULL, NULL},
-	{"wordstart",	StringStartCmd,	NULL, NULL},
-	{NULL, NULL, NULL, NULL}
+	{"bytelength",	StringBytesCmd,	NULL, NULL, 0},
+	{"compare",	StringCmpCmd,	TclCompileStringCmpCmd, NULL, 0},
+	{"equal",	StringEqualCmd,	TclCompileStringEqualCmd, NULL, 0},
+	{"first",	StringFirstCmd,	NULL, NULL, 0},
+	{"index",	StringIndexCmd,	TclCompileStringIndexCmd, NULL, 0},
+	{"is",		StringIsCmd,	NULL, NULL, 0},
+	{"last",	StringLastCmd,	NULL, NULL, 0},
+	{"length",	StringLenCmd,	TclCompileStringLenCmd, NULL, 0},
+	{"map",		StringMapCmd,	NULL, NULL, 0},
+	{"match",	StringMatchCmd,	TclCompileStringMatchCmd, NULL, 0},
+	{"range",	StringRangeCmd,	NULL, NULL, 0},
+	{"repeat",	StringReptCmd,	NULL, NULL, 0},
+	{"replace",	StringRplcCmd,	NULL, NULL, 0},
+	{"reverse",	StringRevCmd,	NULL, NULL, 0},
+	{"tolower",	StringLowerCmd,	NULL, NULL, 0},
+	{"toupper",	StringUpperCmd,	NULL, NULL, 0},
+	{"totitle",	StringTitleCmd,	NULL, NULL, 0},
+	{"trim",	StringTrimCmd,	NULL, NULL, 0},
+	{"trimleft",	StringTrimLCmd,	NULL, NULL, 0},
+	{"trimright",	StringTrimRCmd,	NULL, NULL, 0},
+	{"wordend",	StringEndCmd,	NULL, NULL, 0},
+	{"wordstart",	StringStartCmd,	NULL, NULL, 0},
+	{NULL, NULL, NULL, NULL, 0}
     };
 
     return TclMakeEnsemble(interp, "string", stringImplMap);
@@ -3434,6 +3434,10 @@ Tcl_SubstObjCmd(
     Tcl_Obj *resultPtr;
     int flags;
 
+    /*
+     * Parse command-line options.
+     */
+
     if (objc < 2) {
 	Tcl_WrongNumArgs(interp, 1, objv,
 		"?-nobackslashes? ?-nocommands? ?-novariables? string");
@@ -3443,6 +3447,10 @@ Tcl_SubstObjCmd(
     if (TclSubstOptions(interp, objc-2, objv+1, &flags) != TCL_OK) {
 	return TCL_ERROR;
     }
+
+    /*
+     * Perform the substitution.
+     */
 
     resultPtr = Tcl_SubstObj(interp, objv[objc-1], flags);
 
@@ -3495,7 +3503,7 @@ Tcl_SwitchObjCmd(
      * -glob, you *must* fix TclCompileSwitchCmd's option parser as well.
      */
 
-    static const char *const options[] = {
+    static const char *options[] = {
 	"-exact", "-glob", "-indexvar", "-matchvar", "-nocase", "-regexp",
 	"--", NULL
     };
@@ -3614,8 +3622,8 @@ Tcl_SwitchObjCmd(
     splitObjs = 0;
     if (objc == 1) {
 	Tcl_Obj **listv;
-
 	blist = objv[0];
+
 	if (TclListObjGetElements(interp, objv[0], &objc, &listv) != TCL_OK){
 	    return TCL_ERROR;
 	}
@@ -3721,7 +3729,7 @@ Tcl_SwitchObjCmd(
 	    }
 	    break;
 	case OPT_GLOB:
-	    if (Tcl_StringCaseMatch(TclGetString(stringObj),pattern,noCase)) {
+	    if (Tcl_StringCaseMatch(TclGetString(stringObj), pattern, noCase)) {
 		goto matchFound;
 	    }
 	    break;
@@ -3847,7 +3855,7 @@ Tcl_SwitchObjCmd(
 	if (ctxPtr->type == TCL_LOCATION_BC) {
 	    /*
 	     * Type BC => ctxPtr->data.eval.path    is not used.
-	     *		  ctxPtr->data.tebc.codePtr is used instead.
+	     *            ctxPtr->data.tebc.codePtr is used instead.
 	     */
 
 	    TclGetSrcInfoForPc(ctxPtr);
@@ -4102,7 +4110,7 @@ Tcl_TimeObjCmd(
 
 int
 Tcl_TryObjCmd(
-    ClientData dummy,		/* Not used. */
+    ClientData dummy,	/* Not used. */
     Tcl_Interp *interp,		/* Current interpreter. */
     int objc,			/* Number of arguments. */
     Tcl_Obj *const objv[])	/* Argument objects. */
@@ -4278,7 +4286,7 @@ During(
  *
  * TryPostBody --
  *
- *	Callback to andle the outcome of the execution of the body of a 'try'
+ *	Callback to handle the outcome of the execution of the body of a 'try'
  *	command.
  *
  *----------------------------------------------------------------------

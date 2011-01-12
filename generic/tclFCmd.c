@@ -237,7 +237,7 @@ TclFileMakeDirsCmd(
 	    break;
 	}
 
-	split = Tcl_FSSplitPath(objv[i],&pobjc);
+	split = Tcl_FSSplitPath(objv[i], &pobjc);
 	Tcl_IncrRefCount(split);
 	if (pobjc == 0) {
 	    errno = ENOENT;
@@ -278,7 +278,7 @@ TclFileMakeDirsCmd(
 		    errfile = target;
 		    goto done;
 		} else if ((Tcl_FSStat(target, &statBuf) == 0)
-			    && S_ISDIR(statBuf.st_mode)) {
+			&& S_ISDIR(statBuf.st_mode)) {
 		    /*
 		     * It is a directory that wasn't there before, so keep
 		     * going without error.

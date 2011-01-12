@@ -4226,18 +4226,18 @@ TclInitArrayCmd(
     Tcl_Interp *interp)		/* Current interpreter. */
 {
     static const EnsembleImplMap arrayImplMap[] = {
-	{"anymore",	ArrayAnyMoreCmd,	NULL, NULL},
-	{"donesearch",	ArrayDoneSearchCmd,	NULL, NULL},
-	{"exists",	ArrayExistsCmd,		NULL, NULL},
-	{"get",		ArrayGetCmd,		NULL, NULL},
-	{"names",	ArrayNamesCmd,		NULL, NULL},
-	{"nextelement",	ArrayNextElementCmd,	NULL, NULL},
-	{"set",		ArraySetCmd,		NULL, NULL},
-	{"size",	ArraySizeCmd,		NULL, NULL},
-	{"startsearch",	ArrayStartSearchCmd,	NULL, NULL},
-	{"statistics",	ArrayStatsCmd,		NULL, NULL},
-	{"unset",	ArrayUnsetCmd,		NULL, NULL},
-	{NULL, NULL, NULL, NULL}
+	{"anymore",	ArrayAnyMoreCmd,	NULL, NULL, 0},
+	{"donesearch",	ArrayDoneSearchCmd,	NULL, NULL, 0},
+	{"exists",	ArrayExistsCmd,		NULL, NULL, 0},
+	{"get",		ArrayGetCmd,		NULL, NULL, 0},
+	{"names",	ArrayNamesCmd,		NULL, NULL, 0},
+	{"nextelement",	ArrayNextElementCmd,	NULL, NULL, 0},
+	{"set",		ArraySetCmd,		NULL, NULL, 0},
+	{"size",	ArraySizeCmd,		NULL, NULL, 0},
+	{"startsearch",	ArrayStartSearchCmd,	NULL, NULL, 0},
+	{"statistics",	ArrayStatsCmd,		NULL, NULL, 0},
+	{"unset",	ArrayUnsetCmd,		NULL, NULL, 0},
+	{NULL, NULL, NULL, NULL, 0}
     };
 
     return TclMakeEnsemble(interp, "array", arrayImplMap);

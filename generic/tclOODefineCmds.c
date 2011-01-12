@@ -1074,7 +1074,7 @@ TclOODefineClassObjCmd(
      * produce an error if any attempt is made to swap from one to the other.
      */
 
-    if ((oPtr->classPtr==NULL) == TclOOIsReachable(fPtr->classCls, clsPtr)) {
+    if ((oPtr->classPtr == NULL) == TclOOIsReachable(fPtr->classCls,clsPtr)) {
 	Tcl_AppendResult(interp, "may not change a ",
 		(oPtr->classPtr==NULL ? "non-" : ""), "class object into a ",
 		(oPtr->classPtr==NULL ? "" : "non-"), "class object", NULL);

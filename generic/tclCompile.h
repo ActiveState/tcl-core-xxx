@@ -875,6 +875,15 @@ MODULE_SCOPE int	TclCompEvalObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
 
 /*
  *----------------------------------------------------------------
+ * Procedures exported by the engine to be used by tclBasic.c
+ *----------------------------------------------------------------
+ */
+
+MODULE_SCOPE ByteCode *	TclCompileObj(Tcl_Interp *interp, Tcl_Obj *objPtr,
+			    const CmdFrame *invoker, int word);
+
+/*
+ *----------------------------------------------------------------
  * Procedures shared among Tcl bytecode compilation and execution modules but
  * not used outside:
  *----------------------------------------------------------------

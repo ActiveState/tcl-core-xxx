@@ -166,8 +166,8 @@ Tcl_NewInstanceMethod(
     hPtr = Tcl_CreateHashEntry(oPtr->methodsPtr, (char *) nameObj, &isNew);
     if (isNew) {
 	mPtr = (Method *) ckalloc(sizeof(Method));
-	mPtr->namePtr = nameObj;
 	mPtr->refCount = 1;
+	mPtr->namePtr = nameObj;
 	Tcl_IncrRefCount(nameObj);
 	Tcl_SetHashValue(hPtr, mPtr);
     } else {
@@ -673,7 +673,7 @@ InvokeProcedureMethod(
      * Allocate the special frame data.
      */
 
-    fdPtr = TclStackAlloc(interp, sizeof(PMFrameData));
+    fdPtr = (PMFrameData *) TclStackAlloc(interp, sizeof(PMFrameData));
     pmPtr->refCount++;
 
     /*
@@ -786,7 +786,7 @@ PushMethodCallFrame(
 		contextPtr->callPtr->chain[contextPtr->index].mPtr;
 
 	if (mPtr->declaringClassPtr != NULL) {
-	    nsPtr = (Namespace *)
+	    nsPtr = (Namespace *) 
 		    mPtr->declaringClassPtr->thisPtr->namespacePtr;
 	} else {
 	    nsPtr = (Namespace *) mPtr->declaringObjectPtr->namespacePtr;
@@ -964,7 +964,7 @@ ProcedureMethodCompiledVarConnect(
      * either.
      */
 
-    varName = TclGetStringFromObj(infoPtr->variableObj, &varLen);
+    varName = Tcl_GetStringFromObj(infoPtr->variableObj, &varLen);
     if (contextPtr->callPtr->chain[contextPtr->index]
 	    .mPtr->declaringClassPtr != NULL) {
 	FOREACH(variableObj, contextPtr->callPtr->chain[contextPtr->index]
@@ -1316,8 +1316,6 @@ TclOONewForwardMethod(
     fmPtr->prefixObj = prefixObj;
     Tcl_ListObjIndex(interp, prefixObj, 0, &cmdObj);
     fmPtr->fullyQualified = (strncmp(TclGetString(cmdObj), "::", 2) == 0);
-    Tcl_ListObjIndex(interp, prefixObj, 0, &cmdObj);
-    fmPtr->fullyQualified = (strncmp(TclGetString(cmdObj), "::", 2) == 0);
     Tcl_IncrRefCount(prefixObj);
     return (Method *) Tcl_NewMethod(interp, (Tcl_Class) clsPtr, nameObj,
 	    flags, &fwdMethodType, fmPtr);
@@ -1359,8 +1357,8 @@ InvokeForwardMethod(
 	    numPrefixes, prefixObjs, &len);
 
     /*
-     * In 8.6/NRE we do this much more efficiently. Without NRE simply don't
-     * have the API we use there, so we do this nasty hack here.
+     * In 8.6 we do this much more efficiently. But 8.5 simply doesn't have
+     * the API we use there, so we do this nasty hack here.
      */
 
     if (!fmPtr->fullyQualified) {
@@ -1600,7 +1598,7 @@ TclOONewProcInstanceMethodEx(
     Tcl_Object oPtr,		/* The object to modify. */
     TclOO_PreCallProc *preCallPtr,
     TclOO_PostCallProc *postCallPtr,
-    ProcErrorProc *errProc,
+    ProcErrorProc errProc,
     ClientData clientData,
     Tcl_Obj *nameObj,		/* The name of the method, which must not be
 				 * NULL. */
@@ -1637,7 +1635,7 @@ TclOONewProcMethodEx(
     Tcl_Class clsPtr,		/* The class to modify. */
     TclOO_PreCallProc *preCallPtr,
     TclOO_PostCallProc *postCallPtr,
-    ProcErrorProc *errProc,
+    ProcErrorProc errProc,
     ClientData clientData,
     Tcl_Obj *nameObj,		/* The name of the method, which may be NULL;
 				 * if so, up to caller to manage storage

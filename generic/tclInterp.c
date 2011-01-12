@@ -2652,8 +2652,8 @@ SlaveEval(
 	 * TIP #280: Make actual argument location available to eval'd script.
 	 */
 
-        Interp *iPtr = (Interp *) interp;
-	CmdFrame* invoker = iPtr->cmdFramePtr;
+	Interp *iPtr = (Interp *) interp;
+	CmdFrame *invoker = iPtr->cmdFramePtr;
 	int word = 0;
 
 	TclArgumentGet(interp, objv[0], &invoker, &word);

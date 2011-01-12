@@ -1,3 +1,4 @@
+# -*- tcl -*-
 # $Id$
 
 library tclOO
@@ -166,14 +167,14 @@ declare 8 {
 declare 9 {
     Tcl_Method TclOONewProcInstanceMethodEx(Tcl_Interp *interp,
 	    Tcl_Object oPtr, TclOO_PreCallProc *preCallPtr,
-	    TclOO_PostCallProc *postCallPtr, ProcErrorProc *errProc,
+	    TclOO_PostCallProc *postCallPtr, ProcErrorProc errProc,
 	    ClientData clientData, Tcl_Obj *nameObj, Tcl_Obj *argsObj,
 	    Tcl_Obj *bodyObj, int flags, void **internalTokenPtr)
 }
 declare 10 {
     Tcl_Method TclOONewProcMethodEx(Tcl_Interp *interp, Tcl_Class clsPtr,
 	    TclOO_PreCallProc *preCallPtr, TclOO_PostCallProc *postCallPtr,
-	    ProcErrorProc *errProc, ClientData clientData, Tcl_Obj *nameObj,
+	    ProcErrorProc errProc, ClientData clientData, Tcl_Obj *nameObj,
 	    Tcl_Obj *argsObj, Tcl_Obj *bodyObj, int flags,
 	    void **internalTokenPtr)
 }

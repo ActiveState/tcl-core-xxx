@@ -284,7 +284,7 @@ Tcl_CatchObjCmd(
 
     if (Tcl_LimitExceeded(interp)) {
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
-		"\n    (\"catch\" body line %d)", Tcl_GetErrorLine(interp)));
+						       "\n    (\"catch\" body line %d)", Tcl_GetErrorLine(interp)));
 	return TCL_ERROR;
     }
 
@@ -299,7 +299,6 @@ Tcl_CatchObjCmd(
     }
     if (objc == 4) {
 	Tcl_Obj *options = Tcl_GetReturnOptions(interp, result);
-
 	if (NULL == Tcl_ObjSetVar2(interp, optionVarNamePtr, NULL,
 		options, 0)) {
 	    Tcl_DecrRefCount(options);
@@ -673,9 +672,11 @@ Tcl_EvalObjCmd(
     int objc,			/* Number of arguments. */
     Tcl_Obj *const objv[])	/* Argument objects. */
 {
-    int result;
     register Tcl_Obj *objPtr;
     Interp *iPtr = (Interp *) interp;
+    CmdFrame *invoker = NULL;
+    int word = 0;
+    int result;
 
     if (objc < 2) {
 	Tcl_WrongNumArgs(interp, 1, objv, "arg ?arg ...?");
@@ -687,27 +688,25 @@ Tcl_EvalObjCmd(
 	 * TIP #280. Make argument location available to eval'd script.
 	 */
 
-	CmdFrame* invoker = iPtr->cmdFramePtr;
-	int word = 1;
-	TclArgumentGet (interp, objv[1], &invoker, &word);
-
-	result = TclEvalObjEx(interp, objv[1], TCL_EVAL_DIRECT,
-		invoker, word);
+	invoker = iPtr->cmdFramePtr;
+	word = 1;
+	objPtr = objv[1];
+	TclArgumentGet(interp, objPtr, &invoker, &word);
     } else {
 	/*
 	 * More than one argument: concatenate them together with spaces
 	 * between, then evaluate the result. Tcl_EvalObjEx will delete the
 	 * object when it decrements its refcount after eval'ing it.
+	 *
+	 * TIP #280. Make invoking context available to eval'd script, done
+	 * with the default values.
 	 */
 
 	objPtr = Tcl_ConcatObj(objc-1, objv+1);
-
-	/*
-	 * TIP #280. Make invoking context available to eval'd script.
-	 */
-
-	result = TclEvalObjEx(interp, objPtr, TCL_EVAL_DIRECT, NULL, 0);
     }
+
+    result = TclEvalObjEx(interp, objPtr, TCL_EVAL_DIRECT, invoker, word);
+
     if (result == TCL_ERROR) {
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
 		"\n    (\"eval\" body line %d)", Tcl_GetErrorLine(interp)));
@@ -801,7 +800,6 @@ Tcl_ExprObjCmd(
 	result = Tcl_ExprObj(interp, objv[1], &resultPtr);
     } else {
 	Tcl_Obj *objPtr = Tcl_ConcatObj(objc-1, objv+1);
-
 	Tcl_IncrRefCount(objPtr);
 	result = Tcl_ExprObj(interp, objPtr, &resultPtr);
 	Tcl_DecrRefCount(objPtr);
@@ -847,41 +845,41 @@ TclInitFileCmd(
      */
 
     static const EnsembleImplMap initMap[] = {
-	{"atime",	FileAttrAccessTimeCmd},
-	{"attributes",	TclFileAttrsCmd},
-	{"channels",	TclChannelNamesCmd},
-	{"copy",	TclFileCopyCmd},
-	{"delete",	TclFileDeleteCmd},
-	{"dirname",	PathDirNameCmd},
-	{"executable",	FileAttrIsExecutableCmd},
-	{"exists",	FileAttrIsExistingCmd},
-	{"extension",	PathExtensionCmd},
-	{"isdirectory",	FileAttrIsDirectoryCmd},
-	{"isfile",	FileAttrIsFileCmd},
-	{"join",	PathJoinCmd},
-	{"link",	TclFileLinkCmd},
-	{"lstat",	FileAttrLinkStatCmd},
-	{"mtime",	FileAttrModifyTimeCmd},
-	{"mkdir",	TclFileMakeDirsCmd},
-	{"nativename",	PathNativeNameCmd},
-	{"normalize",	PathNormalizeCmd},
-	{"owned",	FileAttrIsOwnedCmd},
-	{"pathtype",	PathTypeCmd},
-	{"readable",	FileAttrIsReadableCmd},
-	{"readlink",	TclFileReadLinkCmd},
-	{"rename",	TclFileRenameCmd},
-	{"rootname",	PathRootNameCmd},
-	{"separator",	FilesystemSeparatorCmd},
-	{"size",	FileAttrSizeCmd},
-	{"split",	PathSplitCmd},
-	{"stat",	FileAttrStatCmd},
-	{"system",	PathFilesystemCmd},
-	{"tail",	PathTailCmd},
-	{"tempfile",	TclFileTemporaryCmd},
-	{"type",	FileAttrTypeCmd},
-	{"volumes",	FilesystemVolumesCmd},
-	{"writable",	FileAttrIsWritableCmd},
-	{NULL}
+	{"atime",	FileAttrAccessTimeCmd, NULL, NULL, 0},
+	{"attributes",	TclFileAttrsCmd, NULL, NULL, 0},
+	{"channels",	TclChannelNamesCmd, NULL, NULL, 0},
+	{"copy",	TclFileCopyCmd, NULL, NULL, 0},
+	{"delete",	TclFileDeleteCmd, NULL, NULL, 0},
+	{"dirname",	PathDirNameCmd, NULL, NULL, 0},
+	{"executable",	FileAttrIsExecutableCmd, NULL, NULL, 0},
+	{"exists",	FileAttrIsExistingCmd, NULL, NULL, 0},
+	{"extension",	PathExtensionCmd, NULL, NULL, 0},
+	{"isdirectory",	FileAttrIsDirectoryCmd, NULL, NULL, 0},
+	{"isfile",	FileAttrIsFileCmd, NULL, NULL, 0},
+	{"join",	PathJoinCmd, NULL, NULL, 0},
+	{"link",	TclFileLinkCmd, NULL, NULL, 0},
+	{"lstat",	FileAttrLinkStatCmd, NULL, NULL, 0},
+	{"mtime",	FileAttrModifyTimeCmd, NULL, NULL, 0},
+	{"mkdir",	TclFileMakeDirsCmd, NULL, NULL, 0},
+	{"nativename",	PathNativeNameCmd, NULL, NULL, 0},
+	{"normalize",	PathNormalizeCmd, NULL, NULL, 0},
+	{"owned",	FileAttrIsOwnedCmd, NULL, NULL, 0},
+	{"pathtype",	PathTypeCmd, NULL, NULL, 0},
+	{"readable",	FileAttrIsReadableCmd, NULL, NULL, 0},
+	{"readlink",	TclFileReadLinkCmd, NULL, NULL, 0},
+	{"rename",	TclFileRenameCmd, NULL, NULL, 0},
+	{"rootname",	PathRootNameCmd, NULL, NULL, 0},
+	{"separator",	FilesystemSeparatorCmd, NULL, NULL, 0},
+	{"size",	FileAttrSizeCmd, NULL, NULL, 0},
+	{"split",	PathSplitCmd, NULL, NULL, 0},
+	{"stat",	FileAttrStatCmd, NULL, NULL, 0},
+	{"system",	PathFilesystemCmd, NULL, NULL, 0},
+	{"tail",	PathTailCmd, NULL, NULL, 0},
+	{"tempfile",	TclFileTemporaryCmd, NULL, NULL, 0},
+	{"type",	FileAttrTypeCmd, NULL, NULL, 0},
+	{"volumes",	FilesystemVolumesCmd, NULL, NULL, 0},
+	{"writable",	FileAttrIsWritableCmd, NULL, NULL, 0},
+	{NULL, NULL, NULL, NULL, 0}
     };
     return TclMakeEnsemble(interp, "file", initMap);
 }
@@ -945,7 +943,7 @@ TclMakeFileCommandSafe(
 	{"type",	 1},
 	{"volumes",	 1},
 	{"writable",	 1},
-	{NULL}
+	{NULL, 0}
     };
     int i;
     Tcl_DString oldBuf, newBuf;
@@ -2117,13 +2115,13 @@ StoreStatData(
      */
 
 #define STORE_ARY(fieldName, object) \
-    TclNewLiteralStringObj(field, fieldName); \
-    Tcl_IncrRefCount(field); \
-    value = (object); \
+    TclNewLiteralStringObj(field, fieldName);				\
+    Tcl_IncrRefCount(field);						\
+    value = (object);							\
     if (Tcl_ObjSetVar2(interp,varName,field,value,TCL_LEAVE_ERR_MSG)==NULL) { \
-	TclDecrRefCount(field); \
-	return TCL_ERROR; \
-    } \
+	TclDecrRefCount(field);						\
+	return TCL_ERROR;						\
+    }									\
     TclDecrRefCount(field);
 
     /*

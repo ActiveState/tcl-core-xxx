@@ -1871,7 +1871,7 @@ Tcl_ParseQuotedString(
  *	flags argument to provide support for the -nobackslashes, -nocommands,
  *	and -novariables options, as represented by the flag values
  *	TCL_SUBST_BACKSLASHES, TCL_SUBST_COMMANDS, TCL_SUBST_VARIABLES.
- *
+ *	
  * Results:
  *	None.
  *
@@ -2204,7 +2204,7 @@ TclSubstTokens(
 
 		    if (numCL >= maxNumCL) {
 			maxNumCL *= 2;
-			clPosition = (int *) ckrealloc ((char *) clPosition,
+			clPosition = (int *) ckrealloc((char *) clPosition,
 				maxNumCL * sizeof(int));
 		    }
 		    clPosition[numCL] = clPos;
@@ -2225,7 +2225,7 @@ TclSubstTokens(
 
 		int theline;
 
-		TclAdvanceContinuations (&line, &clNextOuter,
+		TclAdvanceContinuations(&line, &clNextOuter,
 			tokenPtr->start - outerScript);
 		theline = line + adjust;
 		code = TclEvalEx(interp, tokenPtr->start+1, tokenPtr->size-2,
@@ -2244,6 +2244,7 @@ TclSubstTokens(
 		}
 	    }
 	    iPtr->numLevels--;
+	    TclResetCancellation(interp, 0);
 	    appendObj = Tcl_GetObjResult(interp);
 	    break;
 	}

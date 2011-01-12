@@ -3245,6 +3245,9 @@ NamespaceEvalCmd(
     int objc,			/* Number of arguments. */
     Tcl_Obj *const objv[])	/* Argument objects. */
 {
+    Interp *iPtr = (Interp *) interp;
+    CmdFrame *invoker;
+    int word;
     Tcl_Namespace *namespacePtr;
     CallFrame *framePtr, **framePtrPtr;
     Tcl_Obj *objPtr;
@@ -3296,12 +3299,11 @@ NamespaceEvalCmd(
 	 * TIP #280: Make actual argument location available to eval'd script.
 	 */
 
-	Interp *iPtr = (Interp *) interp;
-	CmdFrame *invoker = iPtr->cmdFramePtr;
-	int word = 3;
-
+	invoker = iPtr->cmdFramePtr;
+	word = 3;
 	TclArgumentGet(interp, objv[3], &invoker, &word);
-	result = TclEvalObjEx(interp, objv[3], 0, invoker, word);
+
+        result = TclEvalObjEx(interp, objv[3], 0, invoker, word);
     } else {
 	/*
 	 * More than one argument: concatenate them together with spaces
@@ -3310,12 +3312,7 @@ NamespaceEvalCmd(
 	 */
 
 	objPtr = Tcl_ConcatObj(objc-3, objv+3);
-
-	/*
-	 * TIP #280: Make invoking context available to eval'd script.
-	 */
-
-	result = TclEvalObjEx(interp, objPtr, TCL_EVAL_DIRECT, NULL, 0);
+        result = Tcl_EvalObjEx(interp, objPtr, TCL_EVAL_DIRECT);
     }
 
     if (result == TCL_ERROR) {
@@ -3324,7 +3321,8 @@ NamespaceEvalCmd(
 	int overflow = (length > limit);
 
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
-		"\n    (in namespace eval \"%.*s%s\" script line %d)",
+		"\n    (in namespace %s \"%.*s%s\" script line %d)",
+		"eval",
 		(overflow ? limit : length), namespacePtr->fullName,
 		(overflow ? "..." : ""), Tcl_GetErrorLine(interp)));
     }
@@ -3693,6 +3691,7 @@ NamespaceInscopeCmd(
     Tcl_Namespace *namespacePtr;
     CallFrame *framePtr, **framePtrPtr;
     int i, result;
+    Tcl_Obj *cmdObjPtr;
 
     if (objc < 4) {
 	Tcl_WrongNumArgs(interp, 2, objv, "name arg ?arg...?");
@@ -3730,10 +3729,10 @@ NamespaceInscopeCmd(
      */
 
     if (objc == 4) {
-	result = Tcl_EvalObjEx(interp, objv[3], 0);
+	cmdObjPtr = objv[3];
     } else {
 	Tcl_Obj *concatObjv[2];
-	register Tcl_Obj *listPtr, *cmdObjPtr;
+	register Tcl_Obj *listPtr;
 
 	listPtr = Tcl_NewListObj(0, NULL);
 	for (i = 4;  i < objc;  i++) {
@@ -3746,9 +3745,10 @@ NamespaceInscopeCmd(
 	concatObjv[0] = objv[3];
 	concatObjv[1] = listPtr;
 	cmdObjPtr = Tcl_ConcatObj(2, concatObjv);
-	result = Tcl_EvalObjEx(interp, cmdObjPtr, TCL_EVAL_DIRECT);
 	Tcl_DecrRefCount(listPtr);    /* We're done with the list object. */
     }
+
+    result = Tcl_EvalObjEx(interp, cmdObjPtr, 0);
 
     if (result == TCL_ERROR) {
 	int length = strlen(namespacePtr->fullName);
@@ -3756,7 +3756,8 @@ NamespaceInscopeCmd(
 	int overflow = (length > limit);
 
 	Tcl_AppendObjToErrorInfo(interp, Tcl_ObjPrintf(
-		"\n    (in namespace inscope \"%.*s%s\" script line %d)",
+		"\n    (in namespace %s \"%.*s%s\" script line %d)",
+		"inscope",
 		(overflow ? limit : length), namespacePtr->fullName,
 		(overflow ? "..." : ""), Tcl_GetErrorLine(interp)));
     }

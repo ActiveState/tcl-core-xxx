@@ -324,7 +324,7 @@ test stringObj-9.11 {TclAppendObjToObj, mixed src & 1-byte dest index check} tes
 	lappend q [string index $x $i]
     }
     set q
-} "a b c d e f a \u00f b \u00e5 c \u00ef"
+} "a b c d e f a \u00fc b \u00e5 c \u00ef"
 
 test stringObj-10.1 {Tcl_GetRange with all byte-size chars} {testobj testdstring} {
     testdstring free
@@ -335,7 +335,7 @@ test stringObj-10.1 {Tcl_GetRange with all byte-size chars} {testobj testdstring
 } [list none bcde string string]
 test stringObj-10.2 {Tcl_GetRange with some mixed width chars} {testobj testdstring} {
     # Because this test does not use \uXXXX notation below instead of
-    # hardcoding the values, it may fail in multibyte locales.  However, we
+    # hardcoding the values, it may fail in multibyte locales. However, we
     # need to test that the parser produces untyped objects even when there
     # are high-ASCII characters in the input (like "ï"). I don't know what
     # else to do but inline those characters here.

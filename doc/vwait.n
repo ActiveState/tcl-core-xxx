@@ -145,7 +145,7 @@ until after it has printed
 .QW "b was set"
 because of the nesting of \fBvwait\fR commands, and yet \fIb\fR will not be
 set until after the outer \fBvwait\fR returns, so the script has deadlocked.
-The only way to avoid this are to structure the overall program in
+The only way to avoid this is to structure the overall program in
 continuation-passing style. This would be written as:
 .PP
 .CS
@@ -173,7 +173,6 @@ trace add variable a write {apply {args {
 }}}
 \fBvwait\fR done
 .CE
-.PP
 .SH "SEE ALSO"
 global(n), update(n)
 .SH KEYWORDS

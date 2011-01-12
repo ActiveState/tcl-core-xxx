@@ -423,7 +423,7 @@ declare 103 {
 	    int *portPtr)
 }
 declare 104 {
-    int TclSockMinimumBuffers(int sock, int size)
+    int TclSockMinimumBuffers(ClientData sock, int size)
 }
 # Replaced by Tcl_FSStat in 8.4:
 #declare 105 {
@@ -901,7 +901,7 @@ declare 227 {
             Tcl_Namespace *pathAry[])
 }
 declare 228 {
-    int TclObjInterpProcCore(register Tcl_Interp *interp, Tcl_Obj *procNameObj,
+      int TclObjInterpProcCore(register Tcl_Interp *interp, Tcl_Obj *procNameObj,
              int skip, ProcErrorProc *errorProc)
 }
 declare 229 {
@@ -971,7 +971,7 @@ declare 248 {
     int TclCopyChannel(Tcl_Interp *interp, Tcl_Channel inChan,
 	    Tcl_Channel outChan, Tcl_WideInt toRead, Tcl_Obj *cmdPtr)
 }
-
+
 declare 249 {
     char* TclDoubleDigits(double dv, int ndigits, int flags,
 			  int* decpt, int* signum, char** endPtr)
@@ -998,7 +998,7 @@ declare 2 win {
 	    const char *proto)
 }
 declare 3 win {
-    int TclWinGetSockOpt(int s, int level, int optname,
+    int TclWinGetSockOpt(SOCKET s, int level, int optname,
 	    char FAR *optval, int FAR *optlen)
 }
 declare 4 win {
@@ -1012,7 +1012,7 @@ declare 6 win {
     u_short TclWinNToHS(u_short ns)
 }
 declare 7 win {
-    int TclWinSetSockOpt(int s, int level, int optname,
+    int TclWinSetSockOpt(SOCKET s, int level, int optname,
 	    const char FAR *optval, int optlen)
 }
 declare 8 win {
